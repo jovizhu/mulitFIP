@@ -1,0 +1,849 @@
+
+ff: parsing domain file
+domain 'FOREST' defined
+ ... done.
+ff: parsing problem file
+problem 'P2' defined
+ ... done.
+
+
+
+Cueing down from goal distance:    2 into depth [1][2][3][4][5][6][7][8][9][10]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: UP-X-2 X1 Y1 X2 Y2
+        1: MAKE-ENABLED X1 Y1 X2 Y1
+        2: INITIALIZE-BLOCKSWORLD X2 Y1
+        3: UNSTACK C A
+        4: PUTDOWN C
+        5: PICKUP B
+        6: STACK B C
+        7: PICKUP A
+        8: STACK A B
+        9: SOLVE-BLOCKSWORLD X2 Y1
+       10: UP-Y-2 X2 Y1 Y2 X1
+     
+
+Cueing down from goal distance:   10 into depth [1]
+                                   9            [1]
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :   10
+                           9
+
+best first search space empty! problem proven unsolvable.
+
+Change goal alternatively back to the oringinal goal
+
+
+Cueing down from goal distance:    9 into depth [1]
+                                   8            [1]
+                                   7            [1]
+                                   6            [1][2][3][4]
+                                   5            [1][2][3]
+                                   4            [1]
+                                   3            [1]
+                                   2            [1]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: MAKE-ENABLED X1 Y1 X1 Y2
+        1: INITIALIZE-BLOCKSWORLD X1 Y2
+        2: UNSTACK C A
+        3: PUTDOWN C
+        4: PICKUP B
+        5: STACK B C
+        6: PICKUP A
+        7: STACK A B
+        8: SOLVE-BLOCKSWORLD X1 Y2
+        9: UP-X-1 X1 Y2 X2 Y1
+     solved state reached
+
+
+Cueing down from goal distance:    2 into depth [1]
+state have seen. h = 2. return
+
+
+ff: found legal plan as follows
+
+step    0: UP-X-2 X1 Y1 X2 Y2
+     solved state reached
+
+
+Cueing down from goal distance:    2 into depth [1]
+state have seen. h = 2. return
+
+
+ff: found legal plan as follows
+
+step    0: UP-X-2 X1 Y1 X2 Y2
+     solved state reached
+
+
+Cueing down from goal distance:   10 into depth [1]
+                                   9            [1]
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :   10
+                           9
+
+best first search space empty! problem proven unsolvable.
+
+Change goal alternatively back to the oringinal goal
+
+
+Cueing down from goal distance:    9 into depth [1]
+                                   8            [1]
+                                   7            [1]
+                                   6            [1][2][3][4]
+                                   5            [1][2][3]
+                                   4            [1]
+                                   3            [1]
+                                   2            [1]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: MAKE-ENABLED X1 Y1 X1 Y2
+        1: INITIALIZE-BLOCKSWORLD X1 Y2
+        2: UNSTACK C A
+        3: PUTDOWN C
+        4: PICKUP B
+        5: STACK B C
+        6: PICKUP A
+        7: STACK A B
+        8: SOLVE-BLOCKSWORLD X1 Y2
+        9: UP-X-1 X1 Y2 X2 Y1
+     solved state reached
+solved state reached
+
+
+Cueing down from goal distance:   10 into depth [1]
+                                   9            [1]
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :   10
+                           9
+
+best first search space empty! problem proven unsolvable.
+
+Change goal alternatively back to the oringinal goal
+
+
+Cueing down from goal distance:    9 into depth [1]
+                                   8            [1]
+                                   7            [1]
+                                   6            [1][2][3][4]
+                                   5            [1][2][3]
+                                   4            [1]
+                                   3            [1]
+                                   2            [1]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: MAKE-ENABLED X1 Y1 X2 Y1
+        1: INITIALIZE-BLOCKSWORLD X2 Y1
+        2: UNSTACK C A
+        3: PUTDOWN C
+        4: PICKUP B
+        5: STACK B C
+        6: PICKUP A
+        7: STACK A B
+        8: SOLVE-BLOCKSWORLD X2 Y1
+        9: UP-Y-2 X2 Y1 Y2 X1
+     
+
+Cueing down from goal distance:    2 into depth [1]
+state have seen. h = 2. return
+
+
+ff: found legal plan as follows
+
+step    0: UP-X-2 X1 Y1 X2 Y2
+     solved state reached
+solved state reached
+solved state reached
+##########################################
+#####   PROCEDURE-LIKE CODE   ############
+##########################################
+   while(true){
+      switch(state){
+         case S0:	break;
+         case S1:	UP-X-2 X1 Y1 X2 Y2;
+         case S2:	MAKE-ENABLED X1 Y1 X2 Y1;
+         case S3:	INITIALIZE-BLOCKSWORLD X2 Y1;
+         case S4:	UNSTACK C A;
+         case S5:	PUTDOWN C;
+         case S6:	PICKUP B;
+         case S7:	STACK B C;
+         case S8:	PICKUP A;
+         case S9:	STACK A B;
+         case S10:	SOLVE-BLOCKSWORLD X2 Y1;
+         case S11:	UP-Y-2 X2 Y1 Y2 X1;
+         case S12:	break;
+         case S13:	MAKE-ENABLED X1 Y1 X1 Y2;
+         case S14:	INITIALIZE-BLOCKSWORLD X1 Y2;
+         case S15:	UNSTACK C A;
+         case S16:	PUTDOWN C;
+         case S17:	PICKUP B;
+         case S18:	STACK B C;
+         case S19:	PICKUP A;
+         case S20:	STACK A B;
+         case S21:	SOLVE-BLOCKSWORLD X1 Y2;
+         case S22:	UP-X-1 X1 Y2 X2 Y1;
+         case S23:	UP-X-2 X1 Y1 X2 Y2;
+         case S24:	UP-X-2 X1 Y1 X2 Y2;
+         case S25:	MAKE-ENABLED X1 Y1 X1 Y2;
+         case S26:	INITIALIZE-BLOCKSWORLD X1 Y2;
+         case S27:	UNSTACK C A;
+         case S28:	PUTDOWN C;
+         case S29:	PICKUP B;
+         case S30:	STACK B C;
+         case S31:	PICKUP A;
+         case S32:	STACK A B;
+         case S33:	SOLVE-BLOCKSWORLD X1 Y2;
+         case S34:	UP-X-1 X1 Y2 X2 Y1;
+         case S35:	MAKE-ENABLED X1 Y1 X2 Y1;
+         case S36:	INITIALIZE-BLOCKSWORLD X2 Y1;
+         case S37:	UNSTACK C A;
+         case S38:	PUTDOWN C;
+         case S39:	PICKUP B;
+         case S40:	STACK B C;
+         case S41:	PICKUP A;
+         case S42:	STACK A B;
+         case S43:	SOLVE-BLOCKSWORLD X2 Y1;
+         case S44:	UP-Y-2 X2 Y1 Y2 X1;
+         case S45:	UP-X-2 X1 Y1 X2 Y2;
+      }
+   }
+All states involved in final fip plan:
+S0:
+AT-Y(Y2)
+AT-X(X2)
+
+S1:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X1)
+
+S2:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+
+S3:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+
+S4:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON(C A)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(C)
+S-EMPTY()
+
+S5:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-HOLDING(C)
+S-CLEAR(A)
+
+S6:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-EMPTY()
+
+S7:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-HOLDING(B)
+
+S8:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-EMPTY()
+
+S9:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-HOLDING(A)
+
+S10:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(C)
+S-ON(B C)
+S-ON(A B)
+S-CLEAR(A)
+S-EMPTY()
+
+S11:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+
+S12:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-Y(Y2)
+
+S13:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+
+S14:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+
+S15:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON(C A)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(C)
+S-EMPTY()
+
+S16:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-HOLDING(C)
+S-CLEAR(A)
+
+S17:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-EMPTY()
+
+S18:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-HOLDING(B)
+
+S19:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-EMPTY()
+
+S20:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-HOLDING(A)
+
+S21:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(C)
+S-ON(B C)
+S-ON(A B)
+S-CLEAR(A)
+S-EMPTY()
+
+S22:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+
+S23:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+AT-Y(Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+
+S24:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+AT-X(X1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+
+S25:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+
+S26:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+
+S27:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON(C A)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(C)
+S-EMPTY()
+
+S28:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-HOLDING(C)
+S-CLEAR(A)
+
+S29:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-EMPTY()
+
+S30:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-HOLDING(B)
+
+S31:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-EMPTY()
+
+S32:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-HOLDING(A)
+
+S33:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+S-ON-TABLE(C)
+S-ON(B C)
+S-ON(A B)
+S-CLEAR(A)
+S-EMPTY()
+
+S34:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+AT-Y(Y2)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+
+S35:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+
+S36:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X2 Y1)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+
+S37:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON(C A)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(C)
+S-EMPTY()
+
+S38:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-HOLDING(C)
+S-CLEAR(A)
+
+S39:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-ON-TABLE(B)
+S-CLEAR(B)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-EMPTY()
+
+S40:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-CLEAR(C)
+S-HOLDING(B)
+
+S41:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(A)
+S-CLEAR(A)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-EMPTY()
+
+S42:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(C)
+S-ON(B C)
+S-CLEAR(B)
+S-HOLDING(A)
+
+S43:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+S-ON-TABLE(C)
+S-ON(B C)
+S-ON(A B)
+S-CLEAR(A)
+S-EMPTY()
+
+S44:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+AT-X(X2)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+
+S45:
+NINITIALIZED(X2 Y2)
+NINITIALIZED(X1 Y1)
+ENABLED(X2 Y1)
+INITIALIZED(X2 Y1)
+SOLVED(X2 Y1)
+AT-X(X1)
+ENABLED(X1 Y2)
+INITIALIZED(X1 Y2)
+SOLVED(X1 Y2)
+AT-Y(Y1)
+
+The total searching time is   0.008
+
+
+time spent:   0.007 seconds instantiating 6223 easy, 0 hard action templates
+              0.002 seconds reachability analysis, yielding 56 facts and 83 actions
+              0.000 seconds creating final representation with 49 relevant facts
+              0.000 seconds building connectivity graph
+              0.008 seconds searching, evaluating 2 states, to a max depth of 10
+              0.017 seconds total time
+

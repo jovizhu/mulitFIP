@@ -1,0 +1,366 @@
+
+ff: parsing domain file
+domain 'BLOCKS-DOMAIN' defined
+ ... done.
+ff: parsing problem file
+problem 'BW_5_2' defined
+ ... done.
+
+
+
+Cueing down from goal distance:    3 into depth [1]
+                                   2            [1]
+                                   1            [1]
+                                   0            
+
+Cueing down from goal distance:    2 into depth [1]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: PICK-UP B4 B2
+        1: PICK-UP B5 B1
+        2: PUT-ON-BLOCK B5 B2
+        3: PICK-UP-FROM-TABLE B4
+        4: PUT-ON-BLOCK B4 B1
+     
+
+Cueing down from goal distance:    1 into depth [1]
+state have seen. h = 1. return
+
+
+ff: found legal plan as follows
+
+step    0: PUT-DOWN B4
+     
+
+Cueing down from goal distance:    1 into depth [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: PICK-UP-FROM-TABLE B5
+     solved state reached
+solved state reached
+##########################################
+#####   PROCEDURE-LIKE CODE   ############
+##########################################
+   while(true){
+      switch(state){
+         case S0:	break;
+         case S1:	PICK-UP B4 B2;
+         case S2:	PICK-UP B5 B1;
+         case S3:	PUT-ON-BLOCK B5 B2;
+         case S4:	PICK-UP-FROM-TABLE B4;
+         case S5:	PUT-ON-BLOCK B4 B1;
+         case S6:	break;
+         case S7:	PUT-DOWN B4;
+         case S8:	PICK-UP-FROM-TABLE B5;
+      }
+   }
+All states involved in final fip plan:
+S0:
+CLEAR(B5)
+CLEAR(B4)
+CLEAR(B3)
+ON(B5 B2)
+ON(B4 B1)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+EMPTYHAND()
+
+S1:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B2)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B5)
+CLEAR(B4)
+CLEAR(B3)
+ON(B5 B1)
+ON(B4 B2)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+EMPTYHAND()
+
+S2:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B2)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B5)
+CLEAR(B4)
+CLEAR(B3)
+ON(B5 B1)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+EMPTYHAND()
+ON-TABLE(B4)
+CLEAR(B2)
+NOT-ON(B4 B2)
+
+S3:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B2)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B4)
+CLEAR(B3)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+ON-TABLE(B4)
+CLEAR(B2)
+NOT-ON(B4 B2)
+HOLDING(B5)
+CLEAR(B1)
+NOT-ON(B5 B1)
+
+S4:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B4)
+CLEAR(B3)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+ON-TABLE(B4)
+NOT-ON(B4 B2)
+CLEAR(B1)
+NOT-ON(B5 B1)
+ON(B5 B2)
+EMPTYHAND()
+CLEAR(B5)
+
+S5:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B4)
+CLEAR(B3)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+NOT-ON(B4 B2)
+CLEAR(B1)
+NOT-ON(B5 B1)
+ON(B5 B2)
+CLEAR(B5)
+HOLDING(B4)
+
+S6:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B4)
+CLEAR(B3)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+NOT-ON(B4 B2)
+NOT-ON(B5 B1)
+ON(B5 B2)
+CLEAR(B5)
+ON(B4 B1)
+EMPTYHAND()
+
+S7:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B2)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B5)
+CLEAR(B3)
+ON(B5 B1)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+HOLDING(B4)
+CLEAR(B2)
+NOT-ON(B4 B2)
+
+S8:
+NOT-ON(B1 B1)
+NOT-ON(B1 B2)
+NOT-ON(B1 B3)
+NOT-ON(B1 B4)
+NOT-ON(B1 B5)
+NOT-ON(B2 B1)
+NOT-ON(B2 B2)
+NOT-ON(B2 B3)
+NOT-ON(B2 B4)
+NOT-ON(B2 B5)
+NOT-ON(B3 B1)
+NOT-ON(B3 B2)
+NOT-ON(B3 B3)
+NOT-ON(B3 B4)
+NOT-ON(B3 B5)
+NOT-ON(B4 B1)
+NOT-ON(B4 B3)
+NOT-ON(B4 B4)
+NOT-ON(B4 B5)
+NOT-ON(B5 B2)
+NOT-ON(B5 B3)
+NOT-ON(B5 B4)
+NOT-ON(B5 B5)
+CLEAR(B5)
+CLEAR(B4)
+CLEAR(B3)
+ON-TABLE(B3)
+ON-TABLE(B2)
+ON-TABLE(B1)
+EMPTYHAND()
+ON-TABLE(B4)
+CLEAR(B2)
+NOT-ON(B4 B2)
+ON-TABLE(B5)
+CLEAR(B1)
+NOT-ON(B5 B1)
+
+The total searching time is   0.005
+
+
+time spent:   0.002 seconds instantiating 590 easy, 0 hard action templates
+              0.001 seconds reachability analysis, yielding 66 facts and 590 actions
+              0.000 seconds creating final representation with 66 relevant facts
+              0.001 seconds building connectivity graph
+              0.005 seconds searching, evaluating 2 states, to a max depth of 1
+              0.009 seconds total time
+

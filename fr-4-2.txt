@@ -1,0 +1,171 @@
+
+ff: parsing domain file
+domain 'FIRST-RESPONSE' defined
+ ... done.
+ff: parsing problem file
+problem 'FR_4_2' defined
+ ... done.
+
+
+
+Cueing down from goal distance:    4 into depth [1]
+                                   2            [1][2]
+                                   1            [1]
+                                   0            
+
+Cueing down from goal distance:    2 into depth [1]
+                                   1            [1]
+                                   0            
+
+ff: found legal plan as follows
+
+step    0: LOAD-FIRE-UNIT F1 L1
+        1: UNLOAD-FIRE-UNIT F1 L1 L3
+        2: LOAD-FIRE-UNIT F2 L2
+        3: UNLOAD-FIRE-UNIT F2 L2 L2
+        4: TREAT-VICTIM-ON-SCENE-MEDICAL M1 L3 V1
+        5: TREAT-VICTIM-ON-SCENE-MEDICAL M1 L3 V2
+     solved state reached
+solved state reached
+solved state reached
+solved state reached
+##########################################
+#####   PROCEDURE-LIKE CODE   ############
+##########################################
+   while(true){
+      switch(state){
+         case S0:	break;
+         case S1:	LOAD-FIRE-UNIT F1 L1;
+         case S2:	UNLOAD-FIRE-UNIT F1 L1 L3;
+         case S3:	LOAD-FIRE-UNIT F2 L2;
+         case S4:	UNLOAD-FIRE-UNIT F2 L2 L2;
+         case S5:	TREAT-VICTIM-ON-SCENE-MEDICAL M1 L3 V1;
+         case S6:	TREAT-VICTIM-ON-SCENE-MEDICAL M1 L3 V2;
+         case S7:	break;
+      }
+   }
+All states involved in final fip plan:
+S0:
+VICTIM-STATUS(V2 HEALTHY)
+VICTIM-STATUS(V1 HEALTHY)
+NFIRE(L2)
+NFIRE(L3)
+
+S1:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+FIRE(L2)
+VICTIM-STATUS(V1 HURT)
+VICTIM-AT(V1 L3)
+FIRE(L3)
+
+S2:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+FIRE(L2)
+VICTIM-STATUS(V1 HURT)
+VICTIM-AT(V1 L3)
+FIRE(L3)
+HAVE-WATER(F1)
+
+S3:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+FIRE(L2)
+VICTIM-STATUS(V1 HURT)
+VICTIM-AT(V1 L3)
+NFIRE(L3)
+NOT-FIRE(L3)
+
+S4:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+FIRE(L2)
+VICTIM-STATUS(V1 HURT)
+VICTIM-AT(V1 L3)
+NFIRE(L3)
+NOT-FIRE(L3)
+HAVE-WATER(F2)
+
+S5:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+VICTIM-STATUS(V1 HURT)
+VICTIM-AT(V1 L3)
+NFIRE(L3)
+NOT-FIRE(L3)
+NFIRE(L2)
+NOT-FIRE(L2)
+
+S6:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-STATUS(V2 HURT)
+VICTIM-AT(V2 L3)
+VICTIM-AT(V1 L3)
+NFIRE(L3)
+NOT-FIRE(L3)
+NFIRE(L2)
+NOT-FIRE(L2)
+VICTIM-STATUS(V1 HEALTHY)
+
+S7:
+MEDICAL-UNIT-AT(M4 L4)
+MEDICAL-UNIT-AT(M3 L4)
+MEDICAL-UNIT-AT(M2 L3)
+MEDICAL-UNIT-AT(M1 L3)
+FIRE-UNIT-AT(F2 L2)
+FIRE-UNIT-AT(F1 L1)
+VICTIM-AT(V2 L3)
+VICTIM-AT(V1 L3)
+NFIRE(L3)
+NOT-FIRE(L3)
+NFIRE(L2)
+NOT-FIRE(L2)
+VICTIM-STATUS(V1 HEALTHY)
+VICTIM-STATUS(V2 HEALTHY)
+
+The total searching time is   0.002
+
+
+time spent:   0.003 seconds instantiating 348 easy, 0 hard action templates
+              0.000 seconds reachability analysis, yielding 54 facts and 308 actions
+              0.001 seconds creating final representation with 52 relevant facts
+              0.000 seconds building connectivity graph
+              0.002 seconds searching, evaluating 9 states, to a max depth of 2
+              0.006 seconds total time
+
