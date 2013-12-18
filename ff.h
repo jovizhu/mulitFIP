@@ -449,6 +449,15 @@ typedef struct _TypedListList {
 /* This type indicates whether a node in the pddl tree stands for
  * an atomic expression, a junctor or a quantor. 
  */
+/*
+ * ATOM: atomic facts
+ * NOT: not token
+ * AND: and token
+ * OR: or token
+ * ALL: for all token
+ * EX: exists token
+ * WHEN: when token
+ */
 typedef enum _Connective{TRU,
 			   FAL,
 			   ATOM, 

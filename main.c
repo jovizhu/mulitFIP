@@ -206,7 +206,11 @@ int gnum_operators = 0;
 Fact *gfull_initial;
 int gnum_full_initial = 0;
 WffNode *ggoal = NULL;
-
+/* jovi: defined for multiple purposes
+ */
+Operator_pointer gadd_operators[MAX_OPERATORS];
+int gadd_num_operators = 0;
+WffNode *gadd_goal = NULL;
 /* stores inertia - information: is any occurence of the predicate
  * added / deleted in the uninstantiated ops ?
  */
@@ -465,14 +469,12 @@ int main( int argc, char *argv[] ) {
 
 	/* now instantiate operators;
 	*/
-
 	/*JC: initialize the array*/
  	gInvActs = (StateActionPair*)calloc(MAX_INVALID_ACTIONS, sizeof(StateActionPair));
 
 	/**************************
 	* first do PREPROCESSING * 
 	**************************/
-
 
 	/* start by collecting all strings and thereby encoding 
 	* the domain in integers.

@@ -160,9 +160,8 @@ TypedListList *new_TypedListList( void )
 
 
 
-PlNode *new_PlNode( Connective c )
-
-{
+/* Initialize the Node */
+PlNode *new_PlNode( Connective c ) {
 
   PlNode *result = ( PlNode * ) calloc( 1, sizeof( PlNode ) );
   CHECK_PTR(result);

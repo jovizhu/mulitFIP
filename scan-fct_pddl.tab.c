@@ -2347,7 +2347,9 @@ int yyerror( char *msg )
 
 
 
-void load_fct_file( char *filename )  {
+void load_fct_file( char *filename ) 
+
+{
 
   FILE *fp;/* pointer to input files */
   char tmp[MAX_LENGTH] = "";

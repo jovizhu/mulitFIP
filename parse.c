@@ -156,13 +156,6 @@ char *rmdash( char *s )
 
 /* typed-list-of   preprocessing
  */
-
-
-
-
-
-
-
 Token ltype_names[MAX_TYPES];
 int lnum_types;
 
@@ -370,6 +363,7 @@ void build_orig_constant_list( void ) {
       make_either_ty( tyl );
     }
   }
+
   make_either_ty_in_pl( gorig_goal_facts );
   for ( po = gloaded_ops; po; po = po->next ) {
     make_either_ty_in_pl( po->preconds );
@@ -379,10 +373,23 @@ void build_orig_constant_list( void ) {
     }
   }
 
+  /* modified by jovi */
+  /* support multiple goals */
+  make_either_ty_in_pl (gadd_orig_goal_facts);
+  for ( pao = gadd_loaded_ops; pao; pao = pao->next) {
+    make_either_ty_in_pl (pao->preconds);
+    make_either_ty_in_pl (pao->effects);
+    for ( tyl = pao->parse_params; tyl; tyl = tyl->next) {
+	make_either_ty ( tyl );
+    }
+  }
+
 
   /* now, compute the transitive closure of all type inclusions.
    * first initialize the matrix.
+   * m[i][j] is defined as type-i is subset of type-j
    */
+  /* jovi: i will update it later, it is not a good function for transitive computing */
   for ( i = 0; i < lnum_types; i++ ) {
     for ( j = 0; j < lnum_types; j++ ) {
       m[i][j] = ( i == j ? TRUE : FALSE );
@@ -396,15 +403,14 @@ void build_orig_constant_list( void ) {
     }
   }
   for ( i = 0; i < lnum_types; i++ ) {
-    m[i][std] = TRUE;/* all types are subtypes of OBJECT */
+    /* all types are subtypes of OBJECT */
+    m[i][std] = TRUE;
   }
   for ( tyl = gparse_types; tyl; tyl = tyl->next ) {
-    /* all inclusions as are defined in domain file
-     */
+    /* all inclusions as are defined in domain file */
     m[get_type( tyl->name )][tyl->n] = TRUE;
   }
-  /* compute transitive closure on inclusions matrix
-   */
+  /* compute transitive closure on inclusions matrix */
   for ( j = 0; j < lnum_types; j++ ) {
     for ( i = 0; i < lnum_types; i++ ) {
       if ( m[i][j] ) {
@@ -438,6 +444,7 @@ void build_orig_constant_list( void ) {
       }
     }
   }
+
   /* and again, compute transitive closure on inclusions matrix.
    * I guess, this won't change anything (?), but it also won't need
    * any remarkable computation time, so why should one think about it ?
@@ -465,11 +472,14 @@ void build_orig_constant_list( void ) {
    * is declared in type T as well as in some supertype T'.
    * such cases will be filtered out in string collection.
    */
+
   for ( tyl = gparse_constants; tyl; tyl = tyl->next ) {
+
     fl = new_FactList();
     fl->item = new_TokenList();
     fl->item->next = new_TokenList();
     fl->item->item = copy_Token( tyl->name );
+
     if ( tyl->type->next ) {
       fl->item->next->item = new_Token( MAX_LENGTH );
       strcpy( fl->item->next->item, EITHER_STR );
@@ -486,8 +496,10 @@ void build_orig_constant_list( void ) {
      */
     n = get_type( fl->item->next->item );
     for ( i = 0; i < lnum_types; i++ ) {
-      if ( i == n ||
-	   !m[n][i] ) continue;
+
+      if ( i == n || !m[n][i] ) 
+	continue;
+
       fl = new_FactList();
       fl->item = new_TokenList();
       fl->item->next = new_TokenList();
@@ -536,7 +548,9 @@ void build_orig_constant_list( void ) {
    *
    * at the same time, remove typed-listof structures in these defs
    */
+  /* jovi: modified to support multi purpose */
   normalize_tyl_in_pl( &gorig_goal_facts );
+
   for ( po = gloaded_ops; po; po = po->next ) {
     normalize_tyl_in_pl( &po->preconds );
     normalize_tyl_in_pl( &po->effects );
@@ -583,6 +597,55 @@ void build_orig_constant_list( void ) {
     po->parse_params = NULL;
   }
 
+  /* jovi: update to support multiple purposes */
+  normalize_tyl_in_pl( &gadd_orig_goal_facts );
+     
+  for ( pao = gadd_loaded_ops; pao; pao = pao->next ) {
+    normalize_tyl_in_pl( &pao->preconds );
+    normalize_tyl_in_pl( &pao->effects );
+    /* be careful to maintain parameter ordering !
+     */
+    if ( !pao->parse_params ) { 
+      continue;/* no params at all */
+    }
+    fl = new_FactList();
+    fl->item = new_TokenList();
+    fl->item->next = new_TokenList();
+    fl->item->item = copy_Token( po->parse_params->name );
+    if ( pao->parse_params->type->next ) {
+      fl->item->next->item = new_Token( MAX_LENGTH );
+      strcpy( fl->item->next->item, EITHER_STR );
+      for ( tl = pao->parse_params->type; tl; tl = tl->next ) {
+        strcat( fl->item->next->item, CONNECTOR );
+        strcat( fl->item->next->item, tl->item );
+      }
+    } else {
+      fl->item->next->item = copy_Token( pao->parse_params->type->item );
+    }
+    pao->params = fl;
+    p_fl = fl;
+    for ( tyl = pao->parse_params->next; tyl; tyl = tyl->next ) {
+      fl = new_FactList();
+      fl->item = new_TokenList();
+      fl->item->next = new_TokenList();
+      fl->item->item = copy_Token( tyl->name );
+      if ( tyl->type->next ) {
+        fl->item->next->item = new_Token( MAX_LENGTH );
+        strcpy( fl->item->next->item, EITHER_STR );
+        for ( tl = tyl->type; tl; tl = tl->next ) {
+          strcat( fl->item->next->item, CONNECTOR );
+          strcat( fl->item->next->item, tl->item );
+        }
+      } else {
+        fl->item->next->item = copy_Token( tyl->type->item );
+      }
+      p_fl->next = fl;
+      p_fl = fl;
+    }
+    free_TypedList( pao->parse_params );
+    pao->parse_params = NULL;
+  }
+
 
   /* finally, build  gpredicates_and_types  by chaining predicate names 
    * together with the names of their args' types.
@@ -625,6 +688,49 @@ void build_orig_constant_list( void ) {
     }
   }
 
+  /* jovi: update for multiple purpose support*/
+  /* seems not use any more
+  for ( tyll = gparse_predicates; tyll; tyll = tyll->next ) {
+    fl = new_FactList();
+    fl->item = new_TokenList();
+    fl->item->item = copy_Token( tyll->predicate );
+    fl->next = gpredicates_and_types;
+    gpredicates_and_types = fl;
+    if ( !tyll->args ) continue;
+  */
+    /* add arg types; MAINTAIN ORDERING !
+     */
+    /*
+    fl->item->next = new_TokenList();
+    if ( tyll->args->type->next ) {
+      fl->item->next->item = new_Token( MAX_LENGTH );
+      strcpy( fl->item->next->item, EITHER_STR );
+      for ( tl = tyll->args->type; tl; tl = tl->next ) {
+        strcat( fl->item->next->item, CONNECTOR );
+        strcat( fl->item->next->item, tl->item );
+      }
+    } else {
+      fl->item->next->item = copy_Token( tyll->args->type->item );
+    }
+    p_tl = fl->item->next;
+    for ( tyl = tyll->args->next; tyl; tyl = tyl->next ) {
+      tmp_tl = new_TokenList();
+      if ( tyl->type->next ) {
+        tmp_tl->item = new_Token( MAX_LENGTH );
+        strcpy( tmp_tl->item, EITHER_STR );
+        for ( tl = tyl->type; tl; tl = tl->next ) {
+          strcat( tmp_tl->item, CONNECTOR );
+          strcat( tmp_tl->item, tl->item );
+        }
+      } else {
+        tmp_tl->item = copy_Token( tyl->type->item );
+      }
+      p_tl->next = tmp_tl;
+      p_tl = tmp_tl;
+    }
+  }
+  */
+
 
   /* now get rid of remaining typed-list-of parsing structures
    */
@@ -636,7 +742,6 @@ void build_orig_constant_list( void ) {
   gparse_objects = NULL;
   free_TypedListList( gparse_predicates );
   gparse_predicates = NULL;
-
 }
 
 
@@ -717,9 +822,7 @@ int get_type( char *str ) {
 
 
 
-void make_either_ty( TypedList *tyl )
-
-{
+void make_either_ty( TypedList *tyl ) {
 
   TokenList *i;
 
@@ -735,9 +838,7 @@ void make_either_ty( TypedList *tyl )
 
 
 
-void make_either_ty_in_pl( PlNode *n )
-
-{
+void make_either_ty_in_pl( PlNode *n ) {
 
   PlNode *i;
   TypedList *tyl;
@@ -779,9 +880,7 @@ void make_either_ty_in_pl( PlNode *n )
 
 
 
-void normalize_tyl_in_pl( PlNode **n )
-
-{
+void normalize_tyl_in_pl( PlNode **n ) {
 
   PlNode *i;
   TypedList *tyl;
@@ -877,33 +976,10 @@ void normalize_tyl_in_pl( PlNode **n )
 }
 
 
-
-
-
-
-
-
-
-
-
-
 /* ADL syntax test - and normalization (AND s etc.)
+ * jovi: update to support multiple purpose
  */
-
-
-
-
-
-
-
-
-
-
-
-
-Bool make_adl_domain( void )
-
-{
+Bool make_adl_domain( void ) {
 
   PlOperator *i;
   FactList *ff;
@@ -951,6 +1027,32 @@ Bool make_adl_domain( void )
     }
   }
 
+  /* jovi: update for multiple purpose */
+  if ( !gadd_orig_goal_facts ) {
+    gadd_orig_goal_facts = new_PlNode( TRU );
+  }
+  
+  if ( !is_wff( gadd_orig_goal_facts ) ) {
+    printf("\nillegal goal formula");
+    print_PlNode( gadd_orig_goal_facts, 0 );
+    return FALSE;
+  }
+ 
+  for ( i = gadd_loaded_ops; i; i = i->next ) {
+    if ( !i->preconds ) {
+     i->preconds = new_PlNode( TRU );
+    }
+    if ( !is_wff( i->preconds ) ) {
+      printf("\nop %s has illegal precondition", i->name);
+      return FALSE;
+    }
+    if ( !make_effects( &(i->effects) ) ) {
+      printf("\nop %s has illegal effects", i->name);
+      return FALSE;
+    }
+  }
+
+
   if ( gcmd_line.display_info == 102 ) {
     printf("\nfinal ADL representation is:\n");
     printf("\nobjects:");
@@ -963,17 +1065,17 @@ Bool make_adl_domain( void )
     print_PlNode( gorig_goal_facts, 0 );
     printf("\n\nops:");
     print_plops( gloaded_ops );
+    printf("\n\nadditional goal formual:");
+    print_PlNode( gadd_orig_goal_facts, 0 );
+    printf("\n\nadditional ops:");
+    print_plops( gadd_loaded_ops );
   }
-
   return TRUE;
-      
 }
 
 
 
-Bool make_conjunction_of_atoms( PlNode **n )
-
-{
+Bool make_conjunction_of_atoms( PlNode **n ) {
 
   PlNode *tmp, *i, *p, *m;
 
@@ -1028,10 +1130,8 @@ Bool make_conjunction_of_atoms( PlNode **n )
 }
 
 
-
-Bool is_wff( PlNode *n )
-
-{
+/* check if it is well defined */
+Bool is_wff( PlNode *n ) {
 
   PlNode *i;
 

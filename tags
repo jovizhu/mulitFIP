@@ -116,15 +116,15 @@ cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w )$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-mul_pddl.tab.c	/^     CLOSE_PAREN = 285$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-ops_pddl.tab.c	/^     CLOSE_PAREN = 283$/;"	e	enum:yytokentype	file:
-collect_all_strings	inst_pre.c	/^void collect_all_strings( void )$/;"	f
+collect_all_strings	inst_pre.c	/^void collect_all_strings( void ) {$/;"	f
 collect_A_info	relax.c	/^void collect_A_info( void )$/;"	f
 collect_hitting_sets	inst_pre.c	/^void collect_hitting_sets( WffNode *ORlist, int index )$/;"	f
 collect_H_info	relax.c	/^void collect_H_info( void ) {$/;"	f
 collect_inertia_information	inst_pre.c	/^void collect_inertia_information( void )$/;"	f
 collect_relevant_facts	inst_final.c	/^void collect_relevant_facts( void )$/;"	f
-collect_type_names_in_pl	parse.c	/^void collect_type_names_in_pl( PlNode *n )$/;"	f
+collect_type_names_in_pl	parse.c	/^void collect_type_names_in_pl( PlNode *n ) {$/;"	f
 COMMENT	lex.fct_pddl.c	599;"	d	file:
-COMMENT	lex.mul_pddl.c	564;"	d	file:
+COMMENT	lex.mul_pddl.c	582;"	d	file:
 COMMENT	lex.ops_pddl.c	597;"	d	file:
 compute_goal_agenda	orderings.c	/^void compute_goal_agenda( void ){$/;"	f
 conditions	ff.h	/^  Fact *conditions;$/;"	m	struct:_NormEffect
@@ -152,9 +152,9 @@ create_final_goal_state	inst_final.c	/^void create_final_goal_state( void )$/;"	
 create_final_initial_state	inst_final.c	/^void create_final_initial_state( void )$/;"	f
 create_hard_mixed_operators	inst_hard.c	/^void create_hard_mixed_operators( Operator *o, int curr_var )$/;"	f
 create_hard_pseudo_effects	inst_hard.c	/^void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var )$/;"	f
-create_integer_representation	inst_pre.c	/^void create_integer_representation( void )$/;"	f
+create_integer_representation	inst_pre.c	/^void create_integer_representation( void ) {$/;"	f
 create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T )$/;"	f
-create_member_nrs	inst_pre.c	/^void create_member_nrs( void )$/;"	f
+create_member_nrs	inst_pre.c	/^void create_member_nrs( void ) {$/;"	f
 D	ff.h	/^  int *D;$/;"	m	struct:_EfConn
 D	ff.h	/^  int *D;$/;"	m	struct:_FtConn
 debug	ff.h	/^  int debug;$/;"	m	struct:_command_line
@@ -201,7 +201,7 @@ do_weak_planning	search.c	/^Bool do_weak_planning( State *start, State *end ) {$
 E	ff.h	/^  int *E;$/;"	m	struct:_OpConn
 EasyTemplate	ff.h	/^} EasyTemplate;$/;"	t	typeref:struct:_EasyTemplate
 ECHO	lex.fct_pddl.c	692;"	d	file:
-ECHO	lex.mul_pddl.c	657;"	d	file:
+ECHO	lex.mul_pddl.c	675;"	d	file:
 ECHO	lex.ops_pddl.c	690;"	d	file:
 EfConn	ff.h	/^} EfConn;$/;"	t	typeref:struct:_EfConn
 Effect	ff.h	/^} Effect;$/;"	t	typeref:struct:_Effect
@@ -228,7 +228,7 @@ EITHER_STR	ff.h	131;"	d
 EITHER_TOK	scan-fct_pddl.tab.c	/^     EITHER_TOK = 277,$/;"	e	enum:yytokentype	file:
 EITHER_TOK	scan-mul_pddl.tab.c	/^     EITHER_TOK = 262,$/;"	e	enum:yytokentype	file:
 EITHER_TOK	scan-ops_pddl.tab.c	/^     EITHER_TOK = 262,$/;"	e	enum:yytokentype	file:
-encode_domain_in_integers	inst_pre.c	/^void encode_domain_in_integers( void )$/;"	f
+encode_domain_in_integers	inst_pre.c	/^void encode_domain_in_integers( void ) {$/;"	f
 encode_easy_unaries_as_types	inst_easy.c	/^void encode_easy_unaries_as_types( void )$/;"	f
 ENCODE_VAR	ff.h	297;"	d
 EOB_ACT_CONTINUE_SCAN	lex.fct_pddl.c	187;"	d	file:
@@ -384,7 +384,10 @@ full_possibly_positive	inst_hard.c	/^Bool full_possibly_positive( Fact *f )$/;"	
 gA	main.c	/^int *gA;$/;"	v
 gactions	main.c	/^Action *gactions;$/;"	v
 gact_filename	main.c	/^char *gact_filename;$/;"	v
+gadd_goal	main.c	/^WffNode *gadd_goal = NULL;$/;"	v
 gadd_loaded_ops	main.c	/^PlOperator *gadd_loaded_ops = NULL;$/;"	v
+gadd_num_operators	main.c	/^int gadd_num_operators = 0;$/;"	v
+gadd_operators	main.c	/^Operator_pointer gadd_operators[MAX_OPERATORS];$/;"	v
 gadd_orig_goal_facts	main.c	/^PlNode *gadd_orig_goal_facts = NULL;$/;"	v
 garity	main.c	/^int garity[MAX_PREDICATES];$/;"	v
 gbracket_count	lex.fct_pddl.c	/^int gbracket_count = 0;$/;"	v
@@ -405,7 +408,7 @@ get_1P_and_H	relax.c	/^int get_1P_and_H( State *S, State *current_goals ) {$/;"	
 get_A	relax.c	/^void get_A( State *S )$/;"	f
 GET_CONSTANT	ff.h	300;"	d
 get_next_unsolved_state	fip.c	/^StateActionPair* get_next_unsolved_state(){$/;"	f
-get_type	parse.c	/^int get_type( char *str )$/;"	f
+get_type	parse.c	/^int get_type( char *str ) {$/;"	f
 gevaluated_states	main.c	/^int gevaluated_states = 0;$/;"	v
 gfipPlan	main.c	/^PlanNode gfipPlan;$/;"	v
 gft_conn	main.c	/^FtConn *gft_conn;$/;"	v
@@ -519,7 +522,7 @@ increment_state_level_id	fip.c	/^void increment_state_level_id(State *dest, Stat
 INFINITY	ff.h	275;"	d
 INIFACTS	scan-fct_pddl.tab.c	117;"	d	file:
 INITIAL	lex.fct_pddl.c	598;"	d	file:
-INITIAL	lex.mul_pddl.c	563;"	d	file:
+INITIAL	lex.mul_pddl.c	581;"	d	file:
 INITIAL	lex.ops_pddl.c	596;"	d	file:
 initialize_fixpoint	relax.c	/^void initialize_fixpoint( State *S ) {$/;"	f
 initialize_goals	relax.c	/^int initialize_goals( int max ) {$/;"	f
@@ -575,7 +578,7 @@ is_true	ff.h	/^  int is_true;$/;"	m	struct:_FtConn
 is_unsolved_state	fip.c	/^StateActionPair* is_unsolved_state( State *pState ){$/;"	f
 is_used	ff.h	/^  int is_used;$/;"	m	struct:_OpConn
 is_weak_less_than	fip.c	/^Bool is_weak_less_than(State s1, State s2){$/;"	f
-is_wff	parse.c	/^Bool is_wff( PlNode *n )$/;"	f
+is_wff	parse.c	/^Bool is_wff( PlNode *n ) {$/;"	f
 item	ff.h	/^  char *item;$/;"	m	struct:_TokenList
 item	ff.h	/^  TokenList *item;$/;"	m	struct:_FactList
 L	ff.h	/^  int L[MAX_LEVEL];$/;"	m	struct:_State
@@ -652,7 +655,7 @@ lnum_multiply_parameters	inst_easy.c	/^int lnum_multiply_parameters;$/;"	v
 lnum_types	parse.c	/^int lnum_types;$/;"	v
 lnum_used_O	relax.c	/^int lnum_used_O;$/;"	v
 lo	inst_easy.c	/^NormOperator *lo;$/;"	v
-load_fct_file	scan-fct_pddl.tab.c	/^void load_fct_file( char *filename )  {$/;"	f
+load_fct_file	scan-fct_pddl.tab.c	/^void load_fct_file( char *filename ) $/;"	f
 load_mul_file	scan-mul_pddl.tab.c	/^void load_mul_file( char *filename ) {$/;"	f
 load_ops_file	scan-ops_pddl.tab.c	/^void load_ops_file( char *filename )$/;"	f
 lp	inst_final.c	/^int lp;$/;"	v
@@ -667,13 +670,13 @@ lused_O	relax.c	/^int *lused_O;$/;"	v
 lvar_names	inst_pre.c	/^char *lvar_names[MAX_VARS];$/;"	v
 lvar_types	inst_pre.c	/^int lvar_types[MAX_VARS];$/;"	v
 main	main.c	/^int main( int argc, char *argv[] ) {$/;"	f
-make_adl_domain	parse.c	/^Bool make_adl_domain( void )$/;"	f
-make_conjunction_of_atoms	parse.c	/^Bool make_conjunction_of_atoms( PlNode **n )$/;"	f
+make_adl_domain	parse.c	/^Bool make_adl_domain( void ) {$/;"	f
+make_conjunction_of_atoms	parse.c	/^Bool make_conjunction_of_atoms( PlNode **n ) {$/;"	f
 make_conjunction_of_literals	parse.c	/^Bool make_conjunction_of_literals( PlNode **n )$/;"	f
 make_effect	inst_pre.c	/^Effect *make_effect( PlNode *p, int num_vars )$/;"	f
 make_effects	parse.c	/^Bool make_effects( PlNode **n )$/;"	f
-make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl )$/;"	f
-make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n )$/;"	f
+make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl ) {$/;"	f
+make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n ) {$/;"	f
 make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars )$/;"	f
 make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll )$/;"	f
 make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
@@ -797,12 +800,12 @@ new_NormOperator	memory.c	/^NormOperator *new_NormOperator( Operator *op )$/;"	f
 new_Operator	memory.c	/^Operator *new_Operator( char *name, int norp )$/;"	f
 new_PlanHashEntry	memory.c	/^PlanHashEntry *new_PlanHashEntry( void )$/;"	f
 new_PlanNode	memory.c	/^PlanNode* new_PlanNode( void ){$/;"	f
-new_PlNode	memory.c	/^PlNode *new_PlNode( Connective c )$/;"	f
+new_PlNode	memory.c	/^PlNode *new_PlNode( Connective c ) {$/;"	f
 new_PlOperator	memory.c	/^PlOperator *new_PlOperator( char *name )$/;"	f
 new_PseudoAction	memory.c	/^PseudoAction *new_PseudoAction( MixedOperator *op )$/;"	f
 new_PseudoActionEffect	memory.c	/^PseudoActionEffect *new_PseudoActionEffect( void )$/;"	f
 new_StateActionPair	memory.c	/^StateActionPair* new_StateActionPair( void ){$/;"	f
-new_Token	memory.c	/^char *new_Token( int len )$/;"	f
+new_Token	memory.c	/^char *new_Token( int len ) {$/;"	f
 new_TokenList	memory.c	/^TokenList *new_TokenList( void )$/;"	f
 new_TypedList	memory.c	/^TypedList *new_TypedList( void )$/;"	f
 new_TypedListList	memory.c	/^TypedListList *new_TypedListList( void )$/;"	f
@@ -830,7 +833,7 @@ next	ff.h	/^  struct _WffNode *next;$/;"	m	struct:_WffNode	typeref:struct:_WffNo
 next	fip.h	/^	struct	_StateActionPair	*next;$/;"	m	struct:_StateActionPair	typeref:struct:_StateActionPair::_StateActionPair
 next_step	ff.h	/^  struct _PlanHashEntry *next_step;$/;"	m	struct:_PlanHashEntry	typeref:struct:_PlanHashEntry::_PlanHashEntry
 normalize_all_wffs	inst_pre.c	/^void normalize_all_wffs( void )$/;"	f
-normalize_tyl_in_pl	parse.c	/^void normalize_tyl_in_pl( PlNode **n )$/;"	f
+normalize_tyl_in_pl	parse.c	/^void normalize_tyl_in_pl( PlNode **n ) {$/;"	f
 NormEffect	ff.h	/^} NormEffect;$/;"	t	typeref:struct:_NormEffect
 NormOperator	ff.h	/^} NormOperator, *NormOperator_pointer;$/;"	t	typeref:struct:_NormOperator
 NormOperator_pointer	ff.h	/^} NormOperator, *NormOperator_pointer;$/;"	t	typeref:struct:_NormOperator
@@ -944,7 +947,7 @@ out	ff.h	/^  Bool out;$/;"	m	struct:_NormOperator
 out	main.c	/^FILE *out;$/;"	v
 output_planner_info	main.c	/^void output_planner_info( void )$/;"	f
 OVERREAD	lex.fct_pddl.c	600;"	d	file:
-OVERREAD	lex.mul_pddl.c	565;"	d	file:
+OVERREAD	lex.mul_pddl.c	583;"	d	file:
 OVERREAD	lex.ops_pddl.c	598;"	d	file:
 PARAMETERS_TOK	scan-mul_pddl.tab.c	/^     PARAMETERS_TOK = 269,$/;"	e	enum:yytokentype	file:
 PARAMETERS_TOK	scan-ops_pddl.tab.c	/^     PARAMETERS_TOK = 269,$/;"	e	enum:yytokentype	file:
@@ -973,7 +976,7 @@ PlNode	ff.h	/^} PlNode;$/;"	t	typeref:struct:_PlNode
 PlOperator	ff.h	/^} PlOperator;$/;"	t	typeref:struct:_PlOperator
 position_in_constants_table	inst_pre.c	/^int position_in_constants_table( char *str )$/;"	f
 position_in_predicates_table	inst_pre.c	/^int position_in_predicates_table( char *str )$/;"	f
-position_in_types_table	inst_pre.c	/^int position_in_types_table( char *str )$/;"	f
+position_in_types_table	inst_pre.c	/^int position_in_types_table( char *str ) {$/;"	f
 possibly_achievable	orderings.c	/^Bool possibly_achievable( int ft )$/;"	f
 possibly_negative	inst_pre.c	/^Bool possibly_negative( Fact *f )$/;"	f
 possibly_positive	inst_pre.c	/^Bool possibly_positive( Fact *f )$/;"	f
@@ -1064,7 +1067,7 @@ RBRACKET_EXPECTED	scan-fct_pddl.tab.c	97;"	d	file:
 RBRACKET_EXPECTED	scan-mul_pddl.tab.c	97;"	d	file:
 RBRACKET_EXPECTED	scan-ops_pddl.tab.c	97;"	d	file:
 REJECT	lex.fct_pddl.c	580;"	d	file:
-REJECT	lex.mul_pddl.c	545;"	d	file:
+REJECT	lex.mul_pddl.c	563;"	d	file:
 REJECT	lex.ops_pddl.c	580;"	d	file:
 RELAXED_STEPS_DEFAULT	ff.h	163;"	d
 removed	ff.h	/^  Bool removed;$/;"	m	struct:_EfConn
@@ -1383,8 +1386,8 @@ yyleng	lex.ops_pddl.c	16;"	d	file:
 yyless	lex.fct_pddl.c	1877;"	d	file:
 yyless	lex.fct_pddl.c	1878;"	d	file:
 yyless	lex.fct_pddl.c	194;"	d	file:
-yyless	lex.mul_pddl.c	1798;"	d	file:
-yyless	lex.mul_pddl.c	1799;"	d	file:
+yyless	lex.mul_pddl.c	1836;"	d	file:
+yyless	lex.mul_pddl.c	1837;"	d	file:
 yyless	lex.mul_pddl.c	194;"	d	file:
 yyless	lex.ops_pddl.c	1881;"	d	file:
 yyless	lex.ops_pddl.c	1882;"	d	file:
@@ -1426,7 +1429,7 @@ YYMAXUTOK	scan-fct_pddl.tab.c	482;"	d	file:
 YYMAXUTOK	scan-mul_pddl.tab.c	484;"	d	file:
 YYMAXUTOK	scan-ops_pddl.tab.c	502;"	d	file:
 yymore	lex.fct_pddl.c	581;"	d	file:
-yymore	lex.mul_pddl.c	546;"	d	file:
+yymore	lex.mul_pddl.c	564;"	d	file:
 yymore	lex.ops_pddl.c	581;"	d	file:
 yynerrs	scan-fct_pddl.tab.c	/^int yynerrs;$/;"	v
 yynerrs	scan-fct_pddl.tab.c	71;"	d	file:
@@ -1600,7 +1603,7 @@ yytable	scan-fct_pddl.tab.c	/^static const yytype_uint8 yytable[] =$/;"	v	file:
 yytable	scan-mul_pddl.tab.c	/^static const yytype_uint8 yytable[] =$/;"	v	file:
 yytable	scan-ops_pddl.tab.c	/^static const yytype_uint8 yytable[] =$/;"	v	file:
 YYTABLES_NAME	lex.fct_pddl.c	2068;"	d	file:
-YYTABLES_NAME	lex.mul_pddl.c	1989;"	d	file:
+YYTABLES_NAME	lex.mul_pddl.c	2027;"	d	file:
 YYTABLES_NAME	lex.ops_pddl.c	2072;"	d	file:
 YYTABLE_NINF	scan-fct_pddl.tab.c	678;"	d	file:
 YYTABLE_NINF	scan-mul_pddl.tab.c	686;"	d	file:
@@ -1609,7 +1612,7 @@ yytable_value_is_error	scan-fct_pddl.tab.c	697;"	d	file:
 yytable_value_is_error	scan-mul_pddl.tab.c	705;"	d	file:
 yytable_value_is_error	scan-ops_pddl.tab.c	747;"	d	file:
 yyterminate	lex.fct_pddl.c	736;"	d	file:
-yyterminate	lex.mul_pddl.c	701;"	d	file:
+yyterminate	lex.mul_pddl.c	719;"	d	file:
 yyterminate	lex.ops_pddl.c	734;"	d	file:
 YYTERROR	scan-fct_pddl.tab.c	777;"	d	file:
 YYTERROR	scan-mul_pddl.tab.c	786;"	d	file:
@@ -1696,7 +1699,7 @@ YY_	scan-mul_pddl.tab.c	309;"	d	file:
 YY_	scan-ops_pddl.tab.c	323;"	d	file:
 YY_	scan-ops_pddl.tab.c	327;"	d	file:
 yy_accept	lex.fct_pddl.c	/^static yyconst flex_int16_t yy_accept[167] =$/;"	v	file:
-yy_accept	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_accept[101] =$/;"	v	file:
+yy_accept	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_accept[134] =$/;"	v	file:
 yy_accept	lex.ops_pddl.c	/^static yyconst flex_int16_t yy_accept[170] =$/;"	v	file:
 yy_at_bol	lex.fct_pddl.c	/^	int yy_at_bol;$/;"	m	struct:yy_buffer_state	file:
 YY_AT_BOL	lex.fct_pddl.c	358;"	d	file:
@@ -1705,10 +1708,10 @@ YY_AT_BOL	lex.mul_pddl.c	358;"	d	file:
 yy_at_bol	lex.ops_pddl.c	/^	int yy_at_bol;$/;"	m	struct:yy_buffer_state	file:
 YY_AT_BOL	lex.ops_pddl.c	358;"	d	file:
 yy_base	lex.fct_pddl.c	/^static yyconst flex_int16_t yy_base[178] =$/;"	v	file:
-yy_base	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_base[112] =$/;"	v	file:
+yy_base	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_base[145] =$/;"	v	file:
 yy_base	lex.ops_pddl.c	/^static yyconst flex_int16_t yy_base[181] =$/;"	v	file:
 YY_BREAK	lex.fct_pddl.c	771;"	d	file:
-YY_BREAK	lex.mul_pddl.c	736;"	d	file:
+YY_BREAK	lex.mul_pddl.c	754;"	d	file:
 YY_BREAK	lex.ops_pddl.c	769;"	d	file:
 yy_bs_column	lex.fct_pddl.c	/^    int yy_bs_column; \/**< The column count. *\/$/;"	m	struct:yy_buffer_state	file:
 yy_bs_column	lex.mul_pddl.c	/^    int yy_bs_column; \/**< The column count. *\/$/;"	m	struct:yy_buffer_state	file:
@@ -1759,7 +1762,7 @@ YY_CHAR	lex.fct_pddl.c	/^typedef unsigned char YY_CHAR;$/;"	t	file:
 YY_CHAR	lex.mul_pddl.c	/^typedef unsigned char YY_CHAR;$/;"	t	file:
 YY_CHAR	lex.ops_pddl.c	/^typedef unsigned char YY_CHAR;$/;"	t	file:
 yy_chk	lex.fct_pddl.c	/^static yyconst flex_int16_t yy_chk[261] =$/;"	v	file:
-yy_chk	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_chk[184] =$/;"	v	file:
+yy_chk	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_chk[218] =$/;"	v	file:
 yy_chk	lex.ops_pddl.c	/^static yyconst flex_int16_t yy_chk[258] =$/;"	v	file:
 yy_ch_buf	lex.fct_pddl.c	/^	char *yy_ch_buf;		\/* input buffer *\/$/;"	m	struct:yy_buffer_state	file:
 yy_ch_buf	lex.mul_pddl.c	/^	char *yy_ch_buf;		\/* input buffer *\/$/;"	m	struct:yy_buffer_state	file:
@@ -1777,13 +1780,13 @@ yy_c_buf_p	lex.fct_pddl.c	/^static char *yy_c_buf_p = (char *) 0;$/;"	v	file:
 yy_c_buf_p	lex.mul_pddl.c	/^static char *yy_c_buf_p = (char *) 0;$/;"	v	file:
 yy_c_buf_p	lex.ops_pddl.c	/^static char *yy_c_buf_p = (char *) 0;$/;"	v	file:
 YY_DECL	lex.fct_pddl.c	759;"	d	file:
-YY_DECL	lex.mul_pddl.c	724;"	d	file:
+YY_DECL	lex.mul_pddl.c	742;"	d	file:
 YY_DECL	lex.ops_pddl.c	757;"	d	file:
 YY_DECL_IS_OURS	lex.fct_pddl.c	755;"	d	file:
-YY_DECL_IS_OURS	lex.mul_pddl.c	720;"	d	file:
+YY_DECL_IS_OURS	lex.mul_pddl.c	738;"	d	file:
 YY_DECL_IS_OURS	lex.ops_pddl.c	753;"	d	file:
 yy_def	lex.fct_pddl.c	/^static yyconst flex_int16_t yy_def[178] =$/;"	v	file:
-yy_def	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_def[112] =$/;"	v	file:
+yy_def	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_def[145] =$/;"	v	file:
 yy_def	lex.ops_pddl.c	/^static yyconst flex_int16_t yy_def[181] =$/;"	v	file:
 yy_delete_buffer	lex.fct_pddl.c	9;"	d	file:
 yy_delete_buffer	lex.mul_pddl.c	9;"	d	file:
@@ -1804,15 +1807,15 @@ YY_END_OF_BUFFER_CHAR	lex.fct_pddl.c	159;"	d	file:
 YY_END_OF_BUFFER_CHAR	lex.mul_pddl.c	159;"	d	file:
 YY_END_OF_BUFFER_CHAR	lex.ops_pddl.c	159;"	d	file:
 YY_EXIT_FAILURE	lex.fct_pddl.c	1866;"	d	file:
-YY_EXIT_FAILURE	lex.mul_pddl.c	1787;"	d	file:
+YY_EXIT_FAILURE	lex.mul_pddl.c	1825;"	d	file:
 YY_EXIT_FAILURE	lex.ops_pddl.c	1870;"	d	file:
 YY_EXTRA_TYPE	lex.fct_pddl.c	611;"	d	file:
-YY_EXTRA_TYPE	lex.mul_pddl.c	576;"	d	file:
+YY_EXTRA_TYPE	lex.mul_pddl.c	594;"	d	file:
 YY_EXTRA_TYPE	lex.ops_pddl.c	609;"	d	file:
 yy_fatal_error	lex.fct_pddl.c	/^static void yy_fatal_error (yyconst char* msg )$/;"	f	file:
 YY_FATAL_ERROR	lex.fct_pddl.c	746;"	d	file:
 yy_fatal_error	lex.mul_pddl.c	/^static void yy_fatal_error (yyconst char* msg )$/;"	f	file:
-YY_FATAL_ERROR	lex.mul_pddl.c	711;"	d	file:
+YY_FATAL_ERROR	lex.mul_pddl.c	729;"	d	file:
 yy_fatal_error	lex.ops_pddl.c	/^static void yy_fatal_error (yyconst char* msg )$/;"	f	file:
 YY_FATAL_ERROR	lex.ops_pddl.c	744;"	d	file:
 yy_fill_buffer	lex.fct_pddl.c	/^	int yy_fill_buffer;$/;"	m	struct:yy_buffer_state	file:
@@ -1861,7 +1864,7 @@ yy_init_globals	lex.fct_pddl.c	/^static int yy_init_globals (void)$/;"	f	file:
 yy_init_globals	lex.mul_pddl.c	/^static int yy_init_globals (void)$/;"	f	file:
 yy_init_globals	lex.ops_pddl.c	/^static int yy_init_globals (void)$/;"	f	file:
 YY_INPUT	lex.fct_pddl.c	699;"	d	file:
-YY_INPUT	lex.mul_pddl.c	664;"	d	file:
+YY_INPUT	lex.mul_pddl.c	682;"	d	file:
 YY_INPUT	lex.ops_pddl.c	697;"	d	file:
 yy_input_file	lex.fct_pddl.c	/^	FILE *yy_input_file;$/;"	m	struct:yy_buffer_state	file:
 yy_input_file	lex.mul_pddl.c	/^	FILE *yy_input_file;$/;"	m	struct:yy_buffer_state	file:
@@ -1891,10 +1894,10 @@ YY_LOCATION_PRINT	scan-fct_pddl.tab.c	810;"	d	file:
 YY_LOCATION_PRINT	scan-mul_pddl.tab.c	819;"	d	file:
 YY_LOCATION_PRINT	scan-ops_pddl.tab.c	866;"	d	file:
 yy_meta	lex.fct_pddl.c	/^static yyconst flex_int32_t yy_meta[39] =$/;"	v	file:
-yy_meta	lex.mul_pddl.c	/^static yyconst flex_int32_t yy_meta[34] =$/;"	v	file:
+yy_meta	lex.mul_pddl.c	/^static yyconst flex_int32_t yy_meta[35] =$/;"	v	file:
 yy_meta	lex.ops_pddl.c	/^static yyconst flex_int32_t yy_meta[37] =$/;"	v	file:
 YY_MORE_ADJ	lex.fct_pddl.c	582;"	d	file:
-YY_MORE_ADJ	lex.mul_pddl.c	547;"	d	file:
+YY_MORE_ADJ	lex.mul_pddl.c	565;"	d	file:
 YY_MORE_ADJ	lex.ops_pddl.c	582;"	d	file:
 yy_new_buffer	lex.fct_pddl.c	336;"	d	file:
 yy_new_buffer	lex.mul_pddl.c	336;"	d	file:
@@ -1911,7 +1914,7 @@ YY_NUM_RULES	lex.ops_pddl.c	390;"	d	file:
 yy_nxt	lex.fct_pddl.c	/^	flex_int32_t yy_nxt;$/;"	m	struct:yy_trans_info	file:
 yy_nxt	lex.fct_pddl.c	/^static yyconst flex_int16_t yy_nxt[261] =$/;"	v	file:
 yy_nxt	lex.mul_pddl.c	/^	flex_int32_t yy_nxt;$/;"	m	struct:yy_trans_info	file:
-yy_nxt	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_nxt[184] =$/;"	v	file:
+yy_nxt	lex.mul_pddl.c	/^static yyconst flex_int16_t yy_nxt[218] =$/;"	v	file:
 yy_nxt	lex.ops_pddl.c	/^	flex_int32_t yy_nxt;$/;"	m	struct:yy_trans_info	file:
 yy_nxt	lex.ops_pddl.c	/^static yyconst flex_int16_t yy_nxt[258] =$/;"	v	file:
 yy_n_chars	lex.fct_pddl.c	/^	int yy_n_chars;$/;"	m	struct:yy_buffer_state	file:
@@ -1922,8 +1925,8 @@ yy_n_chars	lex.ops_pddl.c	/^	int yy_n_chars;$/;"	m	struct:yy_buffer_state	file:
 yy_n_chars	lex.ops_pddl.c	/^static int yy_n_chars;		\/* number of characters read into yy_ch_buf *\/$/;"	v	file:
 YY_READ_BUF_SIZE	lex.fct_pddl.c	681;"	d	file:
 YY_READ_BUF_SIZE	lex.fct_pddl.c	683;"	d	file:
-YY_READ_BUF_SIZE	lex.mul_pddl.c	646;"	d	file:
-YY_READ_BUF_SIZE	lex.mul_pddl.c	648;"	d	file:
+YY_READ_BUF_SIZE	lex.mul_pddl.c	664;"	d	file:
+YY_READ_BUF_SIZE	lex.mul_pddl.c	666;"	d	file:
 YY_READ_BUF_SIZE	lex.ops_pddl.c	679;"	d	file:
 YY_READ_BUF_SIZE	lex.ops_pddl.c	681;"	d	file:
 yy_reduce_print	scan-fct_pddl.tab.c	/^yy_reduce_print (YYSTYPE *yyvsp, int yyrule)$/;"	f	file:
@@ -1936,10 +1939,10 @@ yy_reduce_print	scan-ops_pddl.tab.c	/^yy_reduce_print (YYSTYPE *yyvsp, int yyrul
 YY_REDUCE_PRINT	scan-ops_pddl.tab.c	1025;"	d	file:
 YY_REDUCE_PRINT	scan-ops_pddl.tab.c	1038;"	d	file:
 YY_RESTORE_YY_MORE_OFFSET	lex.fct_pddl.c	583;"	d	file:
-YY_RESTORE_YY_MORE_OFFSET	lex.mul_pddl.c	548;"	d	file:
+YY_RESTORE_YY_MORE_OFFSET	lex.mul_pddl.c	566;"	d	file:
 YY_RESTORE_YY_MORE_OFFSET	lex.ops_pddl.c	583;"	d	file:
 YY_RULE_SETUP	lex.fct_pddl.c	774;"	d	file:
-YY_RULE_SETUP	lex.mul_pddl.c	739;"	d	file:
+YY_RULE_SETUP	lex.mul_pddl.c	757;"	d	file:
 YY_RULE_SETUP	lex.ops_pddl.c	772;"	d	file:
 YY_SC_TO_UI	lex.fct_pddl.c	138;"	d	file:
 YY_SC_TO_UI	lex.mul_pddl.c	138;"	d	file:
@@ -1969,7 +1972,7 @@ YY_START	lex.mul_pddl.c	150;"	d	file:
 yy_start	lex.ops_pddl.c	/^static int yy_start = 0;	\/* start state number *\/$/;"	v	file:
 YY_START	lex.ops_pddl.c	150;"	d	file:
 YY_START_STACK_INCR	lex.fct_pddl.c	741;"	d	file:
-YY_START_STACK_INCR	lex.mul_pddl.c	706;"	d	file:
+YY_START_STACK_INCR	lex.mul_pddl.c	724;"	d	file:
 YY_START_STACK_INCR	lex.ops_pddl.c	739;"	d	file:
 YY_STATE_BUF_SIZE	lex.fct_pddl.c	176;"	d	file:
 YY_STATE_BUF_SIZE	lex.mul_pddl.c	176;"	d	file:
@@ -2011,7 +2014,7 @@ YY_TYPEDEF_YY_SIZE_T	lex.fct_pddl.c	210;"	d	file:
 YY_TYPEDEF_YY_SIZE_T	lex.mul_pddl.c	210;"	d	file:
 YY_TYPEDEF_YY_SIZE_T	lex.ops_pddl.c	210;"	d	file:
 YY_USER_ACTION	lex.fct_pddl.c	766;"	d	file:
-YY_USER_ACTION	lex.mul_pddl.c	731;"	d	file:
+YY_USER_ACTION	lex.mul_pddl.c	749;"	d	file:
 YY_USER_ACTION	lex.ops_pddl.c	764;"	d	file:
 YY_USE_CONST	lex.fct_pddl.c	112;"	d	file:
 YY_USE_CONST	lex.fct_pddl.c	119;"	d	file:

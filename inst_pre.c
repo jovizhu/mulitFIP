@@ -100,30 +100,12 @@
 /*******************************************************
  * TRANSFORM DOMAIN INTO INTEGER (FACT) REPRESENTATION *
  *******************************************************/
-
-
-
-
-
-
-
-
-
 char *lvar_names[MAX_VARS];
 int lvar_types[MAX_VARS];
-
-
-
-
-
-
-
-
-
-
-void encode_domain_in_integers( void )
-
-{
+/* Jovi: updated for multiple goals.
+ * Dec 18th, 2013 
+ */
+void encode_domain_in_integers( void ) {
 
   int i,j;
 
@@ -171,15 +153,22 @@ void encode_domain_in_integers( void )
     
     printf("\n\nfirst step goal is:\n");
     print_Wff( ggoal, 0 );
+
+    printf("\n\nadditionl operators are:");
+    for (i=0; i< gadd_num_operators; i++) {
+	print_Operator ( goperators[i] );
+    }
+    prinf("\n\n");
+
+    printf("\n\nadditional goals is:\n");
+    prinf_Wff( gadd_goal, 0);
   }
 
 }
 
 
-
-void create_member_nrs( void )
-
-{
+/*gmember_nr: number of objects within a type */
+void create_member_nrs( void ) {
 
   int i, j, num;
 
@@ -200,10 +189,8 @@ void create_member_nrs( void )
 }
 
 
-
-void collect_all_strings( void )
-
-{
+/* collect all the numbers of facts, types, and ......  */
+void collect_all_strings( void ) {
 
   FactList *f;
   TokenList *t;
@@ -222,18 +209,23 @@ void collect_all_strings( void )
   gnum_types = 1;
 
   for ( f = gorig_constant_list; f; f = f->next ) {
+
     if ( (type_num = position_in_types_table( f->item->next->item )) == -1 ) {
+
       if ( gnum_types == MAX_TYPES ) {
 	printf("\ntoo many types! increase MAX_TYPES (currently %d)\n\n",
 	       MAX_TYPES);
 	exit( 1 );
       }
+
       gtype_names[gnum_types] = new_Token( strlen( f->item->next->item ) + 1 );
       strcpy( gtype_names[gnum_types], f->item->next->item );
       gtype_size[gnum_types] = 0;
+
       for ( i = 0; i < MAX_CONSTANTS; i++ ) {
 	gis_member[i][gnum_types] = FALSE;
       }
+
       type_num = gnum_types++;
     }
 
@@ -254,6 +246,7 @@ void collect_all_strings( void )
 	       gtype_names[0], MAX_TYPE);
 	exit( 1 );
       }     
+
       gtype_consts[0][gtype_size[0]++] = c_num;
       gis_member[c_num][0] = TRUE;
     }
@@ -279,27 +272,30 @@ void collect_all_strings( void )
   gnum_predicates = 1;
 
   for ( f = gpredicates_and_types; f; f = f->next ) {
+
     if ( (p_num = position_in_predicates_table( f->item->item )) != -1 ) {
       printf("\npredicate %s declared twice!\n\n", f->item->item);
       exit( 1 );
     }
+
     if ( gnum_predicates == MAX_PREDICATES ) {
-      printf("\ntoo many predicates! increase MAX_PREDICATES (currently %d)\n\n",
-	     MAX_PREDICATES);
+      printf("\ntoo many predicates! increase MAX_PREDICATES (currently %d)\n\n", MAX_PREDICATES);
       exit( 1 );
     }
+
     gpredicates[gnum_predicates] = new_Token( strlen( f->item->item ) + 1 );
     strcpy( gpredicates[gnum_predicates], f->item->item );
     ar = 0;
+
     for ( t = f->item->next; t; t = t->next ) {
+
       if ( (type_num = position_in_types_table( t->item )) == -1 ) {
-	printf("\npredicate %s is declared to use unknown or empty type %s\n\n", 
-	       f->item->item, t->item);
+	printf("\npredicate %s is declared to use unknown or empty type %s\n\n", f->item->item, t->item);
 	exit( 1 );
       }
+
       if ( ar == MAX_ARITY ) {
-	printf("\narity of %s to high! increase MAX_ARITY (currently %d)\n\n",
-	       gpredicates[gnum_predicates], MAX_ARITY);
+	printf("\narity of %s to high! increase MAX_ARITY (currently %d)\n\n", gpredicates[gnum_predicates], MAX_ARITY);
 	exit( 1 );
       }
       gpredicates_args_type[gnum_predicates][ar++] = type_num;
@@ -314,9 +310,7 @@ void collect_all_strings( void )
 
 
 
-int position_in_types_table( char *str )
-
-{
+int position_in_types_table( char *str ) {
 
   int i;
 
@@ -373,9 +367,7 @@ int position_in_predicates_table( char *str )
 
 
 
-void create_integer_representation( void )
-
-{
+void create_integer_representation( void ) {
 
   PlNode *n, *nn;
   PlOperator *o;
@@ -397,6 +389,7 @@ void create_integer_representation( void )
     }
     free_PlNode( gorig_initial_facts );
   }
+
   /* now insert all our artificial equality constraints into initial state.
    */
   for ( i = 0; i < gnum_constants; i++ ) {
@@ -475,6 +468,74 @@ void create_integer_representation( void )
     goperators[gnum_operators++] = tmp;
   }
 
+  /* jovi: add support to multiple goals */
+  gadd_goal = make_Wff( gadd_orig_goal_facts, 0 );
+
+  for ( ao = gadd_loaded_ops; ao; ao = ao->next ) {
+    tmp = new_Operator( ao->name, ao->number_of_real_params );
+
+    for ( ff = ao->params; ff; ff = ff->next ) {
+      if ( (type_num = position_in_types_table( ff->item->next->item )) == -1 ) {
+        printf("\nwarning: parameter %s of op %s has unknown or empty type %s. skipping op",
+               ff->item->item, ao->name, ff->item->next->item);
+        break;
+      }
+      if ( tmp->num_vars == MAX_VARS ) {
+        printf("\ntoo many parameters! increase MAX_VARS (currently %d)\n\n",
+               MAX_VARS);
+        exit( 1 );
+      }
+      for ( i = 0; i < tmp->num_vars; i++ ) {
+        if ( tmp->var_names[i] == ff->item->item ||
+             strcmp( tmp->var_names[i], ff->item->item ) == SAME ) {
+          printf("\nwarning: operator %s parameter %s overwrites previous declaration\n\n",
+                 tmp->name, ff->item->item);
+        }
+      }
+      tmp->var_names[tmp->num_vars] = new_Token( strlen( ff->item->item ) + 1 );
+      strcpy( tmp->var_names[tmp->num_vars], ff->item->item );
+      tmp->var_types[tmp->num_vars++] = type_num;
+    }
+    if ( ff ) {
+      free_Operator( tmp );
+      continue;
+    }
+
+    for ( i = 0; i < tmp->num_vars; i++ ) {
+      lvar_types[i] = tmp->var_types[i];
+      lvar_names[i] = tmp->var_names[i];
+    }
+
+    tmp->preconds = make_Wff( ao->preconds, tmp->num_vars );
+
+    if ( ao->effects ) {
+      /* in make_effect, make sure that no one afects equality.
+       */
+      nn = ao->effects->sons;
+      while ( nn &&
+              (tmp->effects = make_effect( nn, tmp->num_vars )) == NULL ) {
+        nn = nn->next;
+      }
+      if ( nn ) {
+        for ( n = nn->next; n; n = n->next ) {
+          if ( (tmp->effects->prev = make_effect( n, tmp->num_vars )) == NULL ) {
+            continue;
+          }
+          tmp->effects->prev->next = tmp->effects;
+          tmp->effects = tmp->effects->prev;
+        }
+      }
+    }
+
+    if ( gadd_num_operators == MAX_OPERATORS ) {
+      printf("\ntoo many operators! increase MAX_OPERATORS (currently %d)\n\n",
+             MAX_OPERATORS);
+      exit( 1 );
+    }
+    gadd_operators[gadd_num_operators++] = tmp;
+  }
+
+
   if ( 0 ) {
     /* currently not in use; leads to free memory reads and
      * free memory frees (no memory leaks), which are hard to explain.
@@ -482,6 +543,7 @@ void create_integer_representation( void )
      * almost no memory consumption anyway.
      */
     free_PlOperator( gloaded_ops );
+    free_PlOperator( gadd_loaded_ops );
   }
 
 }
@@ -742,38 +804,13 @@ Effect *make_effect( PlNode *p, int num_vars )
     tmp->effects->prev->next = tmp->effects;
     tmp->effects = tmp->effects->prev;
   }
-
   return tmp;
-
 }
-
-
-
-
-
-
-
-
-
-
 
 /*************************
  * INERTIA PREPROCESSING *
  *************************/
-
-
-
-
-
-
-
-
-
-
-
-void do_inertia_preprocessing_step_1( void )
-
-{
+void do_inertia_preprocessing_step_1( void ) {
 
   int i, j;
   Facts *f;
@@ -831,9 +868,7 @@ void do_inertia_preprocessing_step_1( void )
 
 
 
-void collect_inertia_information( void )
-
-{
+void collect_inertia_information( void ) {
 
   int i;
   Effect *e;
