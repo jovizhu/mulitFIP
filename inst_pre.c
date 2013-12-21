@@ -810,6 +810,7 @@ Effect *make_effect( PlNode *p, int num_vars )
 /*************************
  * INERTIA PREPROCESSING *
  *************************/
+/* jovi: update for multiple purpose */
 void do_inertia_preprocessing_step_1( void ) {
 
   int i, j;
@@ -826,6 +827,16 @@ void do_inertia_preprocessing_step_1( void ) {
 	     gis_deleted[i] ? "DELETED" : "NOT DELETED");
     }
     printf("\n\n");
+
+    printf("\n\nadditional predicates inertia info:");
+    for ( i = 0; i < gadd_num_predicates; i++ ) {
+      printf("\n%3d --> %s: ", i, gadd_predicates[i]);
+      printf(" is %s, %s",
+             gadd_is_added[i] ? "ADDED" : "NOT ADDED",
+             gadd_is_deleted[i] ? "DELETED" : "NOT DELETED");
+    }
+    printf("\n\n");
+
   }
 
   split_initial_state();
@@ -835,8 +846,7 @@ void do_inertia_preprocessing_step_1( void ) {
     printf("\nindividual predicates:");
     for ( i = 0; i < gnum_predicates; i++ ) {
       printf("\n\n%s:", gpredicates[i]);
-      if ( !gis_added[i] &&
-	   !gis_deleted[i] ) {
+      if ( !gis_added[i] && !gis_deleted[i] ) {
 	printf(" ---  STATIC");
       }
       for ( j = 0; j < gnum_initial_predicate[i]; j++ ) {
@@ -867,7 +877,10 @@ void do_inertia_preprocessing_step_1( void ) {
 }
 
 
-
+/* jovi: do not understande the function name
+ * update action for add/delete
+ * update for multiple purpose
+ */
 void collect_inertia_information( void ) {
 
   int i;
@@ -891,13 +904,30 @@ void collect_inertia_information( void ) {
     }
   }
 
+ for ( i=0; i < gnum_predicates; i++ ) {
+   gadd_is_added[i] = FALSE;
+   gadd_is_delted[i] = FALSE;
+ }
+
+ for ( i = 0; i < gadd_num_operators; i++ ) {
+   for ( e = gadd_operators[i]->effects; e; e = e->next ) {
+     for ( l = e->effects; l; l = l->next ) {
+       if ( l->negated ) { 
+         gadd_is_deleted[l->fact.predicate] = TRUE;
+       } else {
+         gadd_is_added[l->fact.predicate] = TRUE;
+       } 
+     } 
+   } 
+ } 
+
 }
 
 
-
-void split_initial_state( void )
-
-{
+/* currenlty, it is no need to update
+ * do not consider the predicates in our additional goals
+ */
+void split_initial_state( void ) {
 
   int i, j, p, t;
   Facts *tmp;
@@ -905,28 +935,33 @@ void split_initial_state( void )
   for ( i = 0; i < MAX_PREDICATES; i++ ) {
     gtype_to_predicate[i] = -1;
   }
+
   for ( i = 0; i < MAX_TYPES; i++ ) {
     gpredicate_to_type[i] = -1;
   }
 
   for ( i = 0; i < gnum_predicates; i++ ) {
-    if ( !gis_added[i] &&
-	 !gis_deleted[i] &&
-	 garity[i] == 1 ) {
+    /* jovi: need to consider the additional operators
+     * will update later
+     */
+    if ( !gis_added[i] && !gis_deleted[i] && !gadd_is_added[i] && !gadd_is_deleted[i] && garity[i] == 1 ) {
+
       if ( gnum_types == MAX_TYPES ) {
-	printf("\ntoo many (inferred) types! increase MAX_TYPES (currently %d)\n\n",
-	       MAX_TYPES);
+	printf("\ntoo many (inferred) types! increase MAX_TYPES (currently %d)\n\n", MAX_TYPES);
 	exit( 1 );
       }
+
       gtype_to_predicate[i] = gnum_types;
       gpredicate_to_type[gnum_types] = i;
       gtype_names[gnum_types] = NULL;
       gtype_size[gnum_types] = 0;
+
       for ( j = 0; j < MAX_CONSTANTS; j++ ) {
 	gis_member[j][gnum_types] = FALSE;
       }
       gnum_types++;
     }
+
   }
      
 
@@ -934,51 +969,67 @@ void split_initial_state( void )
    * to be translated to NOT-p
    */
   ginitial_predicate = ( Fact ** ) calloc( gnum_predicates * 2, sizeof( Fact * ) );
+
   gnum_initial_predicate = ( int * ) calloc( gnum_predicates * 2, sizeof( int ) );
+
+  /* size * 2 */
   for ( i = 0; i < gnum_predicates * 2; i++ ) {
     gnum_initial_predicate[i] = 0;
   }
+
   for ( i = 0; i < gnum_full_initial; i++ ) {
     p = gfull_initial[i].predicate;
     gnum_initial_predicate[p]++;
   }
+
   for ( i = 0; i < gnum_predicates; i++ ) {
     ginitial_predicate[i] = ( Fact * ) calloc( gnum_initial_predicate[i], sizeof( Fact ) );
     gnum_initial_predicate[i] = 0;
   }
+
   ginitial = NULL;
   gnum_initial = 0;
 
   for ( i = 0; i < gnum_full_initial; i++ ) {
+
     p = gfull_initial[i].predicate;
     ginitial_predicate[p][gnum_initial_predicate[p]].predicate = p;
+
     for ( j = 0; j < garity[p]; j++ ) {
       ginitial_predicate[p][gnum_initial_predicate[p]].args[j] = gfull_initial[i].args[j];
     }
+
     gnum_initial_predicate[p]++;
-    if ( gis_added[p] ||
-	 gis_deleted[p] ) {
+
+    if ( gis_added[p] || gis_deleted[p] ) {
+
       tmp = new_Facts();
       tmp->fact->predicate = p;
+
       for ( j = 0; j < garity[p]; j++ ) {
 	tmp->fact->args[j] = gfull_initial[i].args[j];
       }
+
       tmp->next = ginitial;
       ginitial = tmp;
       gnum_initial++;
+
     } else {
+      /* predicate is not included in the add/delete */
       if ( garity[p] == 1 ) {
+
 	t = gtype_to_predicate[p];
+
 	if ( gtype_size[t] == MAX_TYPE ) {
-	  printf("\ntoo many consts in type %s! increase MAX_TYPE (currently %d)\n\n",
-		 gtype_names[t], MAX_TYPE);
+	  printf("\ntoo many consts in type %s! increase MAX_TYPE (currently %d)\n\n",gtype_names[t], MAX_TYPE);
 	  exit( 1 );
 	}
+
 	if ( !gis_member[gfull_initial[i].args[0]][gpredicates_args_type[p][0]] ) {
-	  printf("\ntype mismatch in initial state! %s as arg 0 of %s\n\n",
-		 gconstants[gfull_initial[i].args[0]], gpredicates[p]);
+	  printf("\ntype mismatch in initial state! %s as arg 0 of %s\n\n",gconstants[gfull_initial[i].args[0]], gpredicates[p]);
 	  exit( 1 );
 	}
+
 	gtype_consts[t][gtype_size[t]++] = gfull_initial[i].args[0];
 	gis_member[gfull_initial[i].args[0]][t] = TRUE;
       }
@@ -988,33 +1039,10 @@ void split_initial_state( void )
 }
 
 
-
-
-
-
-
-
-
-
-
 /******************************
  * NORMALIZE ALL PL1 FORMULAE *
  ******************************/
-
-
-
-
-
-
-
-
-
-
-
-
-void normalize_all_wffs( void )
-
-{
+void normalize_all_wffs( void ) {
 
   int i;
   Effect *e;
@@ -1024,6 +1052,7 @@ void normalize_all_wffs( void )
   expand_quantifiers_in_wff( &ggoal, -1, -1 );
   NOTs_down_in_wff( &ggoal );
   cleanup_wff( &ggoal );
+
   if ( ggoal->connective == TRU ) {
     printf("\nff: goal can be simplified to TRUE. The empty plan solves it\n\n");
     exit( 1 );
@@ -1037,6 +1066,27 @@ void normalize_all_wffs( void )
   dnf( &ggoal );
   cleanup_wff( &ggoal );
   
+  /* do the same for multiple goals */
+  simplify_wff( &gadd_goal );
+  remove_unused_vars_in_wff( &gadd_goal );
+  expand_quantifiers_in_wff( &gadd_goal, -1, -1 );
+  NOTs_down_in_wff( &gadd_goal );
+  cleanup_wff( &gadd_goal );
+
+  if ( gadd_goal->connective == TRU ) {
+    printf("\nmulti-ff: additional goal can be simplified to TRUE. The empty plan solves it\n\n");
+    exit( 1 );
+  } 
+  if ( gadd_goal->connective == FAL ) {
+    printf("\nmulti-ff: additional goal can be simplified to FALSE. No plan will solve it\n\n");
+    exit( 1 );
+  }
+  /* put goal into DNF right away: fully instantiated already
+   */
+  dnf( &gadd_goal );
+  cleanup_wff( &gadd_goal );
+
+  /* normalize the operators */
   for ( i = 0; i < gnum_operators; i++ ) {
     simplify_wff( &(goperators[i]->preconds) );
     remove_unused_vars_in_wff( &(goperators[i]->preconds) );
@@ -1052,6 +1102,24 @@ void normalize_all_wffs( void )
       cleanup_wff( &(e->conditions) );
     }
   }
+  
+  /* normalize the additional operators */
+  for ( i = 0; i < gadd_num_operators; i++ ) {
+    simplify_wff( &(gadd_operators[i]->preconds) );
+    remove_unused_vars_in_wff( &(gadd_operators[i]->preconds) );
+    expand_quantifiers_in_wff( &(gadd_operators[i]->preconds), -1, -1 );
+    NOTs_down_in_wff( &(gadd_operators[i]->preconds) );
+    cleanup_wff( &(gadd_operators[i]->preconds) );
+
+    for ( e = gadd_operators[i]->effects; e; e = e->next ) {
+      simplify_wff( &(e->conditions) );
+      remove_unused_vars_in_wff( &(e->conditions) );
+      expand_quantifiers_in_wff( &(e->conditions), -1, -1 );
+      NOTs_down_in_wff( &(e->conditions) );
+      cleanup_wff( &(e->conditions) );
+    }
+  }
+
 
   if ( gcmd_line.display_info == 107 ) {
     printf("\n\ndomain with normalized PL1 formula:");
@@ -1064,15 +1132,22 @@ void normalize_all_wffs( void )
 
     printf("\n\ngoal is:\n");
     print_Wff( ggoal, 0 );
+
+    printf("\n\nadditional operators are:");
+    for ( i=0; i< gadd_num_operators; i++) {
+	print_Operator( gadd_operators[i] );
+    }
+    printf("\n\n");
+    
+    printf("\n\nadditional goal is:\n");
+    print_Wff( gadd_goal, 0 );
   }
 
 }
 
 
 
-void remove_unused_vars_in_wff( WffNode **w )
-
-{
+void remove_unused_vars_in_wff( WffNode **w ) {
 
   WffNode *tmp;
   WffNode *i;
@@ -1123,9 +1198,7 @@ void remove_unused_vars_in_wff( WffNode **w )
 
 
 
-Bool var_used_in_wff( int code_var, WffNode *w )
-
-{
+Bool var_used_in_wff( int code_var, WffNode *w ) {
 
   WffNode *i;
   int j;
@@ -1168,9 +1241,7 @@ Bool var_used_in_wff( int code_var, WffNode *w )
 
 
 
-void decrement_inferior_vars( int var, WffNode *w )
-
-{
+void decrement_inferior_vars( int var, WffNode *w ) {
 
   WffNode *i;
   int j;
@@ -1213,9 +1284,7 @@ void decrement_inferior_vars( int var, WffNode *w )
 
 
 
-void simplify_wff( WffNode **w )
-
-{
+void simplify_wff( WffNode **w ) {
 
   WffNode *i, *tmp;
   int m;
@@ -1602,9 +1671,7 @@ Bool matches( Fact *f1, Fact *f2 )
 
 
 
-void cleanup_wff( WffNode **w )
-
-{
+void cleanup_wff( WffNode **w ) {
 
   merge_ANDs_and_ORs_in_wff( w );
   detect_tautologies_in_wff( w );
@@ -1854,26 +1921,9 @@ void NOTs_down_in_wff( WffNode **w )
 /****************************************************
  * NEGATIVE PRE- AND EFFECT- CONDITIONS TRANSLATION *
  ****************************************************/
-
-
-
-
-
-
-
-
 int lconsts[MAX_ARITY];
 
-
-
-
-
-
-
-
-void translate_negative_preconds( void )
-
-{
+void translate_negative_preconds( void ) {
 
   int i, j;
   Effect *e;
@@ -1928,9 +1978,7 @@ void translate_negative_preconds( void )
 
 
 
-Bool translate_one_negative_cond( WffNode *w )
-
-{
+Bool translate_one_negative_cond( WffNode *w ) {
 
   WffNode *i;
   int p, j, k, m;
@@ -2034,9 +2082,7 @@ Bool translate_one_negative_cond( WffNode *w )
 
 
 
-void replace_not_p_with_n_in_wff( int p, int n, WffNode **w )
-
-{
+void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {
 
   WffNode *i;
 
@@ -2542,50 +2588,29 @@ void make_normal_effects( NormOperator **nop, Operator *op )
 /*************************************************************************
  * ADDITIONAL: FULL DNF, only compute on fully instantiated formulae!!!! *
  *************************************************************************/
-
-
-
-
-
-
-
-
-
-
 /* dnf
+ * Simplify the wff Nodes, by merging the AND and OR nodes
  */
-
 WffNode *lhitting_sets;
 WffNode_pointer *lset;
 int lmax_set;
 
-
-
-
-
-
-void dnf( WffNode **w )
-
-{
+void dnf( WffNode **w ) {
 
   static Bool first_call = TRUE;
 
   if ( first_call ) {
-    lset = ( WffNode_pointer * ) 
-      calloc( MAX_HITTING_SET_DEFAULT, sizeof( WffNode_pointer ) );
+    lset = ( WffNode_pointer * ) calloc( MAX_HITTING_SET_DEFAULT, sizeof( WffNode_pointer ) );
     lmax_set = MAX_HITTING_SET_DEFAULT;
     first_call = FALSE;
   }
 
   ANDs_below_ORs_in_wff( w );
-
 }
 
 
-
-void ANDs_below_ORs_in_wff( WffNode **w )
-
-{
+/* AND nodes is sons of OR nodes */
+void ANDs_below_ORs_in_wff( WffNode **w ) {
 
   WffNode *i, *tmp;
   int c, m;
@@ -2618,6 +2643,7 @@ void ANDs_below_ORs_in_wff( WffNode **w )
      * create OR node with one hitting set of w's sons for 
      * each disjunct
      */
+    /* lhitting_sets initialization to NULL */
     lhitting_sets = NULL;
     if ( m > lmax_set ) {
       free( lset );
@@ -2631,6 +2657,7 @@ void ANDs_below_ORs_in_wff( WffNode **w )
     free_WffNode( tmp );
     merge_next_step_ANDs_and_ORs_in_wff( w );
     break;
+    /* endcase AND node */
   case OR:
     for ( i = (*w)->sons; i; i = i->next ) {
       ANDs_below_ORs_in_wff( &i );
@@ -2651,16 +2678,17 @@ void ANDs_below_ORs_in_wff( WffNode **w )
 }
 
 
-
-void collect_hitting_sets( WffNode *ORlist, int index )
-
-{
+/* Or list */
+/* add the elements into lhitting_sets */
+void collect_hitting_sets( WffNode *ORlist, int index ) {
 
   WffNode *tmp1, *tmp2, *j;
   int i;
 
+  /* list is null */
   if ( !ORlist ) {
     tmp1 = new_WffNode( AND );
+
     for ( i = 0; i < index; i++ ) {
       tmp2 = copy_Wff( lset[i] );
       tmp2->next = tmp1->sons;
@@ -2669,20 +2697,22 @@ void collect_hitting_sets( WffNode *ORlist, int index )
       }
       tmp1->sons = tmp2;
     }
+
     tmp1->next = lhitting_sets;
+
     if ( lhitting_sets ) {
       lhitting_sets->prev = tmp1;
     }
     lhitting_sets = tmp1;
     return;
-  }
-
+  } /* endif !ORlist */
+  /* ORlist */ 
   if ( ORlist->connective != OR ) {
     lset[index] = ORlist;
     collect_hitting_sets( ORlist->next, index + 1 );
     return;
-  }
-
+  } /* endif ORlist connective != OR */
+  /* ORlist connective = OR */
   for ( j = ORlist->sons; j; j = j->next ) {
     lset[index] = j;
     collect_hitting_sets( ORlist->next, index + 1 );
@@ -2691,41 +2721,52 @@ void collect_hitting_sets( WffNode *ORlist, int index )
 }
 
 
-
-void merge_next_step_ANDs_and_ORs_in_wff( WffNode **w )
-
-{
+void merge_next_step_ANDs_and_ORs_in_wff( WffNode **w ) {
 
   WffNode *i, *j, *tmp;
 
   i = (*w)->sons;
   while ( i ) {
+
     if ( i->connective == (*w)->connective ) {
+
+      /* node w->sons->sons is empty */
       if ( !(i->sons) ) {
+
 	if ( i->next ) {
 	  i->next->prev = i->prev;
 	}
+
 	if ( i->prev ) {
 	  i->prev->next = i->next;
 	} else {
 	  (*w)->sons = i->next;
 	}
+
 	tmp = i;
 	i = i->next;
 	free( tmp );
 	continue;
-      }
+
+      } /* end if w->sons->sons is empty */
+
+      /* parse to the end of w->sons->sons */
       for ( j = i->sons; j->next; j = j->next );
+
+      // append w->sons->next to w->sons->sons  
       j->next = i->next;
+
       if ( i->next ) {
 	i->next->prev = j;
       }
+
       if ( i->prev ) {
 	i->prev->next = i->sons;
 	i->sons->prev = i->prev;
       } else {
 	(*w)->sons = i->sons;
       }
+
       tmp = i;
       i = i->next;
       free( tmp );

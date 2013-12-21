@@ -60,7 +60,7 @@ alloca	scan-mul_pddl.tab.c	352;"	d	file:
 alloca	scan-ops_pddl.tab.c	370;"	d	file:
 all_goals_activated	relax.c	/^Bool all_goals_activated( int time ) {$/;"	f
 AND	ff.h	/^			   AND, $/;"	e	enum:_Connective
-ANDs_below_ORs_in_wff	inst_pre.c	/^void ANDs_below_ORs_in_wff( WffNode **w )$/;"	f
+ANDs_below_ORs_in_wff	inst_pre.c	/^void ANDs_below_ORs_in_wff( WffNode **w ) {$/;"	f
 AND_TOK	scan-fct_pddl.tab.c	/^     AND_TOK = 268,$/;"	e	enum:yytokentype	file:
 AND_TOK	scan-mul_pddl.tab.c	/^     AND_TOK = 274,$/;"	e	enum:yytokentype	file:
 AND_TOK	scan-ops_pddl.tab.c	/^     AND_TOK = 272,$/;"	e	enum:yytokentype	file:
@@ -112,15 +112,15 @@ check_parents	fip.c	/^Bool check_parents(State *cS, StateActionPair *ptr){$/;"	f
 CHECK_PTR	ff.h	305;"	d
 cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void )$/;"	f
 cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void )$/;"	f
-cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w )$/;"	f
+cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w ) {$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-mul_pddl.tab.c	/^     CLOSE_PAREN = 285$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-ops_pddl.tab.c	/^     CLOSE_PAREN = 283$/;"	e	enum:yytokentype	file:
 collect_all_strings	inst_pre.c	/^void collect_all_strings( void ) {$/;"	f
 collect_A_info	relax.c	/^void collect_A_info( void )$/;"	f
-collect_hitting_sets	inst_pre.c	/^void collect_hitting_sets( WffNode *ORlist, int index )$/;"	f
+collect_hitting_sets	inst_pre.c	/^void collect_hitting_sets( WffNode *ORlist, int index ) {$/;"	f
 collect_H_info	relax.c	/^void collect_H_info( void ) {$/;"	f
-collect_inertia_information	inst_pre.c	/^void collect_inertia_information( void )$/;"	f
+collect_inertia_information	inst_pre.c	/^void collect_inertia_information( void ) {$/;"	f
 collect_relevant_facts	inst_final.c	/^void collect_relevant_facts( void )$/;"	f
 collect_type_names_in_pl	parse.c	/^void collect_type_names_in_pl( PlNode *n ) {$/;"	f
 COMMENT	lex.fct_pddl.c	599;"	d	file:
@@ -162,7 +162,7 @@ debugAllSolvedState	fip.c	/^void debugAllSolvedState(){$/;"	f
 debugAllUnSolvedState	fip.c	/^void debugAllUnSolvedState(){$/;"	f
 debugit	fip.c	/^void debugit(State *s){$/;"	f
 DECODE_VAR	ff.h	298;"	d
-decrement_inferior_vars	inst_pre.c	/^void decrement_inferior_vars( int var, WffNode *w )$/;"	f
+decrement_inferior_vars	inst_pre.c	/^void decrement_inferior_vars( int var, WffNode *w ) {$/;"	f
 decrement_inferior_vars_in_literals	inst_hard.c	/^void decrement_inferior_vars_in_literals( int var, Literal *ef )$/;"	f
 decrement_var_entries	inst_easy.c	/^void decrement_var_entries( NormOperator *o, int start )$/;"	f
 DEFINE_EXPECTED	scan-fct_pddl.tab.c	93;"	d	file:
@@ -177,7 +177,7 @@ detect_ordering_constraints	orderings.c	/^void detect_ordering_constraints( void
 detect_tautologies_in_wff	inst_pre.c	/^void detect_tautologies_in_wff( WffNode **w )$/;"	f
 disable_actions	fip.c	/^void disable_actions(State*s, int index){$/;"	f
 display_info	ff.h	/^  int display_info;$/;"	m	struct:_command_line
-dnf	inst_pre.c	/^void dnf( WffNode **w )$/;"	f
+dnf	inst_pre.c	/^void dnf( WffNode **w ) {$/;"	f
 domain_definition	scan-ops_pddl.y	/^domain_definition : $/;"	l
 DOMAIN_EXPECTED	scan-mul_pddl.tab.c	94;"	d	file:
 DOMAIN_EXPECTED	scan-ops_pddl.tab.c	94;"	d	file:
@@ -196,7 +196,7 @@ DOMNAME_EXPECTED	scan-mul_pddl.tab.c	95;"	d	file:
 DOMNAME_EXPECTED	scan-ops_pddl.tab.c	95;"	d	file:
 do_best_first_search	search.c	/^Bool do_best_first_search( void ) {$/;"	f
 do_enforced_hill_climbing	search.c	/^Bool do_enforced_hill_climbing( State *start, State *end ) {$/;"	f
-do_inertia_preprocessing_step_1	inst_pre.c	/^void do_inertia_preprocessing_step_1( void )$/;"	f
+do_inertia_preprocessing_step_1	inst_pre.c	/^void do_inertia_preprocessing_step_1( void ) {$/;"	f
 do_weak_planning	search.c	/^Bool do_weak_planning( State *start, State *end ) {$/;"	f
 E	ff.h	/^  int *E;$/;"	m	struct:_OpConn
 EasyTemplate	ff.h	/^} EasyTemplate;$/;"	t	typeref:struct:_EasyTemplate
@@ -705,7 +705,7 @@ MAX_TYPE_INTERSECTIONS	ff.h	231;"	d
 MAX_VARS	ff.h	213;"	d
 meet_solved_state	fip.c	/^short meet_solved_state(StateActionPair *pCurrentState, StateActionPair *pNextState, int act){$/;"	f
 merge_ANDs_and_ORs_in_wff	inst_pre.c	/^void merge_ANDs_and_ORs_in_wff( WffNode **w )$/;"	f
-merge_next_step_ANDs_and_ORs_in_wff	inst_pre.c	/^void merge_next_step_ANDs_and_ORs_in_wff( WffNode **w )$/;"	f
+merge_next_step_ANDs_and_ORs_in_wff	inst_pre.c	/^void merge_next_step_ANDs_and_ORs_in_wff( WffNode **w ) {$/;"	f
 MixedOperator	ff.h	/^} MixedOperator;$/;"	t	typeref:struct:_MixedOperator
 mulerr	scan-mul_pddl.tab.c	/^void mulerr( int errno, char *par ) {$/;"	f
 multigoal_definition	scan-mul_pddl.y	/^multigoal_definition : $/;"	l
@@ -832,7 +832,7 @@ next	ff.h	/^  struct _TypedListList *next;$/;"	m	struct:_TypedListList	typeref:s
 next	ff.h	/^  struct _WffNode *next;$/;"	m	struct:_WffNode	typeref:struct:_WffNode::_WffNode
 next	fip.h	/^	struct	_StateActionPair	*next;$/;"	m	struct:_StateActionPair	typeref:struct:_StateActionPair::_StateActionPair
 next_step	ff.h	/^  struct _PlanHashEntry *next_step;$/;"	m	struct:_PlanHashEntry	typeref:struct:_PlanHashEntry::_PlanHashEntry
-normalize_all_wffs	inst_pre.c	/^void normalize_all_wffs( void )$/;"	f
+normalize_all_wffs	inst_pre.c	/^void normalize_all_wffs( void ) {$/;"	f
 normalize_tyl_in_pl	parse.c	/^void normalize_tyl_in_pl( PlNode **n ) {$/;"	f
 NormEffect	ff.h	/^} NormEffect;$/;"	t	typeref:struct:_NormEffect
 NormOperator	ff.h	/^} NormOperator, *NormOperator_pointer;$/;"	t	typeref:struct:_NormOperator
@@ -1075,8 +1075,8 @@ removed	ff.h	/^  Bool removed[MAX_VARS];$/;"	m	struct:_Operator
 removed_vars	ff.h	/^  int removed_vars[MAX_VARS], num_removed_vars, type_removed_vars[MAX_VARS];$/;"	m	struct:_NormOperator
 remove_unused_easy_effect_parameters	inst_easy.c	/^void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )$/;"	f
 remove_unused_easy_parameters	inst_easy.c	/^void remove_unused_easy_parameters( void )$/;"	f
-remove_unused_vars_in_wff	inst_pre.c	/^void remove_unused_vars_in_wff( WffNode **w )$/;"	f
-replace_not_p_with_n_in_wff	inst_pre.c	/^void replace_not_p_with_n_in_wff( int p, int n, WffNode **w )$/;"	f
+remove_unused_vars_in_wff	inst_pre.c	/^void remove_unused_vars_in_wff( WffNode **w ) {$/;"	f
+replace_not_p_with_n_in_wff	inst_pre.c	/^void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {$/;"	f
 REQUIREMENTS_TOK	scan-mul_pddl.tab.c	/^     REQUIREMENTS_TOK = 260,$/;"	e	enum:yytokentype	file:
 REQUIREMENTS_TOK	scan-ops_pddl.tab.c	/^     REQUIREMENTS_TOK = 260,$/;"	e	enum:yytokentype	file:
 REQUIREM_EXPECTED	scan-fct_pddl.tab.c	99;"	d	file:
@@ -1120,7 +1120,7 @@ set_relevants_in_wff	inst_final.c	/^void set_relevants_in_wff( WffNode **w )$/;"
 short	scan-fct_pddl.tab.c	253;"	d	file:
 short	scan-mul_pddl.tab.c	255;"	d	file:
 short	scan-ops_pddl.tab.c	273;"	d	file:
-simplify_wff	inst_pre.c	/^void simplify_wff( WffNode **w )$/;"	f
+simplify_wff	inst_pre.c	/^void simplify_wff( WffNode **w ) {$/;"	f
 sis_negated	scan-fct_pddl.tab.c	/^static Bool sis_negated = FALSE;$/;"	v	file:
 sis_negated	scan-mul_pddl.tab.c	/^static Bool sis_negated = FALSE;$/;"	v	file:
 sis_negated	scan-ops_pddl.tab.c	/^static Bool sis_negated = FALSE;$/;"	v	file:
@@ -1135,7 +1135,7 @@ sons	fip.h	/^	struct _PlanNode *sons[MAX_NUM_D_ACTION];$/;"	m	struct:_PlanNode	t
 SOURCES	makefile	/^SOURCES 	= main.c \\$/;"	m
 source_to_dest	search.c	/^void source_to_dest( State *dest, State *source ) {$/;"	f
 split_domain	inst_pre.c	/^void split_domain( void )$/;"	f
-split_initial_state	inst_pre.c	/^void split_initial_state( void )$/;"	f
+split_initial_state	inst_pre.c	/^void split_initial_state( void ) {$/;"	f
 STANDARD_TYPE	ff.h	130;"	d
 STANDARD_TYPE	scan-mul_pddl.tab.c	120;"	d	file:
 STANDARD_TYPE	scan-ops_pddl.tab.c	119;"	d	file:
@@ -1164,8 +1164,8 @@ Token	ff.h	/^typedef char *Token;$/;"	t
 TokenList	ff.h	/^} TokenList;$/;"	t	typeref:struct:_TokenList
 to_print_state	main.c	/^Bool to_print_state = FALSE;$/;"	v
 transferToNextState	fip.c	/^StateActionPair* transferToNextState( StateActionPair *pCurrent, int op ){$/;"	f
-translate_negative_preconds	inst_pre.c	/^void translate_negative_preconds( void )$/;"	f
-translate_one_negative_cond	inst_pre.c	/^Bool translate_one_negative_cond( WffNode *w )$/;"	f
+translate_negative_preconds	inst_pre.c	/^void translate_negative_preconds( void ) {$/;"	f
+translate_one_negative_cond	inst_pre.c	/^Bool translate_one_negative_cond( WffNode *w ) {$/;"	f
 TRU	ff.h	/^typedef enum _Connective{TRU,$/;"	e	enum:_Connective
 TRUE	ff.h	289;"	d
 try_other_path	fip.c	/^void try_other_path(StateActionPair *s, int a){	$/;"	f
@@ -1229,7 +1229,7 @@ var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormEffect
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormOperator
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_Operator
 var_used_in_literals	inst_hard.c	/^Bool var_used_in_literals( int code_var, Literal *ef )$/;"	f
-var_used_in_wff	inst_pre.c	/^Bool var_used_in_wff( int code_var, WffNode *w )$/;"	f
+var_used_in_wff	inst_pre.c	/^Bool var_used_in_wff( int code_var, WffNode *w ) {$/;"	f
 visited	ff.h	/^  Bool visited;$/;"	m	struct:_WffNode
 WffNode	ff.h	/^} WffNode, *WffNode_pointer;$/;"	t	typeref:struct:_WffNode
 WffNode_pointer	ff.h	/^} WffNode, *WffNode_pointer;$/;"	t	typeref:struct:_WffNode
