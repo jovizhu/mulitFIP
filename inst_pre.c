@@ -1977,7 +1977,7 @@ void translate_negative_preconds( void ) {
 }
 
 
-
+/* jovi: update for multiple purpose */
 Bool translate_one_negative_cond( WffNode *w ) {
 
   WffNode *i;
@@ -2011,7 +2011,7 @@ Bool translate_one_negative_cond( WffNode *w ) {
     printf("\nwon't get here: remove var, non logical %d\n\n",
 	   w->connective);
     exit( 1 );
-  }
+  }/* case NOT only reach this line  */
 
 
   if ( gnum_predicates == MAX_PREDICATES ) {
@@ -2019,34 +2019,38 @@ Bool translate_one_negative_cond( WffNode *w ) {
 	   MAX_PREDICATES);
     exit( 1 );
   }
+
   p = w->son->fact->predicate;
+  /* Add pre "NOT-" to predicates */
   gpredicates[gnum_predicates] = new_Token( strlen( gpredicates[p] ) + 5 );
   sprintf( gpredicates[gnum_predicates], "NOT-%s", gpredicates[p] );
   garity[gnum_predicates] = garity[p];
+
   for ( j = 0; j < garity[p]; j++ ) {
-    gpredicates_args_type[gnum_predicates][j] = 
-      gpredicates_args_type[p][j];
+    gpredicates_args_type[gnum_predicates][j] = gpredicates_args_type[p][j];
   }
+
+  /* not-predicate, both add&delete false  */
   gis_added[gnum_predicates] = FALSE;
   gis_deleted[gnum_predicates] = FALSE;
   m = 1;
+
   for ( j = 0; j < garity[gnum_predicates]; j++ ) {
     m *= gtype_size[gpredicates_args_type[gnum_predicates][j]];
   }
   ginitial_predicate[gnum_predicates] = ( Fact * ) calloc( m, sizeof( Fact ) );
   gnum_predicates++;
 
-
   replace_not_p_with_n_in_wff( p, gnum_predicates - 1, &ggoal );
 
   for ( j = 0; j < gnum_operators; j++ ) {
-    replace_not_p_with_n_in_wff( p, gnum_predicates - 1, 
-				 &(goperators[j]->preconds) );
+    replace_not_p_with_n_in_wff( p, gnum_predicates - 1, &(goperators[j]->preconds) );
 
     for ( e = goperators[j]->effects; e; e = e->next ) {
-      replace_not_p_with_n_in_wff( p, gnum_predicates - 1, 
-				   &(e->conditions) );
+      replace_not_p_with_n_in_wff( p, gnum_predicates - 1, &(e->conditions) );
+
       for ( l = e->effects; l; l = l->next ) {
+
 	if ( l->fact.predicate != p ) {
 	  continue;
 	}
@@ -2072,16 +2076,56 @@ Bool translate_one_negative_cond( WffNode *w ) {
 	l->prev = tmp;
       }
     }
+ }
+ for ( j = 0; j < gadd_num_operators; j++ ) {
+    replace_not_p_with_n_in_wff( p, gnum_predicates - 1, &(gadd_operators[j]->preconds) );
+
+    for ( e = gadd_operators[j]->effects; e; e = e->next ) {
+      replace_not_p_with_n_in_wff( p, gadd_num_predicates - 1, &(e->conditions) );
+
+      for ( l = e->effects; l; l = l->next ) {
+
+        if ( l->fact.predicate != p ) {
+          continue;
+        }
+        tmp = new_Literal();
+
+        if ( l->negated ) {
+          tmp->negated = FALSE;
+          gis_added[gnum_predicates - 1] = TRUE;
+        } else {
+          tmp->negated = TRUE;
+          gis_deleted[gnum_predicates - 1] = TRUE;
+        }
+        tmp->fact.predicate = gnum_predicates - 1;
+
+        for ( k = 0; k < garity[p]; k++ ) {
+          tmp->fact.args[k] = l->fact.args[k];
+          }
+
+        if ( l->prev ) {
+          tmp->prev = l->prev;
+          tmp->prev->next = tmp;
+          } else {
+            e->effects = tmp;
+          }
+
+          tmp->next = l;
+          l->prev = tmp;
+      }
+    }
   }
 
   add_to_initial_state( p, gnum_predicates - 1, 0 );
-
   return TRUE;
-
 }
 
 
-
+/* replace the NOT with its sons 
+ * p is a not-predicate/
+ * n is the num_predicate-1, the position of p
+ * w is the goal
+ */
 void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {
 
   WffNode *i;
@@ -2099,8 +2143,8 @@ void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {
     break;
   case NOT:
     if ( (*w)->son->fact->predicate == p ) {
-      (*w)->connective = ATOM;
-      (*w)->NOT_p = p;
+      (*w)->connective = ATOM; 
+      (*w)->NOT_p = p; /* marked as NOT_p */
       (*w)->fact = (*w)->son->fact;
       (*w)->fact->predicate = n;
       free( (*w)->son );
@@ -2121,9 +2165,7 @@ void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {
 
 
 
-void add_to_initial_state( int p, int n, int index )
-
-{
+void add_to_initial_state( int p, int n, int index ) {
 
   int i, j;
   Facts *tmp;
@@ -2177,33 +2219,12 @@ void add_to_initial_state( int p, int n, int index )
 }
 
 
-
-
-
-
-
-
-
-
-
 /*******************************************************************
  * SPLIT DOMAIN IN PREPARATION FOR SEPARATE INSTANTIATION ROUTINES *
  *******************************************************************/
+void split_domain( void ) {
 
-
-
-
-
-
-
-
-
-
-void split_domain( void )
-
-{
-
-  int i, j, m, s = 0, a;
+  int i, j, m, s = 0, a, add_s = 0;
   Effect *e;
   WffNode *w, *ww, *www;
   NormOperator *tmp_op;
@@ -2214,16 +2235,20 @@ void split_domain( void )
   }
 
   for ( i = 0; i < gnum_operators; i++ ) {
+
     if ( (m = is_dnf( goperators[i]->preconds )) != -1 ) {
+
       for ( e = goperators[i]->effects; e; e = e->next ) {
 	if ( is_dnf( e->conditions ) == -1 ) {
 	  break;
 	}
       }
+
       if ( !e ) {
 	goperators[i]->hard = FALSE;
 	s += m;
       }
+
     }
   }
 
@@ -2313,6 +2338,115 @@ void split_domain( void )
     }
   }
 
+  for ( i = 0; i < gadd_num_operators; i++ ) {
+ 
+	 /* if operator->preconds is dnf */
+    if ( (m = is_dnf( gadd_operators[i]->preconds )) != -1 ) {
+
+      for ( e = gadd_operators[i]->effects; e; e = e->next ) {
+	     /* effect>condition is not dnf */
+        if ( is_dnf( e->conditions ) == -1 ) {
+          break;
+        }
+      }
+
+      if ( !e ) { /* all the effect has been checked */
+        gadd_operators[i]->hard = FALSE;
+        add_s += m;
+      }
+ 
+    }
+  }
+ 
+  gadd_hard_operators = ( Operator_pointer * ) calloc( MAX_OPERATORS, sizeof( Operator ) );
+  gadd_num_hard_operators = 0;
+  gadd_easy_operators = ( NormOperator_pointer * ) calloc( add_s, sizeof( NormOperator_pointer ) );
+  gadd_num_easy_operators = 0;
+
+  for ( i = 0; i < gadd_num_operators; i++ ) {
+
+    if ( gadd_operators[i]->hard ) {
+      gadd_hard_operators[gadd_num_hard_operators++] = gadd_operators[i];
+      continue;
+    }
+
+    w = gadd_operators[i]->preconds;
+    switch ( w->connective ) {
+    case OR:
+      for ( ww = w->sons; ww; ww = ww->next ) {
+        tmp_op = new_NormOperator( gadd_operators[i] );
+        if ( ww->connective == AND ) {
+          m = 0;
+          for ( www = ww->sons; www; www = www->next ) m++;
+          tmp_op->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+          for ( www = ww->sons; www; www = www->next ) {
+            tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
+            tmp_ft->predicate = www->fact->predicate;
+            a = garity[tmp_ft->predicate];
+            for ( j = 0; j < a; j++ ) {
+              tmp_ft->args[j] = www->fact->args[j];
+            }
+            tmp_op->num_preconds++;
+          }
+        } else {
+          tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
+          tmp_ft = &(tmp_op->preconds[0]);
+          tmp_ft->predicate = ww->fact->predicate;
+          a = garity[tmp_ft->predicate];
+          for ( j = 0; j < a; j++ ) {
+            tmp_ft->args[j] = ww->fact->args[j];
+          }
+          tmp_op->num_preconds = 1;
+        }
+2293         make_normal_effects( &tmp_op, goperators[i] );
+2294         geasy_operators[gnum_easy_operators++] = tmp_op;
+2295       }
+2296       break;
+2297     case AND:
+2298       tmp_op = new_NormOperator( goperators[i] );
+2299       m = 0;
+2300       for ( ww = w->sons; ww; ww = ww->next ) m++;
+2301       tmp_op->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+2302       for ( ww = w->sons; ww; ww = ww->next ) {
+2303         tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
+2304         tmp_ft->predicate = ww->fact->predicate;
+2305         a = garity[tmp_ft->predicate];
+2306         for ( j = 0; j < a; j++ ) {
+2307           tmp_ft->args[j] = ww->fact->args[j];
+2308         }
+2309         tmp_op->num_preconds++;
+2310       }
+2311       make_normal_effects( &tmp_op, goperators[i] );
+2312       geasy_operators[gnum_easy_operators++] = tmp_op;
+2313       break;
+2314     case NOT:
+2315     case ATOM:
+2316       tmp_op = new_NormOperator( goperators[i] );
+2317       tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
+2318       tmp_ft = &(tmp_op->preconds[0]);
+2319       tmp_ft->predicate = w->fact->predicate;
+2320       a = garity[tmp_ft->predicate];
+2321       for ( j = 0; j < a; j++ ) {
+2322         tmp_ft->args[j] = w->fact->args[j];
+2323       }
+2324       tmp_op->num_preconds = 1;
+2325       make_normal_effects( &tmp_op, goperators[i] );
+2326       geasy_operators[gnum_easy_operators++] = tmp_op;
+2327       break;
+2328     case TRU:
+2329       tmp_op = new_NormOperator( goperators[i] );
+2330       make_normal_effects( &tmp_op, goperators[i] );
+2331       geasy_operators[gnum_easy_operators++] = tmp_op;
+2332       break;
+2333     case FAL:
+2334       break;
+2335     default:
+2336       printf("\nwon't get here: non OR, AND, ATOM, TRUE, FALSE in dnf. debug me\n\n");
+2337       exit( 1 );
+2338     }
+2339   }
+
+
   if ( gcmd_line.display_info == 109 ) {
     printf("\n\nsplitted operators are:\n");
     
@@ -2330,10 +2464,10 @@ void split_domain( void )
 }
 
 
-
-int is_dnf( WffNode *w )
-
-{
+/* only atom (connected by AND/OR)
+ * or NOT-p
+ */
+int is_dnf( WffNode *w ) {
 
   WffNode *i;
   int s = 0;
@@ -2345,9 +2479,7 @@ int is_dnf( WffNode *w )
     exit( 1 );
   case AND:
     for ( i = w->sons; i; i = i->next ) {
-      if ( i->connective == ATOM ||
-	   ( i->connective == NOT &&
-	     i->son->fact->predicate == -1 ) ) {
+      if ( i->connective == ATOM || ( i->connective == NOT && i->son->fact->predicate == -1 ) ) {
 	continue;
       }
       return -1;
@@ -2356,11 +2488,9 @@ int is_dnf( WffNode *w )
   case OR:
     for ( i = w->sons; i; i = i->next ) {
       s++;
-      if ( i->connective == ATOM ||
-	   ( i->connective == NOT &&
-	     i->son->fact->predicate == -1 ) ||
-	   ( i->connective == AND &&
-	     is_dnf( i ) != -1 ) ) {
+      if ( i->connective == ATOM || 
+	   ( i->connective == NOT && i->son->fact->predicate == -1 ) ||
+	   ( i->connective == AND && is_dnf( i ) != -1 ) ) {
 	continue;
       }
       return -1;

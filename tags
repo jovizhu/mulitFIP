@@ -41,7 +41,7 @@ add_solved_state	fip.c	/^void add_solved_state( StateActionPair *pState ){	$/;"	
 add_to_bfs_space	search.c	/^void add_to_bfs_space( State *S, int op, BfsNode *father ) {$/;"	f
 add_to_ehc_space	search.c	/^void add_to_ehc_space( State *S, int op, EhcNode *father, int new_goal ) {$/;"	f
 add_to_group	fip.c	/^void add_to_group(int index){$/;"	f
-add_to_initial_state	inst_pre.c	/^void add_to_initial_state( int p, int n, int index )$/;"	f
+add_to_initial_state	inst_pre.c	/^void add_to_initial_state( int p, int n, int index ) {$/;"	f
 add_unsolved_state	fip.c	/^void add_unsolved_state( StateActionPair *pState ){$/;"	f
 ADLGOAL	scan-fct_pddl.tab.c	119;"	d	file:
 adl_effect	scan-mul_pddl.y	/^adl_effect:$/;"	l
@@ -563,7 +563,7 @@ in_E	ff.h	/^  Bool in_E;$/;"	m	struct:_EfConn
 in_F	ff.h	/^  Bool in_F;$/;"	m	struct:_FtConn
 in_plan	ff.h	/^  Bool in_plan;$/;"	m	struct:_EfConn
 isReferenced	fip.h	/^	Bool	isReferenced;$/;"	m	struct:_PlanNode
-is_dnf	inst_pre.c	/^int is_dnf( WffNode *w )$/;"	f
+is_dnf	inst_pre.c	/^int is_dnf( WffNode *w ) {$/;"	f
 is_D_action	fip.c	/^Bool is_D_action(const char *name){$/;"	f
 is_eff_literal	parse.c	/^Bool is_eff_literal( PlNode *n )$/;"	f
 is_global_goal	ff.h	/^  Bool is_global_goal;\/* fast goal add finding *\/$/;"	m	struct:_FtConn
@@ -1134,7 +1134,7 @@ sons	ff.h	/^  struct _WffNode *sons;$/;"	m	struct:_WffNode	typeref:struct:_WffNo
 sons	fip.h	/^	struct _PlanNode *sons[MAX_NUM_D_ACTION];$/;"	m	struct:_PlanNode	typeref:struct:_PlanNode::_PlanNode
 SOURCES	makefile	/^SOURCES 	= main.c \\$/;"	m
 source_to_dest	search.c	/^void source_to_dest( State *dest, State *source ) {$/;"	f
-split_domain	inst_pre.c	/^void split_domain( void )$/;"	f
+split_domain	inst_pre.c	/^void split_domain( void ) {$/;"	f
 split_initial_state	inst_pre.c	/^void split_initial_state( void ) {$/;"	f
 STANDARD_TYPE	ff.h	130;"	d
 STANDARD_TYPE	scan-mul_pddl.tab.c	120;"	d	file:
