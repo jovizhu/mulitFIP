@@ -2375,51 +2375,60 @@ void split_domain( void ) {
     case OR:
       for ( ww = w->sons; ww; ww = ww->next ) {
         tmp_op = new_NormOperator( gadd_operators[i] );
+
         if ( ww->connective == AND ) {
           m = 0;
+	  /* m is the number of sons*/
           for ( www = ww->sons; www; www = www->next ) m++;
+
           tmp_op->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+
           for ( www = ww->sons; www; www = www->next ) {
             tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
             tmp_ft->predicate = www->fact->predicate;
             a = garity[tmp_ft->predicate];
+
             for ( j = 0; j < a; j++ ) {
               tmp_ft->args[j] = www->fact->args[j];
             }
+
             tmp_op->num_preconds++;
           }
-        } else {
+        } else { /* ww->connective != AND */
           tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
           tmp_ft = &(tmp_op->preconds[0]);
           tmp_ft->predicate = ww->fact->predicate;
           a = garity[tmp_ft->predicate];
+
           for ( j = 0; j < a; j++ ) {
             tmp_ft->args[j] = ww->fact->args[j];
           }
           tmp_op->num_preconds = 1;
+        } /*endelse: ww->connective != AND */
+
+        make_normal_effects( &tmp_op, goperators[i] );
+        geasy_operators[gnum_easy_operators++] = tmp_op;
+      } /* endfor: w->sons */
+      break; /*end:case OR*/
+    case AND:
+      tmp_op = new_NormOperator( goperators[i] );
+      m = 0;
+      for ( ww = w->sons; ww; ww = ww->next ) m++;
+      /* m is the number of sons */
+      tmp_op->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+      for ( ww = w->sons; ww; ww = ww->next ) {
+        tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
+        tmp_ft->predicate = ww->fact->predicate;
+        a = garity[tmp_ft->predicate];
+        for ( j = 0; j < a; j++ ) {
+          tmp_ft->args[j] = ww->fact->args[j];
         }
-2293         make_normal_effects( &tmp_op, goperators[i] );
-2294         geasy_operators[gnum_easy_operators++] = tmp_op;
-2295       }
-2296       break;
-2297     case AND:
-2298       tmp_op = new_NormOperator( goperators[i] );
-2299       m = 0;
-2300       for ( ww = w->sons; ww; ww = ww->next ) m++;
-2301       tmp_op->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
-2302       for ( ww = w->sons; ww; ww = ww->next ) {
-2303         tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
-2304         tmp_ft->predicate = ww->fact->predicate;
-2305         a = garity[tmp_ft->predicate];
-2306         for ( j = 0; j < a; j++ ) {
-2307           tmp_ft->args[j] = ww->fact->args[j];
-2308         }
-2309         tmp_op->num_preconds++;
-2310       }
-2311       make_normal_effects( &tmp_op, goperators[i] );
-2312       geasy_operators[gnum_easy_operators++] = tmp_op;
-2313       break;
-2314     case NOT:
+        tmp_op->num_preconds++;
+      }
+      make_normal_effects( &tmp_op, goperators[i] );
+      geasy_operators[gnum_easy_operators++] = tmp_op;
+      break;
+    case NOT:
 2315     case ATOM:
 2316       tmp_op = new_NormOperator( goperators[i] );
 2317       tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
@@ -2516,10 +2525,8 @@ int is_dnf( WffNode *w ) {
 }
 
 
-
-void make_normal_effects( NormOperator **nop, Operator *op )
-
-{
+/**/
+void make_normal_effects( NormOperator **nop, Operator *op ) {
 
   Effect *e;
   NormEffect *tmp_ef;
@@ -2537,7 +2544,7 @@ void make_normal_effects( NormOperator **nop, Operator *op )
 	if ( ww->connective == AND ) {
 	  m = 0;
 	  for ( www = ww->sons; www; www = www->next ) m++;
-	  tmp_ef->conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
+	  tmp_ef-> conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
 	  for ( www = ww->sons; www; www = www->next ) {
 	    tmp_ft = &(tmp_ef->conditions[tmp_ef->num_conditions]);
 	    tmp_ft->predicate = www->fact->predicate;

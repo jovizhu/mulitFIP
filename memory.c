@@ -388,10 +388,8 @@ Operator *new_Operator( char *name, int norp )
 }
 
 
-
-NormEffect *new_NormEffect1( Effect *e )
-
-{
+/* copy th effect e to new effect, only types */
+NormEffect *new_NormEffect1( Effect *e ) {
 
   int i;
 
@@ -399,6 +397,7 @@ NormEffect *new_NormEffect1( Effect *e )
   CHECK_PTR(result);
 
   result->num_vars = e->num_vars;
+
   for ( i = 0; i < e->num_vars; i++ ) {
     result->var_types[i] = e->var_types[i];
     result->inst_table[i] = -1;
@@ -416,7 +415,6 @@ NormEffect *new_NormEffect1( Effect *e )
   result->prev = NULL;
 
   return result;
-
 }
 
 

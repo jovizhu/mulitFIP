@@ -681,7 +681,7 @@ make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars )$/;"	f
 make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll )$/;"	f
 make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
 make_name_inst_table_from_PseudoAction	inst_final.c	/^void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )$/;"	f
-make_normal_effects	inst_pre.c	/^void make_normal_effects( NormOperator **nop, Operator *op )$/;"	f
+make_normal_effects	inst_pre.c	/^void make_normal_effects( NormOperator **nop, Operator *op ) {$/;"	f
 make_state	memory.c	/^void make_state( State *S, int n ) {$/;"	f
 make_Wff	inst_pre.c	/^WffNode *make_Wff( PlNode *p, int num_vars )$/;"	f
 matches	inst_pre.c	/^Bool matches( Fact *f1, Fact *f2 )$/;"	f
@@ -794,7 +794,7 @@ new_goal	ff.h	/^  int new_goal;$/;"	m	struct:_EhcNode
 new_goal_gets_deleted	search.c	/^Bool new_goal_gets_deleted( EhcNode *n )$/;"	f
 new_Literal	memory.c	/^Literal *new_Literal( void ) $/;"	f
 new_MixedOperator	memory.c	/^MixedOperator *new_MixedOperator( Operator *op )$/;"	f
-new_NormEffect1	memory.c	/^NormEffect *new_NormEffect1( Effect *e )$/;"	f
+new_NormEffect1	memory.c	/^NormEffect *new_NormEffect1( Effect *e ) {$/;"	f
 new_NormEffect2	memory.c	/^NormEffect *new_NormEffect2( NormEffect *e )$/;"	f
 new_NormOperator	memory.c	/^NormOperator *new_NormOperator( Operator *op )$/;"	f
 new_Operator	memory.c	/^Operator *new_Operator( char *name, int norp )$/;"	f
