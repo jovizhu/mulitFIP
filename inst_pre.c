@@ -2338,13 +2338,13 @@ void split_domain( void ) {
     }
   }
 
+  /* jovi: update for multiple purposes */
   for ( i = 0; i < gadd_num_operators; i++ ) {
- 
-	 /* if operator->preconds is dnf */
+    /* if operator->preconds is dnf */
     if ( (m = is_dnf( gadd_operators[i]->preconds )) != -1 ) {
-
+      /* for each effects of operators */	
       for ( e = gadd_operators[i]->effects; e; e = e->next ) {
-	     /* effect>condition is not dnf */
+        /* effect>condition is not dnf */
         if ( is_dnf( e->conditions ) == -1 ) {
           break;
         }
@@ -2364,12 +2364,13 @@ void split_domain( void ) {
   gadd_num_easy_operators = 0;
 
   for ( i = 0; i < gadd_num_operators; i++ ) {
-
+    /* for each operators, update the hard operators */
     if ( gadd_operators[i]->hard ) {
       gadd_hard_operators[gadd_num_hard_operators++] = gadd_operators[i];
       continue;
     }
 
+    /* the following is update the easy operators */
     w = gadd_operators[i]->preconds;
     switch ( w->connective ) {
     case OR:
@@ -2386,8 +2387,8 @@ void split_domain( void ) {
           for ( www = ww->sons; www; www = www->next ) {
             tmp_ft = &(tmp_op->preconds[tmp_op->num_preconds]);
             tmp_ft->predicate = www->fact->predicate;
-            a = garity[tmp_ft->predicate];
 
+            a = garity[tmp_ft->predicate];
             for ( j = 0; j < a; j++ ) {
               tmp_ft->args[j] = www->fact->args[j];
             }
@@ -2395,6 +2396,7 @@ void split_domain( void ) {
             tmp_op->num_preconds++;
           }
         } else { /* ww->connective != AND */
+          /* split the operators */
           tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
           tmp_ft = &(tmp_op->preconds[0]);
           tmp_ft->predicate = ww->fact->predicate;
@@ -2404,7 +2406,7 @@ void split_domain( void ) {
             tmp_ft->args[j] = ww->fact->args[j];
           }
           tmp_op->num_preconds = 1;
-        } /*endelse: ww->connective != AND */
+        } /* endelse: ww->connective != AND */
 
         make_normal_effects( &tmp_op, goperators[i] );
         geasy_operators[gnum_easy_operators++] = tmp_op;
@@ -2525,7 +2527,7 @@ int is_dnf( WffNode *w ) {
 }
 
 
-/**/
+/* jovi: not sure, seems update the sons of effect  */
 void make_normal_effects( NormOperator **nop, Operator *op ) {
 
   Effect *e;
@@ -2542,11 +2544,13 @@ void make_normal_effects( NormOperator **nop, Operator *op ) {
       for ( ww = w->sons; ww; ww = ww->next ) {
 	tmp_ef = new_NormEffect1( e );
 	if ( ww->connective == AND ) {
-	  m = 0;
+	  m = 0;/* m is the number of sons under ww */
 	  for ( www = ww->sons; www; www = www->next ) m++;
-	  tmp_ef-> conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
+
+	  tmp_ef->conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
+	  /* update the tmp_ef->conditions with ww->sons */
 	  for ( www = ww->sons; www; www = www->next ) {
-	    tmp_ft = &(tmp_ef->conditions[tmp_ef->num_conditions]);
+	    tmp_ft = &(tmp_ef->conditions[tmp_ef->num_conditions]);/* num_conditions is initialized as 0 */
 	    tmp_ft->predicate = www->fact->predicate;
 	    a = garity[tmp_ft->predicate];
 	    for ( j = 0; j < a; j++ ) {
@@ -2554,7 +2558,7 @@ void make_normal_effects( NormOperator **nop, Operator *op ) {
 	    }
 	    tmp_ef->num_conditions++;
 	  }
-	} else {
+	} else { /* ww->coonective != AND */
 	  tmp_ef->conditions = ( Fact * ) calloc( 1, sizeof( Fact ) );
 	  tmp_ft = &(tmp_ef->conditions[0]);
 	  tmp_ft->predicate = ww->fact->predicate;
@@ -2563,9 +2567,10 @@ void make_normal_effects( NormOperator **nop, Operator *op ) {
 	    tmp_ft->args[j] = ww->fact->args[j];
 	  }
 	  tmp_ef->num_conditions = 1;
-	}
-	ma = 0;
-	md = 0;
+	}/* enfif */
+
+	ma = 0; /* add */
+	md = 0; /* delete */
 	for ( l = e->effects; l; l = l->next ) {
 	  if ( l->negated ) {
 	    md++;
@@ -2575,6 +2580,7 @@ void make_normal_effects( NormOperator **nop, Operator *op ) {
 	}
 	tmp_ef->adds = ( Fact * ) calloc( ma, sizeof( Fact ) );
 	tmp_ef->dels = ( Fact * ) calloc( md, sizeof( Fact ) );
+
 	for ( l = e->effects; l; l = l->next ) {
 	  if ( l->negated ) {
 	    tmp_ft = &(tmp_ef->dels[tmp_ef->num_dels++]);
@@ -2586,6 +2592,7 @@ void make_normal_effects( NormOperator **nop, Operator *op ) {
 	    tmp_ft->args[j] = l->fact.args[j];
 	  }
 	}
+
 	tmp_ef->next = (*nop)->effects;
 	if ( (*nop)->effects ) {
 	  (*nop)->effects->prev = tmp_ef;

@@ -466,9 +466,7 @@ NormEffect *new_NormEffect2( NormEffect *e )
 
 
 
-NormOperator *new_NormOperator( Operator *op )
-
-{
+NormOperator *new_NormOperator( Operator *op ) {
 
   int i;
 
