@@ -98,7 +98,7 @@ Bool	ff.h	/^typedef unsigned char Bool;$/;"	t
 BSITUATION_TOK	scan-fct_pddl.tab.c	/^     BSITUATION_TOK = 261,$/;"	e	enum:yytokentype	file:
 build_action_group	fip.c	/^void build_action_group( void ){$/;"	f
 build_connectivity_graph	inst_final.c	/^void build_connectivity_graph( void )$/;"	f
-build_easy_action_templates	inst_easy.c	/^void build_easy_action_templates( void )$/;"	f
+build_easy_action_templates	inst_easy.c	/^void build_easy_action_templates( void ) {$/;"	f
 build_False_set	orderings.c	/^void build_False_set( int ft ) {$/;"	f
 build_fixpoint	relax.c	/^int build_fixpoint( State *S ) {$/;"	f
 build_goal_agenda	orderings.c	/^void build_goal_agenda( void )$/;"	f
@@ -110,7 +110,7 @@ ch	ff.h	/^  Bool ch;$/;"	m	struct:_EfConn
 ch	ff.h	/^  Bool ch;$/;"	m	struct:_FtConn
 check_parents	fip.c	/^Bool check_parents(State *cS, StateActionPair *ptr){$/;"	f
 CHECK_PTR	ff.h	305;"	d
-cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void )$/;"	f
+cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void ) {$/;"	f
 cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void )$/;"	f
 cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w ) {$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
@@ -796,7 +796,7 @@ new_Literal	memory.c	/^Literal *new_Literal( void ) $/;"	f
 new_MixedOperator	memory.c	/^MixedOperator *new_MixedOperator( Operator *op )$/;"	f
 new_NormEffect1	memory.c	/^NormEffect *new_NormEffect1( Effect *e ) {$/;"	f
 new_NormEffect2	memory.c	/^NormEffect *new_NormEffect2( NormEffect *e )$/;"	f
-new_NormOperator	memory.c	/^NormOperator *new_NormOperator( Operator *op )$/;"	f
+new_NormOperator	memory.c	/^NormOperator *new_NormOperator( Operator *op ) {$/;"	f
 new_Operator	memory.c	/^Operator *new_Operator( char *name, int norp )$/;"	f
 new_PlanHashEntry	memory.c	/^PlanHashEntry *new_PlanHashEntry( void )$/;"	f
 new_PlanNode	memory.c	/^PlanNode* new_PlanNode( void ){$/;"	f
@@ -1073,8 +1073,9 @@ RELAXED_STEPS_DEFAULT	ff.h	163;"	d
 removed	ff.h	/^  Bool removed;$/;"	m	struct:_EfConn
 removed	ff.h	/^  Bool removed[MAX_VARS];$/;"	m	struct:_Operator
 removed_vars	ff.h	/^  int removed_vars[MAX_VARS], num_removed_vars, type_removed_vars[MAX_VARS];$/;"	m	struct:_NormOperator
-remove_unused_easy_effect_parameters	inst_easy.c	/^void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )$/;"	f
-remove_unused_easy_parameters	inst_easy.c	/^void remove_unused_easy_parameters( void )$/;"	f
+remove_unused_easy_effect_parameters	inst_easy.c	/^void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e ) {$/;"	f
+remove_unused_easy_parameters	inst_easy.c	/^void remove_unused_easy_parameters( void ) {$/;"	f
+remove_unused_easy_parameters_for_mutliple_purpose	inst_easy.c	/^ 330 void remove_unused_easy_parameters_for_mutliple_purpose ( void ) {$/;"	f
 remove_unused_vars_in_wff	inst_pre.c	/^void remove_unused_vars_in_wff( WffNode **w ) {$/;"	f
 replace_not_p_with_n_in_wff	inst_pre.c	/^void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {$/;"	f
 REQUIREMENTS_TOK	scan-mul_pddl.tab.c	/^     REQUIREMENTS_TOK = 260,$/;"	e	enum:yytokentype	file:

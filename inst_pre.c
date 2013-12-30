@@ -2408,12 +2408,12 @@ void split_domain( void ) {
           tmp_op->num_preconds = 1;
         } /* endelse: ww->connective != AND */
 
-        make_normal_effects( &tmp_op, goperators[i] );
-        geasy_operators[gnum_easy_operators++] = tmp_op;
+        make_normal_effects( &tmp_op, gadd_operators[i] );
+        gadd_easy_operators[gadd_num_easy_operators++] = tmp_op;
       } /* endfor: w->sons */
       break; /*end:case OR*/
-    case AND:
-      tmp_op = new_NormOperator( goperators[i] );
+    case AND: /* preconditon is AND */
+      tmp_op = new_NormOperator( gadd_operators[i] );
       m = 0;
       for ( ww = w->sons; ww; ww = ww->next ) m++;
       /* m is the number of sons */
@@ -2427,36 +2427,36 @@ void split_domain( void ) {
         }
         tmp_op->num_preconds++;
       }
-      make_normal_effects( &tmp_op, goperators[i] );
-      geasy_operators[gnum_easy_operators++] = tmp_op;
+      make_normal_effects( &tmp_op, gadd_operators[i] );
+      gadd_easy_operators[gadd_num_easy_operators++] = tmp_op;
       break;
     case NOT:
-2315     case ATOM:
-2316       tmp_op = new_NormOperator( goperators[i] );
-2317       tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
-2318       tmp_ft = &(tmp_op->preconds[0]);
-2319       tmp_ft->predicate = w->fact->predicate;
-2320       a = garity[tmp_ft->predicate];
-2321       for ( j = 0; j < a; j++ ) {
-2322         tmp_ft->args[j] = w->fact->args[j];
-2323       }
-2324       tmp_op->num_preconds = 1;
-2325       make_normal_effects( &tmp_op, goperators[i] );
-2326       geasy_operators[gnum_easy_operators++] = tmp_op;
-2327       break;
-2328     case TRU:
-2329       tmp_op = new_NormOperator( goperators[i] );
-2330       make_normal_effects( &tmp_op, goperators[i] );
-2331       geasy_operators[gnum_easy_operators++] = tmp_op;
-2332       break;
-2333     case FAL:
-2334       break;
-2335     default:
-2336       printf("\nwon't get here: non OR, AND, ATOM, TRUE, FALSE in dnf. debug me\n\n");
-2337       exit( 1 );
-2338     }
-2339   }
-
+    case ATOM:
+      tmp_op = new_NormOperator( gadd_operators[i] );
+      tmp_op->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
+      tmp_ft = &(tmp_op->preconds[0]);
+      /* tmp_ft is the precondition */
+      tmp_ft->predicate = w->fact->predicate;
+      a = garity[tmp_ft->predicate];
+      for ( j = 0; j < a; j++ ) {
+        tmp_ft->args[j] = w->fact->args[j];
+      }
+      tmp_op->num_preconds = 1;
+      make_normal_effects( &tmp_op, gadd_operators[i] );
+      gadd_easy_operators[gadd_num_easy_operators++] = tmp_op;
+      break;
+    case TRU:
+      tmp_op = new_NormOperator( gadd_operators[i] );
+      make_normal_effects( &tmp_op, gadd_operators[i] );
+      gadd_easy_operators[gadd_num_easy_operators++] = tmp_op;
+      break;
+    case FAL:
+      break;
+    default:
+      printf("\nwon't get here: non OR, AND, ATOM, TRUE, FALSE in dnf. debug me\n\n");
+      exit( 1 );
+    }
+  }
 
   if ( gcmd_line.display_info == 109 ) {
     printf("\n\nsplitted operators are:\n");
@@ -2470,6 +2470,19 @@ void split_domain( void ) {
     for ( i = 0; i < gnum_hard_operators; i++ ) {
       print_Operator( ghard_operators[i] );
     }
+
+    printf("splitted additional operators are:\n");
+
+    printf("\nEASY:\n");
+    for ( i = 0; i< gadd_num_easy_operators; i++) {
+      print_NormOperator( gadd_easy_operators[i] );
+    }
+
+    printf("\n\n\nHARD:\n");
+    for ( i = 0; i < gadd_num_hard_operators; i++ ) {
+      print_Operator( gadd_hard_operators[i] );
+    }
+
   } 
 
 }

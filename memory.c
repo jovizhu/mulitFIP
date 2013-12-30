@@ -465,7 +465,7 @@ NormEffect *new_NormEffect2( NormEffect *e )
 }
 
 
-
+/* new operators with same var_byptes */
 NormOperator *new_NormOperator( Operator *op ) {
 
   int i;
@@ -828,11 +828,8 @@ void free_WffNode( WffNode *w )
 
 }
 
-
-
-void free_NormEffect( NormEffect *e )
-
-{
+/* jovi: can be used by multiple and single purpose planner */
+void free_NormEffect( NormEffect *e ) {
 
   if ( e ) {
     free_NormEffect( e->next );
@@ -869,10 +866,8 @@ void free_partial_Effect( Effect *e )
 }
 
 
-
-void free_NormOperator( NormOperator *o )
-
-{
+/* jovi: can be used for both single and multiple purpose planner */
+void free_NormOperator( NormOperator *o ) {
 
   if ( o ) {
 

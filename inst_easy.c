@@ -77,9 +77,7 @@
 
 
 
-void build_easy_action_templates( void )
-
-{
+void build_easy_action_templates( void ) {
 
   int i, j;
   NormOperator *o;
@@ -163,20 +161,7 @@ void build_easy_action_templates( void )
 /*********************************
  * EASY DOMAIN CLEANUP FUNCTIONs *
  *********************************/
-
-
-
-
-
-
-
-
-
-
-
-void cleanup_easy_domain( void )
-
-{
+void cleanup_easy_domain( void ) {
 
   int i, i1, i2, i3, i4, a;
   NormOperator *o;
@@ -341,10 +326,11 @@ Bool identical_fact( Fact *f1, Fact *f2 )
 } 
 
 
-
-void remove_unused_easy_parameters( void )
-
-{
+/* jovi: this is only for single purpose operators
+ * remove_unused_easy_parameters_for_mulitple_purpose 
+ * is designed for multiple purpose
+ */
+void remove_unused_easy_parameters( void ) {
 
   int i, i1, i2, i3, a;
   NormEffect *e;
@@ -352,6 +338,7 @@ void remove_unused_easy_parameters( void )
   NormOperator *o;
 
   for ( i = 0; i < gnum_easy_operators; i++ ) {
+
     o = geasy_operators[i];
     for ( i1 = 0; i1 < MAX_VARS; i1++ ) {
       used[i1] = FALSE;
@@ -359,6 +346,7 @@ void remove_unused_easy_parameters( void )
     
     for ( i1 = 0; i1 < o->num_preconds; i1++ ) {
       for ( i2 = 0; i2 < garity[o->preconds[i1].predicate]; i2++ ) {
+        /* only works on negative args */
 	if ( o->preconds[i1].args[i2] < 0 ) {
 	  used[DECODE_VAR( o->preconds[i1].args[i2] )] = TRUE;
 	}
@@ -374,6 +362,7 @@ void remove_unused_easy_parameters( void )
 	  }
 	}
       }
+
       for ( i1 = 0; i1 < e->num_adds; i1++ ) {
 	for ( i2 = 0; i2 < garity[e->adds[i1].predicate]; i2++ ) {
 	  if ( e->adds[i1].args[i2] < 0 ) {
@@ -381,6 +370,7 @@ void remove_unused_easy_parameters( void )
 	  }
 	}
       }
+
       for ( i1 = 0; i1 < e->num_dels; i1++ ) {
 	for ( i2 = 0; i2 < garity[e->dels[i1].predicate]; i2++ ) {
 	  if ( e->dels[i1].args[i2] < 0 ) {
@@ -411,6 +401,80 @@ void remove_unused_easy_parameters( void )
   }
 
 }
+
+ /* jovi: remove unused for additional operators */
+void remove_unused_easy_parameters_for_mutliple_purpose ( void ) {
+
+  int i, i1, i2, i3, a;
+  NormEffect *e;
+  Bool used[MAX_VARS];
+  NormOperator *o;
+
+  for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+
+    o = gadd_easy_operators[i];
+    for ( i1 = 0; i1 < MAX_VARS; i1++ ) {
+      used[i1] = FALSE;
+    }
+
+    for ( i1 = 0; i1 < o->num_preconds; i1++ ) {
+      for ( i2 = 0; i2 < garity[o->preconds[i1].predicate]; i2++ ) {
+        /* only works on negative args */
+        if ( o->preconds[i1].args[i2] < 0 ) {
+          used[DECODE_VAR( o->preconds[i1].args[i2] )] = TRUE;
+        }
+      }
+    }
+
+    for ( e = o->effects; e; e = e->next ) {
+      for ( i1 = 0; i1 < e->num_conditions; i1++ ) {
+        a = garity[e->conditions[i1].predicate];
+        for ( i2 = 0; i2 < a; i2++ ) {
+          if ( e->conditions[i1].args[i2] < 0 ) {
+            used[DECODE_VAR( e->conditions[i1].args[i2])] = TRUE;
+          }
+        }
+      }
+
+      for ( i1 = 0; i1 < e->num_adds; i1++ ) {
+        for ( i2 = 0; i2 < garity[e->adds[i1].predicate]; i2++ ) {
+          if ( e->adds[i1].args[i2] < 0 ) {
+            used[DECODE_VAR( e->adds[i1].args[i2])] = TRUE;
+          }
+        }
+      }
+
+      for ( i1 = 0; i1 < e->num_dels; i1++ ) {
+        for ( i2 = 0; i2 < garity[e->dels[i1].predicate]; i2++ ) {
+          if ( e->dels[i1].args[i2] < 0 ) {
+            used[DECODE_VAR( e->dels[i1].args[i2])] = TRUE;
+          }
+        }
+      }
+
+      remove_unused_easy_effect_parameters( o, e );
+    }
+
+    i1 = 0;
+    i3 = 0;
+    while ( i1 < o->num_vars ) {
+      if ( used[i1] ) {
+        i1++;
+      } else { /* used[i1] == FALSE */
+        o->type_removed_vars[o->num_removed_vars] = o->var_types[i1];
+        for ( i2 = i1; i2 < o->num_vars-1; i2++ ) {
+          o->var_types[i2] = o->var_types[i2+1];
+          used[i2] = used[i2+1];
+        }
+        decrement_var_entries( o, i1 );
+        o->num_vars--;
+        o->removed_vars[o->num_removed_vars++] = i3;
+      }
+      i3++;
+    }
+  }
+}
+
 
 
 
@@ -457,10 +521,8 @@ void decrement_var_entries( NormOperator *o, int start )
 }
 
 
-
-void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
-
-{
+/* jovi: can be used for multiple purpose */
+void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e ) {
 
   Bool used[MAX_VARS];
   int i1, i2, i, j, v, a;
@@ -468,6 +530,7 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
   for ( i1 = 0; i1 < MAX_VARS; i1++ ) {
     used[i1] = FALSE;
   }  
+
   for ( i1 = 0; i1 < e->num_conditions; i1++ ) {
     a = garity[e->conditions[i1].predicate];
     for ( i2 = 0; i2 < a; i2++ ) {
@@ -476,6 +539,7 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
       }
     }
   }
+
   for ( i1 = 0; i1 < e->num_adds; i1++ ) {
     for ( i2 = 0; i2 < garity[e->adds[i1].predicate]; i2++ ) {
       if ( e->adds[i1].args[i2] < 0 ) {
@@ -483,6 +547,7 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
       }
     }
   }
+
   for ( i1 = 0; i1 < e->num_dels; i1++ ) {
     for ( i2 = 0; i2 < garity[e->dels[i1].predicate]; i2++ ) {
       if ( e->dels[i1].args[i2] < 0 ) {
@@ -497,6 +562,8 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
     if ( used[v] ) {
       i1++;
     } else {
+      /* move forward for each var */
+      /* remove unused */
       for ( i2 = i1; i2 < e->num_vars-1; i2++ ) {
 	e->var_types[i2] = e->var_types[i2+1];
 	used[o->num_vars+i2] = used[o->num_vars+i2+1];
@@ -511,6 +578,7 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
 	  }
 	}
       }
+
       for ( i = 0; i < e->num_adds; i++ ) {
 	for ( j = 0; j < garity[e->adds[i].predicate]; j++ ) {
 	  if ( e->adds[i].args[j] < ENCODE_VAR( v ) ) {
@@ -537,9 +605,7 @@ void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e )
  * are already recognised during translation, except the artificial ones,
  * of course.
  */
-void handle_empty_easy_parameters( void )
-
-{
+void handle_empty_easy_parameters( void ) {
 
   int i, j, k;
   NormOperator *o;
@@ -594,6 +660,69 @@ void handle_empty_easy_parameters( void )
   }
 
 }
+
+
+/* this one needs ONLY be used after unaries encoding, as all empty types
+ * are already recognised during translation, except the artificial ones,
+ * of course.
+ */
+ 608 void handle_empty_easy_parameters( void ) {
+ 609 
+ 610   int i, j, k;
+ 611   NormOperator *o;
+ 612   NormEffect *e, *tmp;
+ 613 
+ 614   i = 0;
+ 615   while ( i < gadd_num_easy_operators ) {
+ 616     o = gadd_easy_operators[i];
+ 617 
+ 618     for ( j = 0; j < o->num_vars; j++ ) {
+ 619       if ( gtype_size[o->var_types[j]] == 0 ) {
+	   /* this parameter is empty */
+ 620         break;
+ 621       }
+ 622     }
+
+ 623     if ( j < o->num_vars ) { /* empty vars */
+ 624       free_NormOperator( o );
+ 625       for ( k = i; k < gadd_num_easy_operators - 1; k++ ) {
+ 626         gadd_easy_operators[k] = gadd_easy_operators[k+1];
+ 627       }
+ 628       gadd_num_easy_operators--;
+ 629     } else { /* not empty vars */
+ 630       i++;
+ 631     }
+ 632   }
+ 633 
+ 634   for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+ 635     o = geasy_operators[i];
+ 636 
+ 637     e = o->effects;
+ 638     while ( e ) {
+ 639       for ( j = 0; j < e->num_vars; j++ ) {
+ 640         if ( gtype_size[e->var_types[j]] == 0 ) {
+ 641           break;
+ 642         }
+ 643       }
+ 644       if ( j < e->num_vars ) {
+ 645         if ( e->prev ) {
+ 646           e->prev->next = e->next;
+ 647         } else {
+ 648           o->effects = e->next;
+ 649         }
+ 650         if ( e->next ) {
+ 651           e->next->prev = e->prev;
+ 652         }
+ 653         tmp = e->next;
+ 654         free_single_NormEffect( e );
+ 655         e = tmp;
+ 656       } else {
+ 657         e = e->next;
+ 658       }
+ 659     }
+ 660   }
+ 661 
+ 662 }
 
 
 
