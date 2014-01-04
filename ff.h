@@ -677,10 +677,6 @@ typedef struct _Operator {
 /* second step: structures that keep already normalized
  * operators
  */
-
-
-
-
 typedef struct _NormEffect {
 
   int num_vars, var_types[MAX_VARS];

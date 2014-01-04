@@ -111,6 +111,7 @@ ch	ff.h	/^  Bool ch;$/;"	m	struct:_FtConn
 check_parents	fip.c	/^Bool check_parents(State *cS, StateActionPair *ptr){$/;"	f
 CHECK_PTR	ff.h	305;"	d
 cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void ) {$/;"	f
+cleanup_easy_domain_for_multiple_purpose	inst_easy.c	/^void cleanup_easy_domain_for_multiple_purpose ( void ) {$/;"	f
 cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void )$/;"	f
 cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w ) {$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
@@ -153,7 +154,7 @@ create_final_initial_state	inst_final.c	/^void create_final_initial_state( void 
 create_hard_mixed_operators	inst_hard.c	/^void create_hard_mixed_operators( Operator *o, int curr_var )$/;"	f
 create_hard_pseudo_effects	inst_hard.c	/^void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var )$/;"	f
 create_integer_representation	inst_pre.c	/^void create_integer_representation( void ) {$/;"	f
-create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T )$/;"	f
+create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T ) {$/;"	f
 create_member_nrs	inst_pre.c	/^void create_member_nrs( void ) {$/;"	f
 D	ff.h	/^  int *D;$/;"	m	struct:_EfConn
 D	ff.h	/^  int *D;$/;"	m	struct:_FtConn
@@ -229,7 +230,8 @@ EITHER_TOK	scan-fct_pddl.tab.c	/^     EITHER_TOK = 277,$/;"	e	enum:yytokentype	f
 EITHER_TOK	scan-mul_pddl.tab.c	/^     EITHER_TOK = 262,$/;"	e	enum:yytokentype	file:
 EITHER_TOK	scan-ops_pddl.tab.c	/^     EITHER_TOK = 262,$/;"	e	enum:yytokentype	file:
 encode_domain_in_integers	inst_pre.c	/^void encode_domain_in_integers( void ) {$/;"	f
-encode_easy_unaries_as_types	inst_easy.c	/^void encode_easy_unaries_as_types( void )$/;"	f
+encode_easy_unaries_as_types	inst_easy.c	/^void encode_easy_unaries_as_types( void ) {$/;"	f
+encode_easy_unaries_as_types_for_multiple_purpose	inst_easy.c	/^void encode_easy_unaries_as_types_for_multiple_purpose ( void ) {$/;"	f
 ENCODE_VAR	ff.h	297;"	d
 EOB_ACT_CONTINUE_SCAN	lex.fct_pddl.c	187;"	d	file:
 EOB_ACT_CONTINUE_SCAN	lex.mul_pddl.c	187;"	d	file:
@@ -312,7 +314,7 @@ ff_usage	main.c	/^void ff_usage( void ) {$/;"	f
 file	scan-fct_pddl.y	/^file:$/;"	l
 file	scan-mul_pddl.y	/^file:$/;"	l
 file	scan-ops_pddl.y	/^file:$/;"	l
-find_intersected_type	inst_easy.c	/^int find_intersected_type( TypeArray T, int num_T )$/;"	f
+find_intersected_type	inst_easy.c	/^int find_intersected_type( TypeArray T, int num_T ) {$/;"	f
 FIP_H	fip.h	4;"	d
 FLEXINT_H	lex.fct_pddl.c	48;"	d	file:
 FLEXINT_H	lex.mul_pddl.c	48;"	d	file:
@@ -363,8 +365,8 @@ FORALL_TOK	scan-fct_pddl.tab.c	/^     FORALL_TOK = 273,$/;"	e	enum:yytokentype	f
 FORALL_TOK	scan-mul_pddl.tab.c	/^     FORALL_TOK = 277,$/;"	e	enum:yytokentype	file:
 FORALL_TOK	scan-ops_pddl.tab.c	/^     FORALL_TOK = 275,$/;"	e	enum:yytokentype	file:
 free_FactList	memory.c	/^void free_FactList( FactList *source )$/;"	f
-free_NormEffect	memory.c	/^void free_NormEffect( NormEffect *e )$/;"	f
-free_NormOperator	memory.c	/^void free_NormOperator( NormOperator *o )$/;"	f
+free_NormEffect	memory.c	/^void free_NormEffect( NormEffect *e ) {$/;"	f
+free_NormOperator	memory.c	/^void free_NormOperator( NormOperator *o ) {$/;"	f
 free_Operator	memory.c	/^void free_Operator( Operator *o )$/;"	f
 free_partial_Effect	memory.c	/^void free_partial_Effect( Effect *e )$/;"	f
 free_PlNode	memory.c	/^void free_PlNode( PlNode *node )$/;"	f
@@ -501,7 +503,8 @@ gtype_to_predicate	main.c	/^int gtype_to_predicate[MAX_PREDICATES];$/;"	v
 gunsovled_states	main.c	/^StateActionPair *gunsovled_states = NULL;$/;"	v
 g_is_strong	main.c	/^Bool g_is_strong = FALSE;$/;"	v
 h	ff.h	/^  int h;$/;"	m	struct:_BfsNode
-handle_empty_easy_parameters	inst_easy.c	/^void handle_empty_easy_parameters( void )$/;"	f
+handle_empty_easy_parameters	inst_easy.c	/^void handle_empty_easy_parameters( void ) {$/;"	f
+handle_empty_easy_parameters_for_multiple_purpose	inst_easy.c	/^void handle_empty_easy_parameters_for_multiple_purpose ( void ) {$/;"	f
 hard	ff.h	/^  Bool hard;$/;"	m	struct:_Operator
 hash_bfs_node	search.c	/^void hash_bfs_node( BfsNode *n )$/;"	f
 hash_ehc_node	search.c	/^void hash_ehc_node( EhcNode *n ) {$/;"	f
@@ -511,7 +514,7 @@ highest_seen	relax.c	/^static int highest_seen;$/;"	v	file:
 I	ff.h	/^  int *I;$/;"	m	struct:_EfConn
 id	fip.h	/^	int	id;				\/* state id, useful for plan printing *\/$/;"	m	struct:_StateActionPair
 id	fip.h	/^	int	id;$/;"	m	struct:_PlanNode
-identical_fact	inst_easy.c	/^Bool identical_fact( Fact *f1, Fact *f2 )$/;"	f
+identical_fact	inst_easy.c	/^Bool identical_fact( Fact *f1, Fact *f2 ) {$/;"	f
 IMPLIES_TOK	scan-mul_pddl.tab.c	/^     IMPLIES_TOK = 267,$/;"	e	enum:yytokentype	file:
 IMPLIES_TOK	scan-ops_pddl.tab.c	/^     IMPLIES_TOK = 267,$/;"	e	enum:yytokentype	file:
 IMPLY_TOK	scan-fct_pddl.tab.c	/^     IMPLY_TOK = 274,$/;"	e	enum:yytokentype	file:
@@ -586,6 +589,13 @@ l0P_E	relax.c	/^int *l0P_E;$/;"	v
 LABEL_STR	fip.c	13;"	d	file:
 label_unsolved_state	fip.c	/^void label_unsolved_state(State *dest, State *source){$/;"	f
 lActionGroup	fip.c	/^ActionGroup lActionGroup[MAX_ACTIONGROUP];$/;"	v
+ladd_e	inst_easy.c	/^NormEffect *ladd_e;$/;"	v
+ladd_inertia_conds	inst_easy.c	/^int ladd_inertia_conds[MAX_VARS];$/;"	v
+ladd_multiply_parameters	inst_easy.c	/^int ladd_multiply_parameters[MAX_VARS];$/;"	v
+ladd_num_inertia_conds	inst_easy.c	/^int ladd_num_inertia_conds;$/;"	v
+ladd_num_multiply_parameters	inst_easy.c	/^int ladd_num_multiply_parameters;$/;"	v
+ladd_o	inst_easy.c	/^NormOperator *ladd_o;$/;"	v
+ladd_res	inst_easy.c	/^NormEffect *ladd_res;$/;"	v
 largs	inst_final.c	/^int largs[MAX_VARS];$/;"	v
 lbfs_hash_entry	search.c	/^BfsHashEntry_pointer lbfs_hash_entry[BFS_HASH_SIZE];$/;"	v
 lbfs_space_had	search.c	/^BfsNode *lbfs_space_head, *lbfs_space_had;$/;"	v
@@ -673,11 +683,11 @@ main	main.c	/^int main( int argc, char *argv[] ) {$/;"	f
 make_adl_domain	parse.c	/^Bool make_adl_domain( void ) {$/;"	f
 make_conjunction_of_atoms	parse.c	/^Bool make_conjunction_of_atoms( PlNode **n ) {$/;"	f
 make_conjunction_of_literals	parse.c	/^Bool make_conjunction_of_literals( PlNode **n )$/;"	f
-make_effect	inst_pre.c	/^Effect *make_effect( PlNode *p, int num_vars )$/;"	f
+make_effect	inst_pre.c	/^Effect *make_effect( PlNode *p, int num_vars ) {$/;"	f
 make_effects	parse.c	/^Bool make_effects( PlNode **n )$/;"	f
 make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl ) {$/;"	f
 make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n ) {$/;"	f
-make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars )$/;"	f
+make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars ) {$/;"	f
 make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll )$/;"	f
 make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
 make_name_inst_table_from_PseudoAction	inst_final.c	/^void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )$/;"	f
@@ -709,8 +719,9 @@ merge_next_step_ANDs_and_ORs_in_wff	inst_pre.c	/^void merge_next_step_ANDs_and_O
 MixedOperator	ff.h	/^} MixedOperator;$/;"	t	typeref:struct:_MixedOperator
 mulerr	scan-mul_pddl.tab.c	/^void mulerr( int errno, char *par ) {$/;"	f
 multigoal_definition	scan-mul_pddl.y	/^multigoal_definition : $/;"	l
-multiply_easy_effect_parameters	inst_easy.c	/^void multiply_easy_effect_parameters( void )$/;"	f
-multiply_easy_non_constrained_effect_parameters	inst_easy.c	/^void multiply_easy_non_constrained_effect_parameters( int curr_parameter )$/;"	f
+multiply_easy_effect_parameters	inst_easy.c	/^void multiply_easy_effect_parameters( void ) {$/;"	f
+multiply_easy_effect_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {$/;"	f
+multiply_easy_non_constrained_effect_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int curr_parameter ) {$/;"	f
 multiply_easy_non_constrained_op_parameters	inst_easy.c	/^void multiply_easy_non_constrained_op_parameters( int curr_parameter )$/;"	f
 multiply_easy_op_parameters	inst_easy.c	/^void multiply_easy_op_parameters( void )$/;"	f
 multiply_hard_effect_parameters	inst_hard.c	/^void multiply_hard_effect_parameters( void )$/;"	f
@@ -1075,7 +1086,7 @@ removed	ff.h	/^  Bool removed[MAX_VARS];$/;"	m	struct:_Operator
 removed_vars	ff.h	/^  int removed_vars[MAX_VARS], num_removed_vars, type_removed_vars[MAX_VARS];$/;"	m	struct:_NormOperator
 remove_unused_easy_effect_parameters	inst_easy.c	/^void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e ) {$/;"	f
 remove_unused_easy_parameters	inst_easy.c	/^void remove_unused_easy_parameters( void ) {$/;"	f
-remove_unused_easy_parameters_for_mutliple_purpose	inst_easy.c	/^ 330 void remove_unused_easy_parameters_for_mutliple_purpose ( void ) {$/;"	f
+remove_unused_easy_parameters_for_multiple_purpose	inst_easy.c	/^void remove_unused_easy_parameters_for_multiple_purpose ( void ) {$/;"	f
 remove_unused_vars_in_wff	inst_pre.c	/^void remove_unused_vars_in_wff( WffNode **w ) {$/;"	f
 replace_not_p_with_n_in_wff	inst_pre.c	/^void replace_not_p_with_n_in_wff( int p, int n, WffNode **w ) {$/;"	f
 REQUIREMENTS_TOK	scan-mul_pddl.tab.c	/^     REQUIREMENTS_TOK = 260,$/;"	e	enum:yytokentype	file:
@@ -1202,7 +1213,8 @@ UINT32_MAX	lex.ops_pddl.c	102;"	d	file:
 UINT8_MAX	lex.fct_pddl.c	96;"	d	file:
 UINT8_MAX	lex.mul_pddl.c	96;"	d	file:
 UINT8_MAX	lex.ops_pddl.c	96;"	d	file:
-unify_easy_inertia_conditions	inst_easy.c	/^void unify_easy_inertia_conditions( int curr_inertia )$/;"	f
+unify_easy_inertia_conditions	inst_easy.c	/^void unify_easy_inertia_conditions( int curr_inertia ) {$/;"	f
+unify_easy_inertia_conditions_for_multiple_purpose	inst_easy.c	/^void unify_easy_inertia_conditions_for_multiple_purpose( int curr_inertia ) {$/;"	f
 unify_easy_inertia_preconds	inst_easy.c	/^void unify_easy_inertia_preconds( int curr_inertia )$/;"	f
 unput	lex.fct_pddl.c	207;"	d	file:
 unput	lex.mul_pddl.c	207;"	d	file:

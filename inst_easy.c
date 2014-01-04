@@ -148,16 +148,6 @@ void build_easy_action_templates( void ) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
 /*********************************
  * EASY DOMAIN CLEANUP FUNCTIONs *
  *********************************/
@@ -302,13 +292,166 @@ void cleanup_easy_domain( void ) {
 }
 
 
+/*************************************
+ * jovi: added for multiple purposes *
+ * EASY DOMAIN CLEANUP FUNCTIONs     *
+ *************************************/
+void cleanup_easy_domain_for_multiple_purpose ( void ) {
 
-Bool identical_fact( Fact *f1, Fact *f2 )
+  int i, i1, i2, i3, i4, a;
+  NormOperator *o;
+  NormEffect *e;
 
-{
+  /* unused params can result from unary encoding;
+   * that's why we have an extra function here
+   */
+  remove_unused_easy_parameters_for_multiple_purpose();
+
+
+  /* most likely ( for sure ? ) we do not need this function call here,
+   * as empty types are recognised in translation already.
+   *
+   * however, who knows .. ? doesn't need any real computation time anyway.
+   *
+   * function DOES make sense after unaries encoding, as artificial types
+   * might well be empty.
+   */
+  handle_empty_easy_parameters_for_multiple_purpose();
+
+
+  /* remove identical preconds and effects;
+   * VERY unlikely that such will get down to here, after all
+   * the formula preprocessing, but possible (?) in principle.
+   * takes no computation time.
+   *
+   * also, remove effect conditions that are contained in the 
+   * preconditions.
+   */
+  for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+    o = gadd_easy_operators[i];
+
+    /* remvoe the indential preconditons */
+    i1 = 0;
+    while ( i1 < o->num_preconds-1 ) {
+      i2 = i1+1;
+      while ( i2 < o->num_preconds ) {
+	if ( identical_fact( &(o->preconds[i1]), &(o->preconds[i2]) ) ) {
+        /* if i2 and i1 has same preconds, delete i2 */
+	  for ( i3 = i2; i3 < o->num_preconds-1; i3++ ) {
+	    o->preconds[i3].predicate = o->preconds[i3+1].predicate;
+            /* accordingly, move forward each args */
+	    for ( i4 = 0; i4 < garity[o->preconds[i3].predicate]; i4++ ) {
+	      o->preconds[i3].args[i4] = o->preconds[i3+1].args[i4];
+	    }
+	  }
+	  o->num_preconds--;
+	} else {
+	  i2++;
+	}
+      }
+      i1++;
+    }
+    
+    /* remove indential effects */
+    for ( e = o->effects; e; e = e->next ) {
+      i1 = 0;
+      while ( i1 < e->num_conditions-1 ) {
+	i2 = i1+1;
+	while ( i2 < e->num_conditions ) {
+	  if ( identical_fact( &(e->conditions[i1]), &(e->conditions[i2]) ) ) {
+	    /* remove the euqal one */
+	    for ( i3 = i2; i3 < e->num_conditions-1; i3++ ) {
+	      e->conditions[i3].predicate = e->conditions[i3+1].predicate;
+	      /* here, we can still have equalities. nowhere else.
+	       */
+	      a = ( e->conditions[i3].predicate < 0 ) ? 
+		2 : garity[e->conditions[i3].predicate];
+	      for ( i4 = 0; i4 < a; i4++ ) {
+		e->conditions[i3].args[i4] = e->conditions[i3+1].args[i4];
+	      }
+	    }
+	    e->num_conditions--;
+	  } else {
+	    i2++;
+	  }
+	}
+	i1++;
+      }
+
+      /* conditon vs precondition */
+      i1 = 0;
+      while ( i1 < e->num_conditions ) {
+
+	for ( i2 = 0; i2 < o->num_preconds; i2++ ) {
+	  if ( identical_fact( &(e->conditions[i1]), &(o->preconds[i2]) ) ) {
+	    break;
+	  }
+	}
+
+	if ( i2 == o->num_preconds ) {
+	  i1++;
+	  continue;
+	}
+        /* if condtion == preconditon, remove condition */
+	for ( i2 = i1; i2 < e->num_conditions-1; i2++ ) {
+	  e->conditions[i2].predicate = e->conditions[i2+1].predicate;
+	  for ( i3 = 0; i3 < garity[e->conditions[i2].predicate]; i3++ ) {
+	    e->conditions[i2].args[i3] = e->conditions[i2+1].args[i3];
+	  }
+	}
+	e->num_conditions--;
+      }  
+      
+      /* check num_adds */
+      i1 = 0;
+      while ( i1 < e->num_adds-1 ) {
+	i2 = i1+1;
+	while ( i2 < e->num_adds ) {
+	  if ( identical_fact( &(e->adds[i1]), &(e->adds[i2]) ) ) {
+	    for ( i3 = i2; i3 < e->num_adds-1; i3++ ) {
+	      e->adds[i3].predicate = e->adds[i3+1].predicate;
+	      for ( i4 = 0; i4 < garity[e->adds[i3].predicate]; i4++ ) {
+		e->adds[i3].args[i4] = e->adds[i3+1].args[i4];
+	      }
+	    }
+	    e->num_adds--;
+	  } else {
+	    i2++;
+	  }
+	}
+	i1++;
+      }
+
+      /* check num_dels */
+      i1 = 0;
+      while ( i1 < e->num_dels-1 ) {
+	i2 = i1+1;
+	while ( i2 < e->num_dels ) {
+	  if ( identical_fact( &(e->dels[i1]), &(e->dels[i2]) ) ) {
+	    for ( i3 = i2; i3 < e->num_dels-1; i3++ ) {
+	      e->dels[i3].predicate = e->dels[i3+1].predicate;
+	      for ( i4 = 0; i4 < garity[e->dels[i3].predicate]; i4++ ) {
+		e->dels[i3].args[i4] = e->dels[i3+1].args[i4];
+	      }
+	    }
+	    e->num_dels--;
+	  } else {
+	    i2++;
+	  }
+	}
+	i1++;
+      }
+    }
+  }
+
+}
+
+/* jovi: check f1 f2 has the same predicate */
+Bool identical_fact( Fact *f1, Fact *f2 ) {
 
   int i, a;
 
+  /* int predicate */
   if ( f1->predicate != f2->predicate ) {
     return FALSE;
   }
@@ -403,7 +546,7 @@ void remove_unused_easy_parameters( void ) {
 }
 
  /* jovi: remove unused for additional operators */
-void remove_unused_easy_parameters_for_mutliple_purpose ( void ) {
+void remove_unused_easy_parameters_for_multiple_purpose ( void ) {
 
   int i, i1, i2, i3, a;
   NormEffect *e;
@@ -661,96 +804,78 @@ void handle_empty_easy_parameters( void ) {
 
 }
 
-
+/* jovi: added to support multiple purposes planning*/
 /* this one needs ONLY be used after unaries encoding, as all empty types
  * are already recognised during translation, except the artificial ones,
  * of course.
  */
- 608 void handle_empty_easy_parameters( void ) {
- 609 
- 610   int i, j, k;
- 611   NormOperator *o;
- 612   NormEffect *e, *tmp;
- 613 
- 614   i = 0;
- 615   while ( i < gadd_num_easy_operators ) {
- 616     o = gadd_easy_operators[i];
- 617 
- 618     for ( j = 0; j < o->num_vars; j++ ) {
- 619       if ( gtype_size[o->var_types[j]] == 0 ) {
-	   /* this parameter is empty */
- 620         break;
- 621       }
- 622     }
+void handle_empty_easy_parameters_for_multiple_purpose ( void ) {
 
- 623     if ( j < o->num_vars ) { /* empty vars */
- 624       free_NormOperator( o );
- 625       for ( k = i; k < gadd_num_easy_operators - 1; k++ ) {
- 626         gadd_easy_operators[k] = gadd_easy_operators[k+1];
- 627       }
- 628       gadd_num_easy_operators--;
- 629     } else { /* not empty vars */
- 630       i++;
- 631     }
- 632   }
- 633 
- 634   for ( i = 0; i < gadd_num_easy_operators; i++ ) {
- 635     o = geasy_operators[i];
- 636 
- 637     e = o->effects;
- 638     while ( e ) {
- 639       for ( j = 0; j < e->num_vars; j++ ) {
- 640         if ( gtype_size[e->var_types[j]] == 0 ) {
- 641           break;
- 642         }
- 643       }
- 644       if ( j < e->num_vars ) {
- 645         if ( e->prev ) {
- 646           e->prev->next = e->next;
- 647         } else {
- 648           o->effects = e->next;
- 649         }
- 650         if ( e->next ) {
- 651           e->next->prev = e->prev;
- 652         }
- 653         tmp = e->next;
- 654         free_single_NormEffect( e );
- 655         e = tmp;
- 656       } else {
- 657         e = e->next;
- 658       }
- 659     }
- 660   }
- 661 
- 662 }
+  int i, j, k;
+  NormOperator *o;
+  NormEffect *e, *tmp;
 
+  i = 0;
+  while ( i < gadd_num_easy_operators ) {
+    o = gadd_easy_operators[i];
 
+    for ( j = 0; j < o->num_vars; j++ ) {
+      if ( gtype_size[o->var_types[j]] == 0 ) {
+      /* this parameter is empty */
+        break;
+      }
+    }
 
+    if ( j < o->num_vars ) { /* empty vars */
+      free_NormOperator( o );
+      for ( k = i; k < gadd_num_easy_operators - 1; k++ ) {
+        gadd_easy_operators[k] = gadd_easy_operators[k+1];
+      }
+      gadd_num_easy_operators--;
+    } else { /* not empty vars */
+      i++;
+    }
+  }
 
+  for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+    o = gadd_easy_operators[i];
 
+    e = o->effects;
+    while ( e ) {
 
+      for ( j = 0; j < e->num_vars; j++ ) {
+        if ( gtype_size[e->var_types[j]] == 0 ) {
+          break;
+        }
+      }
 
+      if ( j < e->num_vars ) {
 
+        if ( e->prev ) {
+          e->prev->next = e->next;
+        } else {
+          o->effects = e->next;
+        }
 
+        if ( e->next ) {
+          e->next->prev = e->prev;
+        }
+
+        tmp = e->next;
+        free_single_NormEffect( e );
+        e = tmp;
+      } else {
+        e = e->next;
+      }
+    }
+  }
+
+}
 
 /****************************
  * UNARY INERTIA INTO TYPES *
  ****************************/
-
-
-
-
-
-
-
-
-
-
-
-
-void encode_easy_unaries_as_types( void )
-
-{
+void encode_easy_unaries_as_types( void ) {
 
   NormOperator *o;
   int i1, i, j, k, l, new_T, p, a;
@@ -890,11 +1015,162 @@ void encode_easy_unaries_as_types( void )
 
 }
 
+/************************************
+ * jovi: added for multiple purpose *
+ * UNARY INERTIA INTO TYPES         *
+ ************************************/
+void encode_easy_unaries_as_types_for_multiple_purpose ( void ) {
+
+  NormOperator *o;
+  int i1, i, j, k, l, new_T, p, a;
+  TypeArray T;
+  int num_T;
+  NormEffect *e;
+  int intersected_type, var;
+
+  for ( i1 = 0; i1 < gadd_num_easy_operators; i1++ ) {
+
+    o = gadd_easy_operators[i1];
+
+    for ( i = 0; i < o->num_vars; i++ ) {
+
+      T[0] = o->var_types[i];
+      num_T = 1;
+
+      j = 0;
+      while ( j < o->num_preconds ) {
+	p = o->preconds[j].predicate;
+        /* jovi:  not understand */
+        /* type of predicate is not null && args is ??? */
+	if ( ( (new_T = gtype_to_predicate[p]) != -1 ) && ( o->preconds[j].args[0] == ENCODE_VAR( i ) ) ) {
+
+	  if ( num_T == MAX_TYPE_INTERSECTIONS ) {
+	    printf("\nincrease MAX_TYPE_INTERSECTIONS (currently %d)\n\n",
+		   MAX_TYPE_INTERSECTIONS);
+	    exit( 1 );
+	  }
+
+	  /* insert new type number into ordered array T;
+	   * ---- all type numbers in T are different:
+	   *      new nr. is of inferred type - can't be type declared for param
+	   *      precondition facts occur at most once - doubles are removed
+	   *                                              during cleanup
+	   */
+          /* Insert new types */
+	  for ( k = 0; k < num_T; k++ ) {
+	    if ( new_T < T[k] ) { /* type is ordered */
+	      break;
+	    }
+	  }
+
+          /*insert new_T at T[k] */
+  	  for ( l = num_T; l > k; l-- ) {
+	    T[l] = T[l-1];
+	  }
+	  T[k] = new_T;
+	  num_T++;
+
+	  /* now remove superfluous precondition
+	   */
+	  for ( k = j; k < o->num_preconds-1; k++ ) {
+	    o->preconds[k].predicate = o->preconds[k+1].predicate;
+	    for ( l = 0; l < garity[o->preconds[k].predicate]; l++ ) {
+	      o->preconds[k].args[l] = o->preconds[k+1].args[l];
+	    }
+	  }
+
+	  o->num_preconds--;
+	} else {
+	  j++;
+	}
+      }
+
+      /* if we did not hit any unary inertia concerning this parameter
+       * in the preconds, skip parameter and go to next one
+       */
+      if ( num_T == 1 ) {
+	continue;
+      }
+
+      /* now we have the ordered array of types to intersect for param i 
+       * of op o in array T of size num_T;
+       * if there already is this intersected type, set type of this
+       * param to its number, otherwise create the new intersected type.
+       */
+      if ( (intersected_type = find_intersected_type( T, num_T )) != -1 ) {
+	/* type already there
+	 */
+	o->var_types[i] = intersected_type;
+	continue;
+      }
+
+      /* create new type
+       */
+      o->var_types[i] = create_intersected_type( T, num_T );
+    }
+
+    /* effects */
+    for ( e = o->effects; e; e = e->next ) {
+      for ( i = 0; i < e->num_vars; i++ ) {
+	T[0] = e->var_types[i];
+	var = o->num_vars + i;
+	num_T = 1;
+	j = 0;
+	while ( j < e->num_conditions ) {
+	  p = e->conditions[j].predicate;
+	  if ( p < 0 ) {
+	    j++;
+	    continue;
+	  }
+	  if ( ( (new_T = gtype_to_predicate[p]) != -1 ) && ( e->conditions[j].args[0] == ENCODE_VAR( var ) ) ) {
+	    if ( num_T == MAX_TYPE_INTERSECTIONS ) {
+	      printf("\nincrease MAX_TYPE_INTERSECTIONS (currently %d)\n\n",
+		     MAX_TYPE_INTERSECTIONS);
+	      exit( 1 );
+	    }
+	    for ( k = 0; k < num_T; k++ ) {
+	      if ( new_T < T[k] ) {
+		break;
+	      }
+	    }
+	    for ( l = num_T; l > k; l-- ) {
+	      T[l] = T[l-1];
+	    }
+	    T[k] = new_T;
+	    num_T++;
+	    for ( k = j; k < e->num_conditions-1; k++ ) {
+	      e->conditions[k].predicate = e->conditions[k+1].predicate;
+	      a = ( e->conditions[k].predicate < 0 ) ?
+		2 : garity[e->conditions[k].predicate];
+	      for ( l = 0; l < a; l++ ) {
+		e->conditions[k].args[l] = e->conditions[k+1].args[l];
+	      }
+	    }
+	    e->num_conditions--;
+	  } else {
+	    j++;
+	  }
+	}
+	if ( num_T == 1 ) {
+	  continue;
+	}
+	if ( (intersected_type = find_intersected_type( T, num_T )) != -1 ) {
+	  e->var_types[i] = intersected_type;
+	  continue;
+	}
+	e->var_types[i] = create_intersected_type( T, num_T );
+      }
+    }
+  }
+
+  remove_unused_easy_parameters_for_multiple_purpose();
+  handle_empty_easy_parameters_for_multiple_purpose();
+}
 
 
-int create_intersected_type( TypeArray T, int num_T )
 
-{
+
+int create_intersected_type( TypeArray T, int num_T ) {
 
   int i, j, k, intersected_type;
 
@@ -903,14 +1179,18 @@ int create_intersected_type( TypeArray T, int num_T )
 	   MAX_TYPES);
     exit( 1 );
   } 
+
   gtype_names[gnum_types] = NULL;
   gtype_size[gnum_types] = 0;
+
   for ( i = 0; i < MAX_CONSTANTS; i++ ) {
     gis_member[i][gnum_types] = FALSE;
   }
+
   for ( i = 0; i < num_T; i++ ) {
     gintersected_types[gnum_types][i] = T[i];
   }
+
   gnum_intersected_types[gnum_types] = num_T;
   intersected_type = gnum_types;
   gnum_types++;
@@ -962,9 +1242,7 @@ int create_intersected_type( TypeArray T, int num_T )
 
 
 
-int find_intersected_type( TypeArray T, int num_T )
-
-{
+int find_intersected_type( TypeArray T, int num_T ) {
 
   int i, j;
 
@@ -977,6 +1255,7 @@ int find_intersected_type( TypeArray T, int num_T )
       continue;
     }
 
+    /*gnum_intersected_types[i] == num_T */
     for ( j = 0; j < num_T; j++ ) {
       if ( T[j] != gintersected_types[i][j] ) {
 	break;
@@ -985,7 +1264,7 @@ int find_intersected_type( TypeArray T, int num_T )
     if ( j < num_T ) {
       continue;
     }
-
+    /* which means T[j]== gintersected_types[i][j] */
     return i;
   }
 
@@ -1036,13 +1315,7 @@ NormEffect *le;
 NormEffect *lres;
 
 
-
-
-
-
-void multiply_easy_effect_parameters( void )
-
-{
+void multiply_easy_effect_parameters( void ) {
 
   int i, j, k, l, p, par;
   NormEffect *e;
@@ -1102,11 +1375,95 @@ void multiply_easy_effect_parameters( void )
 
 }
 
+/* local globals for multiplying of additional operators 
+ */
+
+int ladd_inertia_conds[MAX_VARS];
+int ladd_num_inertia_conds;
+ 
+int ladd_multiply_parameters[MAX_VARS];
+int ladd_num_multiply_parameters;
+
+NormOperator *ladd_o;
+NormEffect *ladd_e;
+
+NormEffect *ladd_res;
+
+/* jovi: added for multiple purpose */
+void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {
+
+  int i, j, k, l, p, par;
+  NormEffect *e;
+
+  /* for each operators */
+  for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+    ladd_o = gadd_easy_operators[i];
+
+    ladd_res = NULL;
+    /* for each effects of operators */
+    for ( e = ladd_o->effects; e; e = e->next ) {
+      ladd_e = e;
+
+      ladd_num_inertia_conds = 0;
+
+      /* for each condtions of effects of operators */
+      for ( j = 0; j < e->num_conditions; j++ ) {
+        /* for each predicate of conidtion of effects of operators */
+	for ( k = 0; k < garity[e->conditions[j].predicate]; k++ ) {
+          /* check each args */
+	  if ( e->conditions[j].args[k] < 0 && DECODE_VAR( e->conditions[j].args[k] ) < ladd_o->num_vars ) {
+	    break;
+	  }
+	}
+
+	if ( k < garity[e->conditions[j].predicate] ) {
+	  /* only consider inertia constraining effect parameters
+	   */
+	  continue;
+	}
+        /* the effect j is not add or delte */
+	if ( !gis_added[e->conditions[j].predicate] && !gis_deleted[e->conditions[j].predicate] ) {
+	  ladd_inertia_conds[lnum_inertia_conds++] = j;
+	}
+      }
+
+      ladd_num_multiply_parameters = 0;
+      for ( j = 0; j < e->num_vars; j++ ) {
+      /* for each vars */
+	par = ladd_o->num_vars + j;
+	for ( k = 0; k < ladd_num_inertia_conds; k++ ) {
+          /* for each inertia_conds */
+	  p = e->conditions[ladd_inertia_conds[k]].predicate;
+	  for ( l = 0; l < garity[p]; l++ ) {
+            /* for each args under the predicate p */
+	    if ( e->conditions[ladd_inertia_conds[k]].args[l] == ENCODE_VAR( par ) ) {
+	      break;
+	    }
+	  }
+          /* existing e->condition.args != ENCODE_VAR */
+	  if ( l < garity[p] ) {
+	    break;
+	  }
+	}
+        /* existing e->condition.args != ENCODE_VAR */
+	if ( k < ladd_num_inertia_conds ) {
+	  continue;
+	}
+        /* all the e->condition.args == ENCODE_VAR */
+        /* j is the e->num_vars */
+	ladd_multiply_parameters[ladd_num_multiply_parameters++] = j;
+      }
+
+      unify_easy_inertia_conditions( 0 );
+    }
+    free_NormEffect( ladd_o->effects );
+    ladd_o->effects = lres;
+  }
+
+}
 
 
-void unify_easy_inertia_conditions( int curr_inertia )
-
-{
+void unify_easy_inertia_conditions( int curr_inertia ) {
 
   int p, i, j, af, hh;
   int args[MAX_VARS];
@@ -1119,6 +1476,7 @@ void unify_easy_inertia_conditions( int curr_inertia )
   }
 
   p = le->conditions[linertia_conds[curr_inertia]].predicate;
+  /* for each predicate */
   for ( i = 0; i < garity[p]; i++ ) {
     args[i] = le->conditions[linertia_conds[curr_inertia]].args[i];
     if ( args[i] < 0 ) {
@@ -1142,8 +1500,10 @@ void unify_easy_inertia_conditions( int curr_inertia )
 	  continue;
 	}
       }
+      /* if args[j] < 0 || j>=garity[p]*/
       le->inst_table[affected_params[af++]] = ginitial_predicate[p][i].args[j];
     }
+
     if ( j < garity[p] ) {
       continue;
     }
@@ -1152,50 +1512,108 @@ void unify_easy_inertia_conditions( int curr_inertia )
   }
 
   for ( i = 0; i < num_affected_params; i++ ) {
+    /* inst_table */
     le->inst_table[affected_params[i]] = -1;
   }
 
 }
 
 
+void unify_easy_inertia_conditions_for_multiple_purpose( int curr_inertia ) {
 
-void multiply_easy_non_constrained_effect_parameters( int curr_parameter )
+  int p, i, j, af, hh;
+  int args[MAX_VARS];
+  int affected_params[MAX_VARS];
+  int num_affected_params = 0;
 
-{
+  if ( curr_inertia == ladd_num_inertia_conds ) {
+    multiply_easy_non_constrained_effect_parameters( 0 );
+    return;
+  }
+
+  p = le->conditions[linertia_conds[curr_inertia]].predicate;
+  /* for each predicate */
+  for ( i = 0; i < garity[p]; i++ ) {
+    args[i] = le->conditions[linertia_conds[curr_inertia]].args[i];
+    if ( args[i] < 0 ) {
+      hh = DECODE_VAR( args[i] );
+      hh -= lo->num_vars;
+      if ( le->inst_table[hh] != -1 ) {
+	args[i] = le->inst_table[hh];
+      } else {
+	affected_params[num_affected_params++] = hh;
+      }
+    }
+  }
+
+  for ( i = 0; i < gnum_initial_predicate[p]; i++ ) {
+    af = 0;
+    for ( j = 0; j < garity[p]; j++ ) {
+      if ( args[j] >= 0 ) {
+	if ( args[j] != ginitial_predicate[p][i].args[j] ) {
+	  break;
+	} else {
+	  continue;
+	}
+      }
+      /* if args[j] < 0 || j>=garity[p]*/
+      le->inst_table[affected_params[af++]] = ginitial_predicate[p][i].args[j];
+    }
+
+    if ( j < garity[p] ) {
+      continue;
+    }
+
+    unify_easy_inertia_conditions( curr_inertia + 1 );
+  }
+
+  for ( i = 0; i < num_affected_params; i++ ) {
+    /* inst_table */
+    le->inst_table[affected_params[i]] = -1;
+  }
+
+}
+
+
+void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int curr_parameter ) {
 
   int t, n, i, j, k, p, par;
   NormEffect *tmp;
   Bool rem;
 
-  if ( curr_parameter == lnum_multiply_parameters ) {
+  if ( curr_parameter == ladd_num_multiply_parameters ) {
     /* create new effect, adjusting conds to inst, and
      * partially instantiating effects;
      *
      * add result to  lres
      */
-    tmp = new_NormEffect2( le );
+    tmp = new_NormEffect2( ladd_e );
     /* instantiate param occurences
      */
-    for ( i = 0; i < le->num_vars; i++ ) {
-      par = lo->num_vars + i;
+    for ( i = 0; i < ladd_e->num_vars; i++ ) {
+      par = ladd_o->num_vars + i;
+
       for ( j = 0; j < tmp->num_conditions; j++ ) {
 	for ( k = 0; k < garity[tmp->conditions[j].predicate]; k++ ) {
+          /* if conditions args has been ENCODE */
 	  if ( tmp->conditions[j].args[k] == ENCODE_VAR( par ) ) {
-	    tmp->conditions[j].args[k] = le->inst_table[i];
+	    tmp->conditions[j].args[k] = ladd_e->inst_table[i];
 	  }
 	}
       }
+
       for ( j = 0; j < tmp->num_adds; j++ ) {
 	for ( k = 0; k < garity[tmp->adds[j].predicate]; k++ ) {
 	  if ( tmp->adds[j].args[k] == ENCODE_VAR( par ) ) {
-	    tmp->adds[j].args[k] = le->inst_table[i];
+	    tmp->adds[j].args[k] = ladd_e->inst_table[i];
 	  }
 	}
       }
+
       for ( j = 0; j < tmp->num_dels; j++ ) {
 	for ( k = 0; k < garity[tmp->dels[j].predicate]; k++ ) {
 	  if ( tmp->dels[j].args[k] == ENCODE_VAR( par ) ) {
-	    tmp->dels[j].args[k] = le->inst_table[i];
+	    tmp->dels[j].args[k] = ladd_e->inst_table[i];
 	  }
 	}
       }
@@ -1204,16 +1622,17 @@ void multiply_easy_non_constrained_effect_parameters( int curr_parameter )
      */
     i = 0;
     while ( i < tmp->num_conditions ) {
+
       rem = FALSE;
       p = tmp->conditions[i].predicate;
-      if ( !gis_added[p] &&
-	   !gis_deleted[p] ) {
+      if ( !gis_added[p] &&  !gis_deleted[p] ) {
+
 	for ( j = 0; j < garity[p]; j++ ) {
-	  if ( tmp->conditions[i].args[j] < 0 &&
-	       DECODE_VAR( tmp->conditions[i].args[j] < lo->num_vars ) ) {
+	  if ( tmp->conditions[i].args[j] < 0 && DECODE_VAR( tmp->conditions[i].args[j] < ladd_o->num_vars ) ) {
 	    break;
 	  }
 	}
+        /* all params has been unified */
 	if ( j == garity[p] ) {
 	  /* inertia that constrain only effect params have been unified,
 	   * are therefore TRUE
@@ -1221,6 +1640,8 @@ void multiply_easy_non_constrained_effect_parameters( int curr_parameter )
 	  rem = TRUE;
 	}
       }
+
+      /* remove conditon[i] */
       if ( rem ) {
 	for ( j = i; j < tmp->num_conditions - 1; j++ ) {
 	  tmp->conditions[j].predicate = tmp->conditions[j+1].predicate;

@@ -550,9 +550,7 @@ void create_integer_representation( void ) {
 
 
 
-void make_Fact( Fact *f, PlNode *n, int num_vars )
-
-{
+void make_Fact( Fact *f, PlNode *n, int num_vars ) {
 
   int m, i;
   TokenList *t;
@@ -564,10 +562,11 @@ void make_Fact( Fact *f, PlNode *n, int num_vars )
     exit( 1 );
   }
 
+  /* atom is not empty */
   f->predicate = position_in_predicates_table( n->atom->item );
+
   if ( f->predicate == -1 ) {
-    printf("\nundeclared predicate %s used in domain definition\n\n",
-	   n->atom->item);
+    printf("\nundeclared predicate %s used in domain definition\n\n", n->atom->item);
     exit( 1 );
   }
 
@@ -588,6 +587,7 @@ void make_Fact( Fact *f, PlNode *n, int num_vars )
 	       t->item, n->atom->item);
 	exit( 1 );
       }
+
       if ( f->predicate != -1 &&
 	   lvar_types[i] != gpredicates_args_type[f->predicate][m] &&
 	   !is_subtype( lvar_types[i], gpredicates_args_type[f->predicate][m] ) ) {
@@ -595,7 +595,10 @@ void make_Fact( Fact *f, PlNode *n, int num_vars )
 	       lvar_names[i], m, gpredicates[f->predicate]);
 	exit( 1 );
       }
+
+      /* i-th var in lvar_names  */
       f->args[m] = ENCODE_VAR( i );
+
     } else {
       if ( (f->args[m] = 
 	    position_in_constants_table( t->item )) == -1 ) {
@@ -723,9 +726,7 @@ WffNode *make_Wff( PlNode *p, int num_vars )
 
 
 
-Effect *make_effect( PlNode *p, int num_vars )
-
-{
+Effect *make_effect( PlNode *p, int num_vars ) {
 
   Effect *tmp = new_Effect();
   PlNode *n, *m;
@@ -752,8 +753,7 @@ Effect *make_effect( PlNode *p, int num_vars )
   }
 
   if ( !n || n->connective != WHEN ) {
-    printf("\nnon WHEN %d at end of effect parameters. debug me\n\n",
-	   n->connective);
+    printf("\nnon WHEN %d at end of effect parameters. debug me\n\n", n->connective);
     exit( 1 );
   }
 
