@@ -70,8 +70,7 @@ void build_easy_action_templates( void ) {
     }
   }
 
-  encode_easy_unaries_as_types();
-
+  encode_easy_unaries_as_types(); 
   if ( gcmd_line.display_info == 111 ) {
     printf("\n\nunaries encoded easy operators are:\n");
     for ( i = 0; i < gnum_easy_operators; i++ ) {
@@ -878,7 +877,8 @@ void encode_easy_unaries_as_types( void ) {
 	  if ( num_T == MAX_TYPE_INTERSECTIONS ) {
 	    printf("\nincrease MAX_TYPE_INTERSECTIONS (currently %d)\n\n", MAX_TYPE_INTERSECTIONS);
 	    exit( 1 );
-	  }
+	  } /*endif num_T == MAX_TYPE_INTERSECTIONS */
+
 	  /* insert new type number into ordered array T;
 	   * ---- all type numbers in T are different:
 	   *      new nr. is of inferred type - can't be type declared for param
@@ -894,6 +894,7 @@ void encode_easy_unaries_as_types( void ) {
 	  }
 	  T[k] = new_T;
 	  num_T++;
+
 	  /* now remove superfluous precondition */
 	  for ( k = j; k < o->num_preconds-1; k++ ) {
 	    o->preconds[k].predicate = o->preconds[k+1].predicate;
@@ -902,7 +903,7 @@ void encode_easy_unaries_as_types( void ) {
 	    }
 	  }
 	  o->num_preconds--;
-	} else {
+	} else { /*else if new_T is not defined || args is not ENCODEDED*/
 	  j++;
 	}
       }
