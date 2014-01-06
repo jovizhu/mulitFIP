@@ -38,13 +38,6 @@
  */
 
 
-
-
-
-
-
-
-
 /*********************************************************************
  * File: inst_easy.c
  * Description: functions for multiplying easy operators.
@@ -54,14 +47,6 @@
  *
  *********************************************************************/ 
 
-
-
-
-
-
-
-
-
 #include "ff.h"
 
 #include "output.h"
@@ -69,13 +54,6 @@
 
 #include "inst_pre.h"
 #include "inst_easy.h" 
-
-
-
-
-
-
-
 
 void build_easy_action_templates( void ) {
 
@@ -895,18 +873,16 @@ void encode_easy_unaries_as_types( void ) {
       j = 0;
       while ( j < o->num_preconds ) {
 	p = o->preconds[j].predicate;
-	if ( ( (new_T = gtype_to_predicate[p]) != -1 ) &&
-	     ( o->preconds[j].args[0] == ENCODE_VAR( i ) ) ) {
+	if ( ( (new_T = gtype_to_predicate[p]) != -1 ) && ( o->preconds[j].args[0] == ENCODE_VAR( i ) ) ) {
+
 	  if ( num_T == MAX_TYPE_INTERSECTIONS ) {
-	    printf("\nincrease MAX_TYPE_INTERSECTIONS (currently %d)\n\n",
-		   MAX_TYPE_INTERSECTIONS);
+	    printf("\nincrease MAX_TYPE_INTERSECTIONS (currently %d)\n\n", MAX_TYPE_INTERSECTIONS);
 	    exit( 1 );
 	  }
 	  /* insert new type number into ordered array T;
 	   * ---- all type numbers in T are different:
 	   *      new nr. is of inferred type - can't be type declared for param
-	   *      precondition facts occur at most once - doubles are removed
-	   *                                              during cleanup
+	   *      precondition facts occur at most once - doubles are removed during cleanup
 	   */
 	  for ( k = 0; k < num_T; k++ ) {
 	    if ( new_T < T[k] ) {
@@ -918,8 +894,7 @@ void encode_easy_unaries_as_types( void ) {
 	  }
 	  T[k] = new_T;
 	  num_T++;
-	  /* now remove superfluous precondition
-	   */
+	  /* now remove superfluous precondition */
 	  for ( k = j; k < o->num_preconds-1; k++ ) {
 	    o->preconds[k].predicate = o->preconds[k+1].predicate;
 	    for ( l = 0; l < garity[o->preconds[k].predicate]; l++ ) {
@@ -1527,20 +1502,20 @@ void unify_easy_inertia_conditions_for_multiple_purpose( int curr_inertia ) {
   int num_affected_params = 0;
 
   if ( curr_inertia == ladd_num_inertia_conds ) {
-    multiply_easy_non_constrained_effect_parameters( 0 );
+    multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( 0 );
     return;
   }
 
-  p = le->conditions[linertia_conds[curr_inertia]].predicate;
+  p = ladd_e->conditions[ladd_inertia_conds[curr_inertia]].predicate;
   /* for each predicate */
   for ( i = 0; i < garity[p]; i++ ) {
-    args[i] = le->conditions[linertia_conds[curr_inertia]].args[i];
-    if ( args[i] < 0 ) {
+    args[i] = ladd_e->conditions[ladd_inertia_conds[curr_inertia]].args[i];
+    if ( args[i] < 0 ) { /* it is encoded */
       hh = DECODE_VAR( args[i] );
-      hh -= lo->num_vars;
-      if ( le->inst_table[hh] != -1 ) {
-	args[i] = le->inst_table[hh];
-      } else {
+      hh -= ladd_o->num_vars;
+      if ( ladd_e->inst_table[hh] != -1 ) {
+	args[i] = ladd_e->inst_table[hh];
+      } else { /* ladd_e->inst_table[hh] == -1, it is affected */
 	affected_params[num_affected_params++] = hh;
       }
     }
@@ -1549,27 +1524,29 @@ void unify_easy_inertia_conditions_for_multiple_purpose( int curr_inertia ) {
   for ( i = 0; i < gnum_initial_predicate[p]; i++ ) {
     af = 0;
     for ( j = 0; j < garity[p]; j++ ) {
-      if ( args[j] >= 0 ) {
+      if ( args[j] >= 0 ) { /*args is not encoded */
+        /* check whether all the args is in the initial predicate */
 	if ( args[j] != ginitial_predicate[p][i].args[j] ) {
 	  break;
 	} else {
 	  continue;
 	}
       }
-      /* if args[j] < 0 || j>=garity[p]*/
-      le->inst_table[affected_params[af++]] = ginitial_predicate[p][i].args[j];
+      /* if args[j] < 0 , args is encoded */
+      ladd_e->inst_table[affected_params[af++]] = ginitial_predicate[p][i].args[j];
     }
 
     if ( j < garity[p] ) {
+      /* args != ginitial_predicate.args */
       continue;
     }
-
-    unify_easy_inertia_conditions( curr_inertia + 1 );
+    /* all the args == ginitial_predicate.args && j== garity[p]*/
+    unify_easy_inertia_conditions_for_multiple_purpose( curr_inertia + 1 );
   }
 
   for ( i = 0; i < num_affected_params; i++ ) {
     /* inst_table */
-    le->inst_table[affected_params[i]] = -1;
+    ladd_e->inst_table[affected_params[i]] = -1;
   }
 
 }
@@ -1654,26 +1631,27 @@ void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int 
 	i++;
       }
     }
-    /* add result to lres
-     */
-    if ( lres ) {
-      lres->prev = tmp;
+
+    /* add result to lres */
+    if ( ladd_res ) {
+      ladd_res->prev = tmp;
     }
-    tmp->next = lres;
-    lres = tmp;
+    tmp->next = ladd_res;
+    ladd_res = tmp;
     return;
   }
 
-  t = le->var_types[lmultiply_parameters[curr_parameter]];
+  /* if curr_parameter != ladd_num_multiply_parameters
+   * curr_parameter++ and do the same thing */
+  t = ladd_e->var_types[ladd_multiply_parameters[curr_parameter]];
   n = gtype_size[t];
 
   for ( i = 0; i < n; i++ ) {
-    le->inst_table[lmultiply_parameters[curr_parameter]] = gtype_consts[t][i];
-    multiply_easy_non_constrained_effect_parameters( curr_parameter + 1 );
+    ladd_e->inst_table[ladd_multiply_parameters[curr_parameter]] = gtype_consts[t][i];
+    multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( curr_parameter + 1 );
   }
-
-  le->inst_table[lmultiply_parameters[curr_parameter]] = -1;
-
+  /* set inst_table to -1 */
+  ladd_e->inst_table[ladd_multiply_parameters[curr_parameter]] = -1;
 }
 
 
