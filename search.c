@@ -737,7 +737,7 @@ Bool new_goal_gets_deleted( EhcNode *n )
 ************************************/
 Bool do_best_first_search( void ) {
 
-	static Bool fc = TRUE;
+	static Bool fc = TRUE; /*first round*/
 	static State S;
 
 	BfsNode *first;
@@ -952,18 +952,14 @@ Bool bfs_state_hashed( State *S )
 /****************************
 * STATE HANDLING FUNCTIONS *
 ****************************/
-
-
 /* function that computes state transition as induced by a
-* normalized ADL action. Adds go before deletes!
-*
-* a bit odd in implementation:
-* function returns number of new goal that came in when applying
-* op to source; needed for Goal Added Deletion Heuristic
-*/
-int result_to_dest( State *dest, State *source, int op )
-
-{
+ * normalized ADL action. Adds go before deletes!
+ *
+ * a bit odd in implementation:
+ * function returns number of new goal that came in when applying
+ * op to source; needed for Goal Added Deletion Heuristic
+ */
+int result_to_dest( State *dest, State *source, int op ) {
 
 	static Bool first_call = TRUE;
 	static Bool *in_source, *in_dest, *in_del, *true_ef;
@@ -978,25 +974,26 @@ int result_to_dest( State *dest, State *source, int op )
 		in_del = ( Bool * ) calloc( gnum_ft_conn, sizeof( Bool ) );
 		true_ef = ( Bool * ) calloc( gnum_ef_conn, sizeof( Bool ) );
 		del = ( int * ) calloc( gnum_ft_conn, sizeof( int ) );
+
 		for ( i = 0; i < gnum_ft_conn; i++ ) {
 			in_source[i] = FALSE;
 			in_dest[i] = FALSE;
 			in_del[i] = FALSE;
 		}
+
 		for ( i = 0; i < gnum_ef_conn; i++ ) {
 			true_ef[i] = FALSE;
 		}
+
 		first_call = FALSE;
 	}
 
-	/* setup true facts for effect cond evaluation
-	*/
+	/* setup true facts for effect cond evaluation */
 	for ( i = 0; i < source->num_F; i++ ) {
 		in_source[source->F[i]] = TRUE;
 	}
 
-	/* setup deleted facts
-	*/
+	/* setup deleted facts */
 	num_del = 0;
 	for ( i = 0; i < gop_conn[op].num_E; i++ ) {
 		ef = gop_conn[op].E[i];
@@ -1013,10 +1010,10 @@ int result_to_dest( State *dest, State *source, int op )
 	}
 
 	/* put all non-deleted facts from source into dest.
-	* need not check for put-in facts here,
-	* as initial state is made doubles-free, and invariant keeps
-	* true through the transition procedure
-	*/
+	 * need not check for put-in facts here,
+	 * as initial state is made doubles-free, and invariant keeps
+	 * true through the transition procedure
+	 */
 	dest->num_F = 0;
 	for ( i = 0; i < source->num_F; i++ ) {
 		if ( in_del[source->F[i]] ) {

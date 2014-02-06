@@ -243,9 +243,7 @@ int get_1P( State *S, State *current_goals )
 
 
 
-void get_A( State *S )
-
-{
+void get_A( State *S ) {
 
 	int i;
 
@@ -269,9 +267,7 @@ void get_A( State *S )
 
 
 
-void collect_A_info( void )
-
-{
+void collect_A_info( void ) {
 
 	static Bool first_call = TRUE;
 
@@ -396,14 +392,10 @@ void initialize_fixpoint( State *S ) {
 	}
 }
 
-
-
-void activate_ft( int index, int time )
-
-{
+/* set gft_conn, update gef_conn if all PCs are satisfied */
+void activate_ft( int index, int time ) {
 
 	int i;
-
 	gft_conn[index].level = time;
 
 	for ( i = 0; i < gft_conn[index].num_PC; i++ ) {
@@ -412,8 +404,7 @@ void activate_ft( int index, int time )
 			gef_conn[gft_conn[index].PC[i]].ch = TRUE;
 			lch_E[lnum_ch_E++] = gft_conn[index].PC[i];
 		}
-		if ( gef_conn[gft_conn[index].PC[i]].num_active_PCs ==
-			gef_conn[gft_conn[index].PC[i]].num_PC ) {
+		if ( gef_conn[gft_conn[index].PC[i]].num_active_PCs == gef_conn[gft_conn[index].PC[i]].num_PC ) {
 				new_ef( gft_conn[index].PC[i] );
 		}
 	}

@@ -3,7 +3,7 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+!_TAG_PROGRAM_VERSION	5.8	//
 A	ff.h	/^  int *A;$/;"	m	struct:_EfConn
 A	ff.h	/^  int *A;$/;"	m	struct:_FtConn
 achieve_goals	relax.c	/^void achieve_goals( int time ) {$/;"	f
@@ -27,7 +27,7 @@ action_def_body	scan-ops_pddl.y	/^action_def_body:$/;"	l
 ACTION_TOK	scan-mul_pddl.tab.c	/^     ACTION_TOK = 265,$/;"	e	enum:yytokentype	file:
 ACTION_TOK	scan-ops_pddl.tab.c	/^     ACTION_TOK = 265,$/;"	e	enum:yytokentype	file:
 activate_ef	relax.c	/^void activate_ef( int index, int time ) {$/;"	f
-activate_ft	relax.c	/^void activate_ft( int index, int time )$/;"	f
+activate_ft	relax.c	/^void activate_ft( int index, int time ) {$/;"	f
 additional_action_defs	scan-mul_pddl.y	/^additional_action_defs:$/;"	l
 additional_goal_defs	scan-mul_pddl.y	/^additional_goal_defs:$/;"	l
 ADDONS	makefile	/^ADDONS	= $/;"	m
@@ -407,7 +407,7 @@ GetOPName	fip.c	19;"	d	file:
 GetOPParamInst	fip.c	21;"	d	file:
 get_1P	relax.c	/^int get_1P( State *S, State *current_goals )$/;"	f
 get_1P_and_H	relax.c	/^int get_1P_and_H( State *S, State *current_goals ) {$/;"	f
-get_A	relax.c	/^void get_A( State *S )$/;"	f
+get_A	relax.c	/^void get_A( State *S ) {$/;"	f
 GET_CONSTANT	ff.h	300;"	d
 get_next_unsolved_state	fip.c	/^StateActionPair* get_next_unsolved_state(){$/;"	f
 get_type	parse.c	/^int get_type( char *str ) {$/;"	f
