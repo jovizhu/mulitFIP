@@ -1041,8 +1041,7 @@ int result_to_dest( State *dest, State *source, int op ) {
 		}
 	}
 
-	/* unset infos
-	*/
+	/* unset infos */
 	for ( i = 0; i < source->num_F; i++ ) {
 		in_source[source->F[i]] = FALSE;
 	}

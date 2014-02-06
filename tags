@@ -118,7 +118,7 @@ CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	
 CLOSE_PAREN	scan-mul_pddl.tab.c	/^     CLOSE_PAREN = 285$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-ops_pddl.tab.c	/^     CLOSE_PAREN = 283$/;"	e	enum:yytokentype	file:
 collect_all_strings	inst_pre.c	/^void collect_all_strings( void ) {$/;"	f
-collect_A_info	relax.c	/^void collect_A_info( void )$/;"	f
+collect_A_info	relax.c	/^void collect_A_info( void ) {$/;"	f
 collect_hitting_sets	inst_pre.c	/^void collect_hitting_sets( WffNode *ORlist, int index ) {$/;"	f
 collect_H_info	relax.c	/^void collect_H_info( void ) {$/;"	f
 collect_inertia_information	inst_pre.c	/^void collect_inertia_information( void ) {$/;"	f
@@ -1102,7 +1102,7 @@ reset_fixpoint	relax.c	/^void reset_fixpoint( void ) {$/;"	f
 reset_relax	relax.c	/^void reset_relax( void ){$/;"	f
 reset_search	search.c	/^void reset_search( void ){$/;"	f
 reset_search_info	relax.c	/^void reset_search_info( void )$/;"	f
-result_to_dest	search.c	/^int result_to_dest( State *dest, State *source, int op )$/;"	f
+result_to_dest	search.c	/^int result_to_dest( State *dest, State *source, int op ) {$/;"	f
 rmdash	parse.c	/^char *rmdash( char *s )$/;"	f
 rm_unsolved_states	fip.c	/^void rm_unsolved_states(State *s){$/;"	f
 rm_unsolved_states_ex_self	fip.c	/^void rm_unsolved_states_ex_self(State *s){$/;"	f

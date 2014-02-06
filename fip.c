@@ -919,11 +919,9 @@ void convert_ff_plan_to_fip_plan( PlanNode *pPlanNode ){
 * build action group pointer
 */
 void build_action_group( void ){
-
 	int i;
 
 	lnum_action_group = 0;
-
 
 	/* transverse all actions. find out brother D_action */
 	for(i = 0; i < gnum_op_conn; i ++){

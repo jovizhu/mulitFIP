@@ -218,9 +218,7 @@ int get_1P_and_H( State *S, State *current_goals ) {
 
 
 
-int get_1P( State *S, State *current_goals )
-
-{
+int get_1P( State *S, State *current_goals ) {
 
 	int h, max;
 
