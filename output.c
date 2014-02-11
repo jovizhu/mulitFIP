@@ -753,17 +753,8 @@ void print_op_name( int index )
 * program output routines
 */
 
-
-
-
-
-
-
-
-
-void print_plan( void )
-
-{  
+/* gplan_ops[] */
+void print_plan( void ) {  
 
 	int i, ef, j;
 

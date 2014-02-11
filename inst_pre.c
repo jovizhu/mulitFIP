@@ -1196,8 +1196,10 @@ void remove_unused_vars_in_wff( WffNode **w ) {
 
 }
 
-
-
+/***************************************
+ *  coed_var is ENCODED var            *
+ *  code_var is usded in the Node w    *
+ ***************************************/
 Bool var_used_in_wff( int code_var, WffNode *w ) {
 
   WffNode *i;
@@ -1231,16 +1233,14 @@ Bool var_used_in_wff( int code_var, WffNode *w ) {
   case FAL:
     return FALSE;
   default:
-    printf("\nwon't get here: var used ?, non logical %d\n\n",
-	   w->connective);
+    printf("\nwon't get here: var used ?, non logical %d\n\n", w->connective);
     exit( 1 );
   }
-
 
 }
 
 
-
+/* update var insie the Node w */
 void decrement_inferior_vars( int var, WffNode *w ) {
 
   WffNode *i;

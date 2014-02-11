@@ -69,6 +69,18 @@ void build_easy_action_templates( void ) {
       print_NormOperator( geasy_operators[i] );
     }
   }
+ /****************************************
+  * jovi: for multiple purpsoe 
+  ****************************************/
+  cleanup_easy_domain_for_multiple_purpose();
+
+  if ( gcmd_line.display_info ==110 ) {
+    printf("\n\ncleaned up esay additional operations are:");
+    for ( i=0; i < gadd_num_easy_operators; i++ ) {
+      print_NormOperator ( gadd_easy_operators[i] );
+    }
+  }
+ /*****************************************/
 
   encode_easy_unaries_as_types(); 
   if ( gcmd_line.display_info == 111 ) {
@@ -78,14 +90,37 @@ void build_easy_action_templates( void ) {
     }
   }
 
-  multiply_easy_effect_parameters();
+ /****************************************
+  * jovi: for multiple purpsoe 
+  ****************************************/
+  encode_easy_unaries_as_types_for_multiple_purpose (); 
+  if ( gcmd_line.display_info == 111 ) {
+    printf("\n\nunaries encoded additional easy operators are:\n");
+    for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+      print_NormOperator( gadd_easy_operators[i] );
+    }
+  }
+ /*****************************************/
 
+  multiply_easy_effect_parameters();
   if ( gcmd_line.display_info == 112 ) {
     printf("\n\neffects multiplied easy operators are:\n");
     for ( i = 0; i < gnum_easy_operators; i++ ) {
       print_NormOperator( geasy_operators[i] );
     }
   }
+
+ /****************************************
+  * jovi: for multiple purpsoe 
+  ****************************************/
+  multiply_easy_effect_parameters_for_multiple_purpose ();
+  if ( gcmd_line.display_info == 112 ) {
+    printf("\n\neffects multiplied additional easy operators are:\n");
+    for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+      print_NormOperator( gadd_easy_operators[i] );
+    }
+  }
+ /*****************************************/
 
   multiply_easy_op_parameters();
 
@@ -123,6 +158,47 @@ void build_easy_action_templates( void ) {
     }
   }
 
+ /****************************************
+  * jovi: for multiple purpsoe 
+  ****************************************/
+  multiply_easy_op_parameters_for_multiple_purposes ();
+
+  if ( gcmd_line.display_info == 113 ) {
+    printf("\n\ninertia free additional easy operators are:");
+    for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+      print_NormOperator( gadd_easy_operators[i] );
+    }
+    printf("\n\n");
+  }
+
+  if ( gcmd_line.display_info == 114 ) {
+    printf("\n\nadditional easy operator templates are:\n");
+    
+    for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+      o = gadd_easy_operators[i];
+
+      /* for each operators, we create many templats, 
+         and for each templates, we have may possible vars */
+      printf("\n\n-----------operator %s:-----------", o->operator->name);
+      for ( t = gadd_easy_templates; t; t = t->next ) {
+
+	if ( t->op != o ) {
+	  continue;
+	}
+	printf("\ninst: ");
+	for ( j = 0; j < o->num_vars; j++ ) {
+	  if ( t->inst_table[j] < 0 ) {
+	    printf("\nuninstantiated param in template! debug me, please\n\n");
+	    exit( 1 );
+	  }
+	  printf("x%d = %s", j, gconstants[t->inst_table[j]]);
+	  if ( j < o->num_vars - 1 ) {
+	    printf(", ");
+	  }
+	}
+      }
+    }
+  }
 }
 
 /*********************************
@@ -546,7 +622,9 @@ void remove_unused_easy_parameters_for_multiple_purpose ( void ) {
       }
     }
 
+    /* set usded[] according the effects */
     for ( e = o->effects; e; e = e->next ) {
+
       for ( i1 = 0; i1 < e->num_conditions; i1++ ) {
         a = garity[e->conditions[i1].predicate];
         for ( i2 = 0; i2 < a; i2++ ) {
@@ -577,15 +655,20 @@ void remove_unused_easy_parameters_for_multiple_purpose ( void ) {
 
     i1 = 0;
     i3 = 0;
+    /*o is set as gadd_easy_operators[i];*/
     while ( i1 < o->num_vars ) {
+
       if ( used[i1] ) {
         i1++;
-      } else { /* used[i1] == FALSE */
+      } else { 
+        /* used[i1] == FALSE */
         o->type_removed_vars[o->num_removed_vars] = o->var_types[i1];
+
         for ( i2 = i1; i2 < o->num_vars-1; i2++ ) {
           o->var_types[i2] = o->var_types[i2+1];
           used[i2] = used[i2+1];
         }
+
         decrement_var_entries( o, i1 );
         o->num_vars--;
         o->removed_vars[o->num_removed_vars++] = i3;
@@ -598,9 +681,7 @@ void remove_unused_easy_parameters_for_multiple_purpose ( void ) {
 
 
 
-void decrement_var_entries( NormOperator *o, int start )
-
-{
+void decrement_var_entries( NormOperator *o, int start ) {
 
   int st = ENCODE_VAR( start ), i, j, a;
   NormEffect *e;
@@ -608,12 +689,14 @@ void decrement_var_entries( NormOperator *o, int start )
   for ( i = 0; i < o->num_preconds; i++ ) {
     for ( j = 0; j < garity[o->preconds[i].predicate]; j++ ) {
       if ( o->preconds[i].args[j] < st ) {
+       /* move the args to fill the delete ones */
 	o->preconds[i].args[j]++;
       }
     }
   }
 
   for ( e = o->effects; e; e = e->next ) {
+
     for ( i = 0; i < e->num_conditions; i++ ) {
       a = garity[e->conditions[i].predicate];
       for ( j = 0; j < a; j++ ) {
@@ -636,7 +719,7 @@ void decrement_var_entries( NormOperator *o, int start )
 	}
       }
     }
-  }
+  }/* end for e=o->effects */
 
 }
 
@@ -1276,8 +1359,7 @@ int find_intersected_type( TypeArray T, int num_T ) {
 
 
 
-/* local globals for multiplying
- */
+/* local globals for multiplying */
 
 int linertia_conds[MAX_VARS];
 int lnum_inertia_conds;
@@ -1287,9 +1369,7 @@ int lnum_multiply_parameters;
 
 NormOperator *lo;
 NormEffect *le;
-
 NormEffect *lres;
-
 
 void multiply_easy_effect_parameters( void ) {
 
@@ -1373,8 +1453,8 @@ void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {
 
   /* for each operators */
   for ( i = 0; i < gadd_num_easy_operators; i++ ) {
-    ladd_o = gadd_easy_operators[i];
 
+    ladd_o = gadd_easy_operators[i];
     ladd_res = NULL;
     /* for each effects of operators */
     for ( e = ladd_o->effects; e; e = e->next ) {
@@ -1384,6 +1464,7 @@ void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {
 
       /* for each condtions of effects of operators */
       for ( j = 0; j < e->num_conditions; j++ ) {
+
         /* for each predicate of conidtion of effects of operators */
 	for ( k = 0; k < garity[e->conditions[j].predicate]; k++ ) {
           /* check each args */
@@ -1393,8 +1474,7 @@ void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {
 	}
 
 	if ( k < garity[e->conditions[j].predicate] ) {
-	  /* only consider inertia constraining effect parameters
-	   */
+	  /* only consider inertia constraining effect parameters */
 	  continue;
 	}
         /* the effect j is not add or delte */
@@ -1676,27 +1756,7 @@ void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int 
 /**************************
  * MULTIPLY OP PARAMETERS *
  **************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void multiply_easy_op_parameters( void )
-
-{
+void multiply_easy_op_parameters( void ) {
 
   int i, j, k, l, p;
   NormOperator *o;
@@ -1711,6 +1771,76 @@ void multiply_easy_op_parameters( void )
     for ( j = 0; j < lo->num_preconds; j++ ) {
       if ( !gis_added[lo->preconds[j].predicate] &&
 	   !gis_deleted[lo->preconds[j].predicate] ) {
+	linertia_conds[lnum_inertia_conds++] = j;
+      }
+    }
+      
+    lnum_multiply_parameters = 0;
+    for ( j = 0; j < lo->num_vars; j++ ) {
+      for ( k = 0; k < lnum_inertia_conds; k++ ) {
+	p = lo->preconds[linertia_conds[k]].predicate;
+	for ( l = 0; l < garity[p]; l++ ) {
+	  if ( lo->preconds[linertia_conds[k]].args[l] ==
+	       ENCODE_VAR( j ) ) {
+	    break;
+	  }
+	}
+	if ( l < garity[p] ) {
+	  break;
+	}
+      }
+      if ( k < lnum_inertia_conds ) {
+	continue;
+      }
+      lmultiply_parameters[lnum_multiply_parameters++] = j;
+    }
+
+    unify_easy_inertia_preconds( 0 );
+  }
+
+  /* now remove inertia preconditions from operator schemata
+   */
+  for ( i = 0; i < gnum_easy_operators; i++ ) {
+    o = geasy_operators[i];
+
+    j = 0;
+    while ( j < o->num_preconds ) {
+      if ( !gis_added[o->preconds[j].predicate] &&
+	   !gis_deleted[o->preconds[j].predicate] ) {
+	for ( k = j; k < o->num_preconds - 1; k++ ) { 
+ 	  o->preconds[k].predicate = o->preconds[k+1].predicate;
+	  for ( l = 0; l < garity[o->preconds[k].predicate]; l++ ) {
+	    o->preconds[k].args[l] = o->preconds[k+1].args[l];
+	  }
+	}
+	o->num_preconds--;
+      } else {
+	j++;
+      }
+    }
+  }   
+
+}
+
+
+/**************************************
+ * jovi: updated for multiple purpose *
+ * MULTIPLY OP PARAMETERS             *
+ **************************************/
+void multiply_easy_op_parameters_for_multiple_purpose ( void ) {
+
+  int i, j, k, l, p;
+  NormOperator *o;
+
+  gadd_easy_templates = NULL;
+  gadd_num_easy_templates = 0;
+
+  for ( i = 0; i < gadd_num_easy_operators; i++ ) {
+    lo = gadd_easy_operators[i];
+
+    ladd_num_inertia_conds = 0;
+    for ( j = 0; j < lo->num_preconds; j++ ) {
+      if ( !gis_added[lo->preconds[j].predicate] && !gadd_is_deleted[lo->preconds[j].predicate] ) {
 	linertia_conds[lnum_inertia_conds++] = j;
       }
     }

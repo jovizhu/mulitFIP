@@ -102,7 +102,7 @@ build_easy_action_templates	inst_easy.c	/^void build_easy_action_templates( void
 build_False_set	orderings.c	/^void build_False_set( int ft ) {$/;"	f
 build_fixpoint	relax.c	/^int build_fixpoint( State *S ) {$/;"	f
 build_goal_agenda	orderings.c	/^void build_goal_agenda( void )$/;"	f
-build_hard_action_templates	inst_hard.c	/^void build_hard_action_templates( void )$/;"	f
+build_hard_action_templates	inst_hard.c	/^void build_hard_action_templates( void ) {$/;"	f
 build_orig_constant_list	parse.c	/^void build_orig_constant_list( void ) {$/;"	f
 CC	makefile	/^CC      = gcc$/;"	m
 CFLAGS	makefile	/^CFLAGS = -O6 -g -w -ansi $(TYPE) $(ADDONS) $/;"	m
@@ -112,7 +112,8 @@ check_parents	fip.c	/^Bool check_parents(State *cS, StateActionPair *ptr){$/;"	f
 CHECK_PTR	ff.h	305;"	d
 cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void ) {$/;"	f
 cleanup_easy_domain_for_multiple_purpose	inst_easy.c	/^void cleanup_easy_domain_for_multiple_purpose ( void ) {$/;"	f
-cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void )$/;"	f
+cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void ) {$/;"	f
+cleanup_hard_domain_for_multiple_purpose	inst_hard.c	/^void cleanup_hard_domain_for_multiple_purpose ( void ) {$/;"	f
 cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w ) {$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-mul_pddl.tab.c	/^     CLOSE_PAREN = 285$/;"	e	enum:yytokentype	file:
@@ -164,8 +165,8 @@ debugAllUnSolvedState	fip.c	/^void debugAllUnSolvedState(){$/;"	f
 debugit	fip.c	/^void debugit(State *s){$/;"	f
 DECODE_VAR	ff.h	298;"	d
 decrement_inferior_vars	inst_pre.c	/^void decrement_inferior_vars( int var, WffNode *w ) {$/;"	f
-decrement_inferior_vars_in_literals	inst_hard.c	/^void decrement_inferior_vars_in_literals( int var, Literal *ef )$/;"	f
-decrement_var_entries	inst_easy.c	/^void decrement_var_entries( NormOperator *o, int start )$/;"	f
+decrement_inferior_vars_in_literals	inst_hard.c	/^void decrement_inferior_vars_in_literals( int var, Literal *ef ) {$/;"	f
+decrement_var_entries	inst_easy.c	/^void decrement_var_entries( NormOperator *o, int start ) {$/;"	f
 DEFINE_EXPECTED	scan-fct_pddl.tab.c	93;"	d	file:
 DEFINE_TOK	scan-fct_pddl.tab.c	/^     DEFINE_TOK = 258,$/;"	e	enum:yytokentype	file:
 DEFINE_TOK	scan-mul_pddl.tab.c	/^     DEFINE_TOK = 258,$/;"	e	enum:yytokentype	file:
@@ -386,8 +387,18 @@ full_possibly_positive	inst_hard.c	/^Bool full_possibly_positive( Fact *f )$/;"	
 gA	main.c	/^int *gA;$/;"	v
 gactions	main.c	/^Action *gactions;$/;"	v
 gact_filename	main.c	/^char *gact_filename;$/;"	v
+gadd_easy_operators	main.c	/^NormOperator_pointer *gadd_easy_operators;$/;"	v
+gadd_easy_templates	main.c	/^EasyTemplate *gadd_easy_templates;$/;"	v
 gadd_goal	main.c	/^WffNode *gadd_goal = NULL;$/;"	v
+gadd_hard_mixed_operators	main.c	/^MixedOperator *gadd_hard_mixed_operators;$/;"	v
+gadd_hard_operators	main.c	/^Operator_pointer *gadd_hard_operators;$/;"	v
+gadd_hard_templates	main.c	/^PseudoAction_pointer *gadd_hard_templates;$/;"	v
 gadd_loaded_ops	main.c	/^PlOperator *gadd_loaded_ops = NULL;$/;"	v
+gadd_num_easy_operators	main.c	/^int gadd_num_easy_operators;$/;"	v
+gadd_num_easy_templates	main.c	/^int gadd_num_easy_templates;$/;"	v
+gadd_num_hard_mixed_operators	main.c	/^int gadd_num_hard_mixed_operators;$/;"	v
+gadd_num_hard_operators	main.c	/^int gadd_num_hard_operators;$/;"	v
+gadd_num_hard_templates	main.c	/^int gadd_num_hard_templates;$/;"	v
 gadd_num_operators	main.c	/^int gadd_num_operators = 0;$/;"	v
 gadd_operators	main.c	/^Operator_pointer gadd_operators[MAX_OPERATORS];$/;"	v
 gadd_orig_goal_facts	main.c	/^PlNode *gadd_orig_goal_facts = NULL;$/;"	v
@@ -405,7 +416,7 @@ getFactAddress	fip.c	/^int getFactAddress(int *p, int n){$/;"	f
 GetNumVar	fip.c	20;"	d	file:
 GetOPName	fip.c	19;"	d	file:
 GetOPParamInst	fip.c	21;"	d	file:
-get_1P	relax.c	/^int get_1P( State *S, State *current_goals )$/;"	f
+get_1P	relax.c	/^int get_1P( State *S, State *current_goals ) {$/;"	f
 get_1P_and_H	relax.c	/^int get_1P_and_H( State *S, State *current_goals ) {$/;"	f
 get_A	relax.c	/^void get_A( State *S ) {$/;"	f
 GET_CONSTANT	ff.h	300;"	d
@@ -445,7 +456,7 @@ gnum_constants	main.c	/^int gnum_constants = 0;$/;"	v
 gnum_easy_operators	main.c	/^int gnum_easy_operators;$/;"	v
 gnum_easy_templates	main.c	/^int gnum_easy_templates;$/;"	v
 gnum_ef_conn	main.c	/^int gnum_ef_conn;$/;"	v
-gnum_fip_plan_node	main.c	/^int		gnum_fip_plan_node = 0;$/;"	v
+gnum_fip_plan_node	main.c	/^int gnum_fip_plan_node = 0;$/;"	v
 gnum_ft_conn	main.c	/^int gnum_ft_conn;$/;"	v
 gnum_full_initial	main.c	/^int gnum_full_initial = 0;$/;"	v
 gnum_goal_agenda	main.c	/^int gnum_goal_agenda;$/;"	v
@@ -533,7 +544,7 @@ initialize_relax	relax.c	/^void initialize_relax( void ) {$/;"	f
 init_def	scan-fct_pddl.y	/^init_def:$/;"	l
 INIT_TOK	scan-fct_pddl.tab.c	/^     INIT_TOK = 264,$/;"	e	enum:yytokentype	file:
 instances	fip.h	/^	int instances;$/;"	m	struct:_ActionGroup
-instantiated_fact_adress	inst_hard.c	/^int instantiated_fact_adress( Fact *f )$/;"	f
+instantiated_fact_adress	inst_hard.c	/^int instantiated_fact_adress( Fact *f ) {$/;"	f
 instantiate_Effect	inst_hard.c	/^Effect *instantiate_Effect( Effect *e )$/;"	f
 instantiate_wff	inst_hard.c	/^WffNode *instantiate_wff( WffNode *w )$/;"	f
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_Action
@@ -723,7 +734,8 @@ multiply_easy_effect_parameters	inst_easy.c	/^void multiply_easy_effect_paramete
 multiply_easy_effect_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_effect_parameters_for_multiple_purpose ( void ) {$/;"	f
 multiply_easy_non_constrained_effect_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int curr_parameter ) {$/;"	f
 multiply_easy_non_constrained_op_parameters	inst_easy.c	/^void multiply_easy_non_constrained_op_parameters( int curr_parameter )$/;"	f
-multiply_easy_op_parameters	inst_easy.c	/^void multiply_easy_op_parameters( void )$/;"	f
+multiply_easy_op_parameters	inst_easy.c	/^void multiply_easy_op_parameters( void ) {$/;"	f
+multiply_easy_op_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_op_parameters_for_multiple_purpose ( void ) {$/;"	f
 multiply_hard_effect_parameters	inst_hard.c	/^void multiply_hard_effect_parameters( void )$/;"	f
 multiply_hard_op_parameters	inst_hard.c	/^void multiply_hard_op_parameters( void )$/;"	f
 MULTI_GOAL_TOK	scan-fct_pddl.tab.c	/^     MULTI_GOAL_TOK = 265,$/;"	e	enum:yytokentype	file:
@@ -1041,7 +1053,7 @@ print_official_op_name	main.c	/^void print_official_op_name( int index )$/;"	f
 print_official_result	main.c	/^void print_official_result( void )$/;"	f
 print_Operator	output.c	/^void print_Operator( Operator *o )$/;"	f
 print_op_name	output.c	/^void print_op_name( int index )$/;"	f
-print_plan	output.c	/^void print_plan( void )$/;"	f
+print_plan	output.c	/^void print_plan( void ) {  $/;"	f
 print_PlNode	output.c	/^void print_PlNode( PlNode *plnode, int indent )$/;"	f
 print_plops	output.c	/^void print_plops( PlOperator *plop )$/;"	f
 print_PseudoAction	output.c	/^void print_PseudoAction( PseudoAction *o )$/;"	f
@@ -1241,7 +1253,7 @@ var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_Effect
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormEffect
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormOperator
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_Operator
-var_used_in_literals	inst_hard.c	/^Bool var_used_in_literals( int code_var, Literal *ef )$/;"	f
+var_used_in_literals	inst_hard.c	/^Bool var_used_in_literals( int code_var, Literal *ef ) {$/;"	f
 var_used_in_wff	inst_pre.c	/^Bool var_used_in_wff( int code_var, WffNode *w ) {$/;"	f
 visited	ff.h	/^  Bool visited;$/;"	m	struct:_WffNode
 WffNode	ff.h	/^} WffNode, *WffNode_pointer;$/;"	t	typeref:struct:_WffNode

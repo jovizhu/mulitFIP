@@ -79,27 +79,16 @@
 
 
 
-/* used in multiplying routines
- */
+/* used in multiplying routines */
 int linst_table[MAX_VARS];
 int_pointer lini[MAX_PREDICATES];
 
-
-
-
-
-
-
-
-void build_hard_action_templates( void )
-
-{
+void build_hard_action_templates( void ) {
 
   int i, j, size, adr;
   MixedOperator *o;
 
-  /* if there are no hard ops --> nothing to do!
-   */
+  /* if there are no hard ops --> nothing to do! */
   if ( gnum_hard_operators == 0 ) {
     return;
   }
@@ -117,6 +106,19 @@ void build_hard_action_templates( void )
     }
   }
 
+  /***************************************************************
+   * jovi: update for multiple purpose  
+   ***************************************************************/
+  cleanup_hard_domain_for_multiple_purpose ();
+
+  if ( gcmd_line.display_info == 115 ) {
+    printf("\n\ncleaned up hard domain representation is:\n\n");
+    for ( i = 0; i < gadd_num_hard_operators; i++ ) {
+      print_Operator( gadd_hard_operators[i] );
+    }
+  }
+  /**************************************************************/
+
 
   /* create local table of instantiated facts that occur in the
    * initial state. for fast finding out if fact is in ini or not.
@@ -126,6 +128,7 @@ void build_hard_action_templates( void )
     for ( j = 0; j < garity[i]; j++ ) {
       size *= gnum_constants;
     }
+    /* lini is the list of initial */
     lini[i] = ( int_pointer ) calloc( size, sizeof( int ) );
     for ( j = 0; j < size; j++ ) {
       lini[i][j] = 0;
@@ -135,7 +138,6 @@ void build_hard_action_templates( void )
       lini[i][adr]++;
     }
   }
-
 
   /* create mixed op for each param combination
    */
@@ -148,6 +150,20 @@ void build_hard_action_templates( void )
     }
   }
 
+
+  /*************************************************
+   * jovi: update for multiple purpose 		   * 
+   * create mixed op for each param combination    *
+   *************************************************/
+  multiply_hard_op_parameters_for_multiple_purpose ();
+
+  if ( gcmd_line.display_info == 116 ) {
+    printf("\n\nadditional mixed hard domain representation is:\n\n");
+    for ( o = ghard_mixed_operators; o; o = o->next ) {
+      print_MixedOperator( o );
+    }
+  }
+  /*******************************************************************/
 
   /* create pseudo op for each mixed op
    */
@@ -177,21 +193,7 @@ void build_hard_action_templates( void )
 /****************
  * CLEANUP CODE *
  ****************/
-
-
-
-
-
-
-
-
-
-
-
-
-void cleanup_hard_domain( void )
-
-{
+void cleanup_hard_domain( void ) {
 
   int i, j, k, par;
   Operator *o;
@@ -257,10 +259,77 @@ void cleanup_hard_domain( void )
 }
 
 
+/*******************************************
+ * Jovi: CLEANUP CODE fro multiple purpose *
+ *******************************************/
+void cleanup_hard_domain_for_multiple_purpose ( void ) {
 
-Bool var_used_in_literals( int code_var, Literal *ef )
+  int i, j, k, par;
+  Operator *o;
+  Effect *e;
 
-{
+  /* so far, only unused parameters removal */
+  for ( i = 0; i < gadd_num_hard_operators; i++ ) {
+    o = gadd_hard_operators[i];
+
+    j = 0;
+    while ( j < o->num_vars ) {
+      if ( var_used_in_wff( ENCODE_VAR( j ), o->preconds ) ) {
+	j++;
+	continue;
+      }
+      /* j is not used in o-> preconds */
+      for ( e = o->effects; e; e = e->next ) {
+	if ( var_used_in_wff( ENCODE_VAR( j ), e->conditions ) ) {
+	  break;
+	}
+	if ( var_used_in_literals( ENCODE_VAR( j ), e->effects ) ) {
+	  break;
+	}
+      }
+      if ( e ) {
+	j++;
+	continue;
+      }
+      /* j is not used */
+      o->removed[j] = TRUE;
+      j++;
+    }
+
+    
+    /* o is set as gadd_hard_operators[i] */
+    for ( e = o->effects; e; e = e->next ) {
+      j = 0;
+      while ( j < e->num_vars ) {
+	par = o->num_vars + j;
+	if ( var_used_in_wff( ENCODE_VAR( par ), e->conditions ) ) {
+	  j++;
+	  continue;
+	}
+	if ( var_used_in_literals( ENCODE_VAR( par ), e->effects ) ) {
+	  j++;
+	  continue;
+	}
+
+	if ( e->var_names[j] ) {
+	  free( e->var_names[j] );
+	}
+
+	for ( k = j; k < e->num_vars - 1; k++ ) {
+	  e->var_names[k] = e->var_names[k+1];
+	  e->var_names[k] = e->var_names[k+1];
+	}
+
+	e->num_vars--;
+	decrement_inferior_vars( par, e->conditions );
+	decrement_inferior_vars_in_literals( par, e->effects );
+      }
+    }
+  }
+
+}
+
+Bool var_used_in_literals( int code_var, Literal *ef ) {
 
   Literal *l;
   int i;
@@ -272,16 +341,12 @@ Bool var_used_in_literals( int code_var, Literal *ef )
       }
     }
   }
-
   return FALSE;
-
 }
 
 
-
-void decrement_inferior_vars_in_literals( int var, Literal *ef )
-
-{
+/* update args inside the ef */
+void decrement_inferior_vars_in_literals( int var, Literal *ef ) {
 
   Literal *l;
   int i;
@@ -743,19 +808,14 @@ Bool full_possibly_negative( Fact *f )
 
 
 
-int instantiated_fact_adress( Fact *f )
-
-{
+int instantiated_fact_adress( Fact *f ) {
 
   int r = 0, b = 1, i;
-
   for ( i = 0; i < garity[f->predicate]; i++ ) {
     r += b * f->args[i];
     b *= gnum_constants;
   }
-
   return r;
-
 }
 
 

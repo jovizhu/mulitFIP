@@ -183,9 +183,10 @@ void increment_state_level_id(State *dest, State source){
 
 Bool is_strong_less_than(State s1, State s2){
 	int i, l = s1.num_L;
-	if(s1.num_L > s2.num_L)/*len(s1) <= len(s2)?*/
+	if(s1.num_L > s2.num_L) /*len(s1) <= len(s2)?*/
 		return FALSE;
 
+	/* else if s1.num_L >= s2.num_L */
 	for(i = 0; i < l - 1; i++){
 		if(s1.L[i] != s2.L[i]){
 			return FALSE;
@@ -912,7 +913,6 @@ void convert_ff_plan_to_fip_plan( PlanNode *pPlanNode ){
 
 }
 
-
 /*
 * on the one hand: build action group
 * on the other hand: for each action in gop_conn,
@@ -989,6 +989,7 @@ void debugAllSolvedState(){
 	printf("\n\nExiting debugAllSolvedState...\n");
 }
 
+/* insert pState into gTail */
 void add_solved_state( StateActionPair *pState ){	
 
 	/*debug: duplicate check*/
@@ -998,7 +999,7 @@ void add_solved_state( StateActionPair *pState ){
 		return;
 	}
 
-	pState->id	=	gnum_solved_states++;
+	pState->id = gnum_solved_states++;
 
 	if( gTail ){
 		gTail->next = pState;
@@ -1107,7 +1108,7 @@ void solve_unsolved_states(void){
 	make_state(&originGoal, gnum_ft_conn);
 	originGoal.max_F = gnum_ft_conn;
 
-	source_to_dest( &originState, &ginitial_state);
+	source_to_dest(&originState, &ginitial_state);
 	source_to_dest(&originGoal, &ggoal_state);
 
 	while( gunsovled_states ){
@@ -1117,11 +1118,11 @@ void solve_unsolved_states(void){
 		debugAllSolvedState();*/
 
 		p = get_next_unsolved_state();		
+
 		if( q = is_solved_state( & p->state ) ){
 			/* state has been solved.
 			* we need to record it in fipPlan tree
 			*/	
-			
 			if(g_is_strong){						
 				if(same_state(&q->state, &p->parent[p->numP - 1])){
 					printf("solve_unsolved_states -- Same state. Not safe to jump..\n");
@@ -1134,37 +1135,36 @@ void solve_unsolved_states(void){
 				else if( is_strong_less_than(q->state, p->parent[p->numP - 1])){					
 					printf("solve_unsolved_states -- NOT safe to jump..\n");
 					/*debugit(&p->parent[p->numP - 1]);*/
-					source_to_dest( &ginitial_state, &originState);
+					source_to_dest(&ginitial_state, &originState);
 					source_to_dest(&ggoal_state, &originGoal);	
-					backtrack_single_nodes(&p->parent[p->numP - 1], p->p_actions[p->numP - 1]);					
+					backtrack_single_nodes(&p->parent[p->numP - 1], p->p_actions[p->numP - 1]);	
+
 					continue;
 				}else if(is_weak_less_than(q->state, p->parent[p->numP - 1])){
 					printf("solve_unsolved_states -- Perform BFS to check whether it is a safe jump\n");
-					source_to_dest( &ginitial_state, &originState);
+					source_to_dest(&ginitial_state, &originState);
 					source_to_dest(&ggoal_state, &originGoal);	
-					backtrack_single_nodes(&p->parent[p->numP - 1], p->p_actions[p->numP - 1]);					
+					backtrack_single_nodes(&p->parent[p->numP - 1], p->p_actions[p->numP - 1]);	
+
 					continue;
 					/*breath-first-search*/
 					/*No real cases have been found that commit this situation!*/
 				}else{
-					printf("solve_unsolved_states -- It is safe to jump\n");							
+					printf("solve_unsolved_states -- It is safe to jump\n");			
 					/*debugit(&q->state);*/
 				}
-			} 
+			}/* end q is strong*/ 
 
 			free_StateActionPair( p );
 			if(q->action)
 				q->action->isReferenced = TRUE;
 			printf("solved state reached\n");
 			continue;
-		}
-
-
+		} /* end q has next */
 
 		/* need to call ff again */
 		/* reset status */
 		/* set initial condition */
-
 		source_to_dest( &ginitial_state, &p->state);
 
 		/*JC: Alternative goal*/

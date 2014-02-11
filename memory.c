@@ -1010,8 +1010,8 @@ StateActionPair* new_StateActionPair( void ){
 	StateActionPair *p = ( StateActionPair * ) calloc( 1, sizeof( StateActionPair ) );
 	p->action	=	NULL;
 	p->next		=	NULL;
-	p->id			=	-1;
-	p->numP = 0; /*Jicheng: Initially, no PI parent*/
+	p->id		=	-1;
+	p->numP 	= 	0; /*Jicheng: Initially, no PI parent*/
 	make_state(&p->state, gnum_ft_conn);
 	return p;
 }

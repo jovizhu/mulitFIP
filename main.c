@@ -199,21 +199,18 @@ int garity[MAX_PREDICATES];
 int gpredicates_args_type[MAX_PREDICATES][MAX_ARITY];
 int gnum_predicates = 0;
 
-/* the domain in integer (Fact) representation
- */
+/* the domain in integer (Fact) representation */
 Operator_pointer goperators[MAX_OPERATORS];
 int gnum_operators = 0;
 Fact *gfull_initial;
 int gnum_full_initial = 0;
 WffNode *ggoal = NULL;
-/* jovi: defined for multiple purposes
- */
+/* jovi: defined for multiple purposes */
 Operator_pointer gadd_operators[MAX_OPERATORS];
 int gadd_num_operators = 0;
 WffNode *gadd_goal = NULL;
 /* stores inertia - information: is any occurence of the predicate
- * added / deleted in the uninstantiated ops ?
- */
+ * added / deleted in the uninstantiated ops ? */
 Bool gis_added[MAX_PREDICATES];
 Bool gis_deleted[MAX_PREDICATES];
 
@@ -237,38 +234,55 @@ int gpredicate_to_type[MAX_TYPES];
 TypeArray gintersected_types[MAX_TYPES];
 int gnum_intersected_types[MAX_TYPES];
 
-/* splitted domain: hard n easy ops
-*/
+/* splitted domain: hard n easy ops */
 Operator_pointer *ghard_operators;
 int gnum_hard_operators;
 NormOperator_pointer *geasy_operators;
 int gnum_easy_operators;
 
 /* so called Templates for easy ops: possible inertia constrained
-* instantiation constants
-*/
+* instantiation constants */
 EasyTemplate *geasy_templates;
 int gnum_easy_templates;
 
 /* first step for hard ops: create mixed operators, with conjunctive
-* precondition and arbitrary effects
-*/
+* precondition and arbitrary effects */
 MixedOperator *ghard_mixed_operators;
 int gnum_hard_mixed_operators;
 
-/* hard ''templates'' : pseudo actions
-*/
+/* hard ''templates'' : pseudo actions */
 PseudoAction_pointer *ghard_templates;
 int gnum_hard_templates;
 
-/* store the final "relevant facts"
-*/
+/*************************** mutlipl purpose support ******************************************************************/
+/* splitted additional domain: hard n easy ops */
+Operator_pointer *gadd_hard_operators;
+int gadd_num_hard_operators;
+NormOperator_pointer *gadd_easy_operators;
+int gadd_num_easy_operators;
+
+/* so called Templates for easy ops: possible inertia constrained
+* instantiation constants */
+EasyTemplate *gadd_easy_templates;
+int gadd_num_easy_templates;
+
+/* first step for hard ops: create mixed operators, with conjunctive
+* precondition and arbitrary effects */
+MixedOperator *gadd_hard_mixed_operators;
+int gadd_num_hard_mixed_operators;
+
+/* hard ''templates'' : pseudo actions */
+PseudoAction_pointer *gadd_hard_templates;
+int gadd_num_hard_templates;
+/************************************** multiple purpose (end) **********************************************************/
+
+
+/* store the final "relevant facts" */
 Fact grelevant_facts[MAX_RELEVANT_FACTS];
 int gnum_relevant_facts = 0;
 int gnum_pp_facts = 0;
 
-/* the final actions and problem representation
-*/
+/* the final actions and problem representation */
 Action *gactions;
 int gnum_actions;
 State ginitial_state;
@@ -280,7 +294,7 @@ StateActionPair *gini_pair = NULL;
 /* tree shape plan
 */
 PlanNode gfipPlan;
-int		gnum_fip_plan_node = 0;
+int gnum_fip_plan_node = 0;
 
 StateActionPair *gsolved_states = NULL;
 int gnum_solved_states = 0;
@@ -527,8 +541,7 @@ int main( int argc, char *argv[] ) {
   	ftime(&start);
 
   	/* perform reachability analysis in terms of relaxed 
-   	* fixpoint
-   	*/
+   	* fixpoint */
   	perform_reachability_analysis();
 
   	/*times( &end );*/
@@ -619,6 +632,7 @@ int main( int argc, char *argv[] ) {
 
 	if ( found_plan ) {
 		/*print_plan();*/		
+                /* D action add to group */
 		build_action_group();
 
 		gfipPlan.num_sons = 0;
@@ -657,33 +671,27 @@ int main( int argc, char *argv[] ) {
 				printf("The initial state is a dead-end! The problem is unsolvable.\n");
 				exit(0);
 			}
-
 		}
 
 		printf("##########################################\n");
 		printf("#####   PROCEDURE-LIKE CODE   ############\n");
 		printf("##########################################\n");
-		/*print_fip_plan_1( is_solved_state(&ginitial_state) , &gfipPlan, 1);
+		/* print_fip_plan_1( is_solved_state(&ginitial_state) , &gfipPlan, 1); */		
 
-		*/		
-
-		/*times( &end );*/
+		/* times( &end ); */
 		ftime(&end);
 		TIME( gsearch_time );
 
-		/*myend = clock();*/
+		/* myend = clock(); */
 		ftime(&myend);
 
-		/*printf("my cac is %7.3f\n", 1.0*(myend.millitm - mystart.millitm)/1000.0);*/
-
+		/* printf("my cac is %7.3f\n", 1.0*(myend.millitm - mystart.millitm)/1000.0); */
 		print_fip_plan_2(); 
 
 		if(to_print_state)
 			print_all_states();
-
-		/*print_fip_plan_3( &gfipPlan, 0 );*/  
+		/* print_fip_plan_3( &gfipPlan, 0 ); */  
 	}
-
 	printf("The total searching time is %7.3f\n", (myend.time - mystart.time) + (myend.millitm - mystart.millitm)/1000.0);
 
   output_planner_info();
