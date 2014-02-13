@@ -540,8 +540,7 @@ int main( int argc, char *argv[] ) {
   	/*times( &start );*/
   	ftime(&start);
 
-  	/* perform reachability analysis in terms of relaxed 
-   	* fixpoint */
+  	/* perform reachability analysis in terms of relaxed  fixpoint */
   	perform_reachability_analysis();
 
   	/*times( &end );*/

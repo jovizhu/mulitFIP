@@ -38,8 +38,6 @@
  */
 
 
-
-
 /*********************************************************************
  * File: inst_final.c
  * Description: final domain representation functions
@@ -48,9 +46,6 @@
  * Author: Joerg Hoffmann 2000
  *
  *********************************************************************/ 
-
-
-
 
 #include "ff.h"
 
@@ -61,18 +56,11 @@
 #include "inst_final.h"
 
 
-
-
-
 /********************************
  * POSSIBLY TRUE FACTS ANALYSIS *
  ********************************/
 
-
-
-/* local globals for this part
- */
-
+/* local globals for this part */
 int_pointer lpos[MAX_PREDICATES];
 int_pointer lneg[MAX_PREDICATES];
 int_pointer luse[MAX_PREDICATES];
@@ -80,7 +68,6 @@ int_pointer lindex[MAX_PREDICATES];
 
 int lp;
 int largs[MAX_VARS];
-
 
 void perform_reachability_analysis( void ) {
 
@@ -123,36 +110,35 @@ void perform_reachability_analysis( void ) {
     had_hard_template[i] = FALSE;
   }
 
-  /* mark initial facts as possibly positive, not poss. negative
-   */
+  /* mark initial facts as possibly positive, not poss. negative */
   for ( i = 0; i < gnum_predicates; i++ ) {
     lp = i;
     for ( j = 0; j < gnum_initial_predicate[i]; j++ ) {
+
       for ( k = 0; k < garity[i]; k++ ) {
 	largs[k] = ginitial_predicate[i][j].args[k];
       }
+
       adr = fact_adress();
       lpos[lp][adr] = 1;
       lneg[lp][adr] = 0;
     }
   }
 
-  /* compute fixpoint
-   */
+  /* compute fixpoint */
   fixpoint = FALSE;
   while ( !fixpoint ) {
     fixpoint = TRUE;
 
-    /* assign next layer of easy templates to possibly positive fixpoint
-     */
+    /* assign next layer of easy templates to possibly positive fixpoint */
     t1 = geasy_templates;
     while ( t1 ) {
       no = t1->op;
+
       for ( i = 0; i < no->num_preconds; i++ ) {
 	lp = no->preconds[i].predicate;
 	for ( j = 0; j < garity[lp]; j++ ) {
-	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ?
-	    no->preconds[i].args[j] : t1->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
+	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ? no->preconds[i].args[j] : t1->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
 	}
 	if ( !lpos[lp][fact_adress()] ) {
 	  break;
@@ -339,15 +325,12 @@ void perform_reachability_analysis( void ) {
 }
 
 
-
 /* bit complicated to avoid memory explosion when high arity predicates take
  * num_obs ^ arity space. take space for individual arg types only; 
  * must consider pred args in smallest - to - largest - type order to make
  * mapping injective.
  */
-int fact_adress( void )
-
-{
+int fact_adress( void ) {
 
   int r = 0, b = 1, i, j, min, minj;
   Bool done[MAX_ARITY];
@@ -379,9 +362,7 @@ int fact_adress( void )
     b *= min;
     done[minj] = TRUE;
   }
-
   return r;
-
 }
 
 

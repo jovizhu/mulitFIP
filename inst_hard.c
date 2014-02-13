@@ -53,14 +53,6 @@
  *
  *********************************************************************/ 
 
-
-
-
-
-
-
-
-
 #include "ff.h"
 
 #include "output.h"
@@ -68,16 +60,6 @@
 
 #include "inst_pre.h"
 #include "inst_hard.h" 
-
-
-
-
-
-
-
-
-
-
 
 /* used in multiplying routines */
 int linst_table[MAX_VARS];
@@ -122,6 +104,7 @@ void build_hard_action_templates( void ) {
 
   /* create local table of instantiated facts that occur in the
    * initial state. for fast finding out if fact is in ini or not.
+   * jovi: initial process, not need to update 
    */
   for ( i = 0; i < gnum_predicates; i++ ) {
     size = 1;
@@ -159,14 +142,13 @@ void build_hard_action_templates( void ) {
 
   if ( gcmd_line.display_info == 116 ) {
     printf("\n\nadditional mixed hard domain representation is:\n\n");
-    for ( o = ghard_mixed_operators; o; o = o->next ) {
+    for ( o = gadd_hard_mixed_operators; o; o = o->next ) {
       print_MixedOperator( o );
     }
   }
   /*******************************************************************/
 
-  /* create pseudo op for each mixed op
-   */
+  /* create pseudo op for each mixed op */
   multiply_hard_effect_parameters();
  
   if ( gcmd_line.display_info == 117 ) {
@@ -176,6 +158,21 @@ void build_hard_action_templates( void ) {
     }
   }
  
+  /***************************************** 
+   * jovi: update for multiple purpose     *
+   * create pseudo op for each mixed op    *
+   *****************************************/
+  multiply_hard_effect_parameters_for_multiple_purpose ();
+ 
+  if ( gcmd_line.display_info == 117 ) {
+    printf("\n\npseudo hard domain representation is:\n\n");
+    for ( i = 0; i < gadd_num_hard_templates; i++ ) {
+      print_PseudoAction( gadd_hard_templates[i] );
+    }
+  }
+ 
+
+}
 
 }
 
@@ -364,42 +361,10 @@ void decrement_inferior_vars_in_literals( int var, Literal *ef ) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /******************************
  * CODE THAT BUILDS MIXED OPS *
  ******************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void multiply_hard_op_parameters( void )
-
-{
+void multiply_hard_op_parameters( void ) {
 
   int i;
 
@@ -416,10 +381,27 @@ void multiply_hard_op_parameters( void )
 }
 
 
+/*************************************
+ * Jovi: update for multiple purpose *
+ * CODE THAT BUILDS MIXED OPS        *
+ *************************************/
+void multiply_hard_op_parameters_for_multiple_purpose ( void ) {
 
-void create_hard_mixed_operators( Operator *o, int curr_var )
+  int i;
 
-{
+  gadd_hard_mixed_operators = NULL;
+
+  for ( i = 0; i < MAX_VARS; i++ ) {
+    linst_table[i] = -1;
+  }
+
+  for ( i = 0; i < gadd_num_hard_operators; i++ ) {
+    create_hard_mixed_operators_for_multiple_purpose ( gadd_hard_operators[i], 0 );
+  }
+
+}
+
+void create_hard_mixed_operators( Operator *o, int curr_var ) {
 
   int t, i, m;
   WffNode *tmp1, *w, *ww;
@@ -562,11 +544,156 @@ void create_hard_mixed_operators( Operator *o, int curr_var )
 
 }
 
+/* Jovi: update for multiple purposes */
+/*       split operation into multiple operations based on preconditon */
+void create_hard_mixed_operators_for_multiple_purpose ( Operator *o, int curr_var ) {
+
+  int t, i, m;
+  WffNode *tmp1, *w, *ww;
+  MixedOperator *tmp2;
+
+  if ( curr_var < o->num_vars ) {
+    if ( o->removed[curr_var] ) { /* if curr_var is deleted */
+      /* param doesn't matter -- select any appropriate type constant
+       * at least one there; otherwise, op would not have been translated. */
+
+      linst_table[curr_var] = gtype_consts[o->var_types[curr_var]][0];
+      create_hard_mixed_operators_for_multiple_purpose ( o, curr_var + 1 );
+      linst_table[curr_var] = -1;
+      return;
+    }
+
+    t = o->var_types[curr_var];
+
+    for ( i = 0; i < gtype_size[t]; i++ ) {
+      linst_table[curr_var] = gtype_consts[t][i];
+
+      create_hard_mixed_operators_for_multiple_purpose ( o, curr_var + 1 );
+
+      linst_table[curr_var] = -1;
+    }
+
+    return;
+  }/* enif curr < o->num_var */
+
+  /* curr >= o->num_var */
+  tmp1 = instantiate_wff( o->preconds );
+
+  if ( tmp1->connective == FAL ) {
+    free_WffNode( tmp1 );
+    return;
+  }
+
+  dnf( &tmp1 );
+  cleanup_wff( &tmp1 );
+
+  if ( tmp1->connective == FAL ) {
+    free_WffNode( tmp1 );
+    return;
+  }
+
+  /* only debugging, REMOVE LATER */
+  if ( is_dnf( tmp1 ) == -1 ) {
+    printf("\n\nILLEGAL DNF %s AFTER INSTANTIATION\n\n", o->name);
+    print_Wff( tmp1, 0 );
+    exit( 1 );
+  }
+
+  switch ( tmp1->connective ) {
+  case OR:
+    for ( w = tmp1->sons; w; w = w->next ) {
+      tmp2 = new_MixedOperator( o );
+      for ( i = 0; i < o->num_vars; i++ ) {
+	tmp2->inst_table[i] = linst_table[i];
+      }
+      if ( w->connective == AND ) {
+	m = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) m++;
+	tmp2->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+	tmp2->num_preconds = m;
+	m = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) {
+	  tmp2->preconds[m].predicate = ww->fact->predicate;
+	  for ( i = 0; i < garity[ww->fact->predicate]; i++ ) {
+	    tmp2->preconds[m].args[i] = ww->fact->args[i];
+	  }
+	  m++;
+	}
+      } else {
+	/* w->connective != AND */
+	tmp2->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
+	tmp2->num_preconds = 1;
+	tmp2->preconds[0].predicate = w->fact->predicate;
+	for ( i = 0; i < garity[w->fact->predicate]; i++ ) {
+	  tmp2->preconds[0].args[i] = w->fact->args[i];
+	}
+      }
+
+      tmp2->effects = instantiate_Effect( o->effects );
+      tmp2->next = gadd_hard_mixed_operators;
+      gadd_hard_mixed_operators = tmp2;
+      gadd_num_hard_mixed_operators++;
+    }
+    break;
+  case AND:
+    tmp2 = new_MixedOperator( o );
+    for ( i = 0; i < o->num_vars; i++ ) {
+      tmp2->inst_table[i] = linst_table[i];
+    }
+    m = 0;
+    for ( w = tmp1->sons; w; w = w->next ) m++;
+    tmp2->preconds = ( Fact * ) calloc( m, sizeof( Fact ) );
+    tmp2->num_preconds = m;
+    m = 0;
+    for ( w = tmp1->sons; w; w = w->next ) {
+      tmp2->preconds[m].predicate = w->fact->predicate;
+      for ( i = 0; i < garity[w->fact->predicate]; i++ ) {
+	tmp2->preconds[m].args[i] = w->fact->args[i];
+      }
+      m++;
+    }
+    tmp2->effects = instantiate_Effect( o->effects );
+    tmp2->next = gadd_hard_mixed_operators;
+    gadd_hard_mixed_operators = tmp2;
+    gadd_num_hard_mixed_operators++;
+    break;
+  case ATOM:
+    tmp2 = new_MixedOperator( o );
+    for ( i = 0; i < o->num_vars; i++ ) {
+      tmp2->inst_table[i] = linst_table[i];
+    }
+    tmp2->preconds = ( Fact * ) calloc( 1, sizeof( Fact ) );
+    tmp2->num_preconds = 1;
+    tmp2->preconds[0].predicate = tmp1->fact->predicate;
+    for ( i = 0; i < garity[tmp1->fact->predicate]; i++ ) {
+      tmp2->preconds[0].args[i] = tmp1->fact->args[i];
+    }
+    tmp2->effects = instantiate_Effect( o->effects );
+    tmp2->next = gadd_hard_mixed_operators;
+    gadd_hard_mixed_operators = tmp2;
+    gadd_num_hard_mixed_operators++;
+    break;
+  case TRU:
+    tmp2 = new_MixedOperator( o );
+    for ( i = 0; i < o->num_vars; i++ ) {
+      tmp2->inst_table[i] = linst_table[i];
+    }
+    tmp2->effects = instantiate_Effect( o->effects );
+    tmp2->next = gadd_hard_mixed_operators;
+    gadd_hard_mixed_operators = tmp2;
+    gadd_num_hard_mixed_operators++;
+    break;
+  default:
+    printf("\n\nillegal connective %d in parsing DNF precond.\n\n", tmp1->connective);
+    exit( 1 );
+  }
+
+  free_WffNode( tmp1 );
+
+}
 
 
-Effect *instantiate_Effect( Effect *e )
-
-{
+Effect *instantiate_Effect( Effect *e ) {
 
   Effect *res = NULL, *tmp, *i;
   Literal *tt, *l;
@@ -593,8 +720,7 @@ Effect *instantiate_Effect( Effect *e )
       tt->fact.predicate = l->fact.predicate;
       for ( j = 0; j < garity[tt->fact.predicate]; j++ ) {
 	tt->fact.args[j] = l->fact.args[j];
-	if ( tt->fact.args[j] < 0 &&
-	     linst_table[DECODE_VAR( tt->fact.args[j] )] != -1 ) {
+	if ( tt->fact.args[j] < 0 && linst_table[DECODE_VAR( tt->fact.args[j] )] != -1 ) {
 	  tt->fact.args[j] = linst_table[DECODE_VAR( tt->fact.args[j] )];
 	}
       }
@@ -611,16 +737,10 @@ Effect *instantiate_Effect( Effect *e )
     }
     res = tmp;
   }
-
   return res;
-
 }
 
-
-
-WffNode *instantiate_wff( WffNode *w )
-
-{
+WffNode *instantiate_wff( WffNode *w ) {
 
   WffNode *res = NULL, *tmp, *i;
   int j, c0, c1, m, h;
@@ -694,16 +814,13 @@ WffNode *instantiate_wff( WffNode *w )
     res = tmp;
     break;
   case NOT:
-    /* must be non-equality
-     */
+    /* must be non-equality */
     c0 = ( w->son->fact->args[0] < 0 ) ?
       linst_table[DECODE_VAR( w->son->fact->args[0] )] : w->son->fact->args[0];
     c1 = ( w->son->fact->args[1] < 0 ) ?
       linst_table[DECODE_VAR( w->son->fact->args[1] )] : w->son->fact->args[1];
-    if ( c0 < 0 ||
-	 c1 < 0 ) {
-      /* ef param while checking ef conds in inst op
-       */
+    if ( c0 < 0 || c1 < 0 ) {
+      /* ef param while checking ef conds in inst op */
       res = new_WffNode( ATOM );
       res->fact = new_Fact();
       res->fact->predicate = -2;
@@ -753,13 +870,11 @@ WffNode *instantiate_wff( WffNode *w )
     res = new_WffNode( w->connective );
     break;
   default:
-    printf("\n\nillegal connective %d in instantiate formula\n\n",
-	   w->connective);
+    printf("\n\nillegal connective %d in instantiate formula\n\n", w->connective);
     exit( 1 );
   }
 
   return res;
-
 }
 
 
@@ -834,24 +949,7 @@ int instantiated_fact_adress( Fact *f ) {
 /*********************************************************
  * CODE THAT MULTIPLIES EFFECT PARAMS --> PSEUDO ACTIONS *
  *********************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void multiply_hard_effect_parameters( void )
-
-{
+void multiply_hard_effect_parameters( void ) {
 
   MixedOperator *o;
   PseudoAction *tmp;
@@ -878,10 +976,36 @@ void multiply_hard_effect_parameters( void )
 }
 
 
+/*********************************************************
+ * jovi: update for multiple purpose                     *
+ * CODE THAT MULTIPLIES EFFECT PARAMS --> PSEUDO ACTIONS *
+ *********************************************************/
+void multiply_hard_effect_parameters_for_multiple_purpose ( void ) {
 
-void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var )
+  MixedOperator *o;
+  PseudoAction *tmp;
+  int i;
+  Effect *e;
 
-{
+  gadd_hard_templates = ( PseudoAction_pointer * ) calloc( gadd_num_hard_mixed_operators, sizeof ( PseudoAction_pointer ) );
+  gadd_num_hard_templates = 0;
+
+  for ( o = gadd_hard_mixed_operators; o; o = o->next ) {
+    tmp = new_PseudoAction( o );
+
+    for ( i = 0; i < tmp->operator->num_vars; i++ ) {
+      linst_table[i] = tmp->inst_table[i];
+    }
+
+    for ( e = o->effects; e; e = e->next ) {
+      create_hard_pseudo_effects_for_multiple_purpose ( tmp, e, 0 );
+    }
+
+    gadd_hard_templates[gadd_num_hard_templates++] = tmp;
+  }
+}
+
+void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var ) {
 
   int par, t, i, m;
   WffNode *tmp1, *w, *ww;
@@ -999,11 +1123,128 @@ void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var )
 
 }
  
+/* Jovi: update for multiple purpose */
+/* split effects*/
+void create_hard_pseudo_effects_for_multiple_purpose ( PseudoAction *a, Effect *e, int curr_var ) {
 
+  int par, t, i, m;
+  WffNode *tmp1, *w, *ww;
+  PseudoActionEffect *tmp2;
 
-void make_instantiate_literals( PseudoActionEffect *e, Literal *ll )
+  if ( curr_var < e->num_vars ) {
+    par = a->operator->num_vars + curr_var;
 
-{
+    t = e->var_types[curr_var];
+    for ( i = 0; i < gtype_size[t]; i++ ) {
+      linst_table[par] = gtype_consts[t][i];
+
+      create_hard_pseudo_effects_for_multiple_purpose ( a, e, curr_var + 1 );
+
+      linst_table[par] = -1;
+    }
+    return;
+  }
+
+  tmp1 = instantiate_wff( e->conditions );
+
+  if ( tmp1->connective == FAL ) {
+    free_WffNode( tmp1 );
+    return;
+  }
+
+  dnf( &tmp1 );
+  cleanup_wff( &tmp1 );
+
+  /* only debugging, REMOVE LATER
+   */
+  if ( is_dnf( tmp1 ) == -1 ) {
+    printf("\n\nILLEGAL DNF %s AFTER INSTANTIATION\n\n", a->operator->name);
+    print_Wff( tmp1, 0 );
+    exit( 1 );
+  }
+
+  switch ( tmp1->connective ) {
+  case OR:
+    for ( w = tmp1->sons; w; w = w->next ) {
+      tmp2 = new_PseudoActionEffect();
+      if ( w->connective == AND ) {
+	m = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) m++;
+	tmp2->conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
+	tmp2->num_conditions = m;
+	m = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) {
+	  tmp2->conditions[m].predicate = ww->fact->predicate;
+	  for ( i = 0; i < garity[ww->fact->predicate]; i++ ) {
+	    tmp2->conditions[m].args[i] = ww->fact->args[i];
+	  }
+	  m++;
+	}
+      } else {
+	tmp2->conditions = ( Fact * ) calloc( 1, sizeof( Fact ) );
+	tmp2->num_conditions = 1;
+	tmp2->conditions[0].predicate = w->fact->predicate;
+	for ( i = 0; i < garity[w->fact->predicate]; i++ ) {
+	  tmp2->conditions[0].args[i] = w->fact->args[i];
+	}
+      }
+      make_instantiate_literals( tmp2, e->effects );
+      tmp2->next = a->effects;
+      a->effects = tmp2;
+      a->num_effects++;
+    }
+    break;
+  case AND:
+    tmp2 = new_PseudoActionEffect();
+    m = 0;
+    for ( w = tmp1->sons; w; w = w->next ) m++;
+    tmp2->conditions = ( Fact * ) calloc( m, sizeof( Fact ) );
+    tmp2->num_conditions = m;
+    m = 0;
+    for ( w = tmp1->sons; w; w = w->next ) {
+      tmp2->conditions[m].predicate = w->fact->predicate;
+      for ( i = 0; i < garity[w->fact->predicate]; i++ ) {
+	tmp2->conditions[m].args[i] = w->fact->args[i];
+      }
+      m++;
+    }
+    make_instantiate_literals( tmp2, e->effects );
+    tmp2->next = a->effects;
+    a->effects = tmp2;
+    a->num_effects++;
+    break;
+  case ATOM:
+    tmp2 = new_PseudoActionEffect();
+    tmp2->conditions = ( Fact * ) calloc( 1, sizeof( Fact ) );
+    tmp2->num_conditions = 1;
+    tmp2->conditions[0].predicate = tmp1->fact->predicate;
+    for ( i = 0; i < garity[tmp1->fact->predicate]; i++ ) {
+      tmp2->conditions[0].args[i] = tmp1->fact->args[i];
+    }
+    make_instantiate_literals( tmp2, e->effects );
+    tmp2->next = a->effects;
+    a->effects = tmp2;
+    a->num_effects++;
+    break;
+  case TRU:
+    tmp2 = new_PseudoActionEffect();
+    make_instantiate_literals( tmp2, e->effects );
+    tmp2->next = a->effects;
+    a->effects = tmp2;
+    a->num_effects++;
+    break;
+  default:
+    printf("\n\nillegal connective %d in parsing DNF precond.\n\n",
+	   tmp1->connective);
+    exit( 1 );
+  }
+
+  free_WffNode( tmp1 );
+
+}
+ 
+
+void make_instantiate_literals( PseudoActionEffect *e, Literal *ll ) {
 
   int ma = 0, md = 0, i;
   Literal *l;

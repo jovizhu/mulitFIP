@@ -152,8 +152,10 @@ copy_Wff	inst_pre.c	/^WffNode *copy_Wff( WffNode *w )$/;"	f
 create_final_actions	inst_final.c	/^void create_final_actions( void )$/;"	f
 create_final_goal_state	inst_final.c	/^void create_final_goal_state( void )$/;"	f
 create_final_initial_state	inst_final.c	/^void create_final_initial_state( void )$/;"	f
-create_hard_mixed_operators	inst_hard.c	/^void create_hard_mixed_operators( Operator *o, int curr_var )$/;"	f
-create_hard_pseudo_effects	inst_hard.c	/^void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var )$/;"	f
+create_hard_mixed_operators	inst_hard.c	/^void create_hard_mixed_operators( Operator *o, int curr_var ) {$/;"	f
+create_hard_mixed_operators_for_multiple_purpose	inst_hard.c	/^void create_hard_mixed_operators_for_multiple_purpose ( Operator *o, int curr_var ) {$/;"	f
+create_hard_pseudo_effects	inst_hard.c	/^void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var ) {$/;"	f
+create_hard_pseudo_effects_for_multiple_purpose	inst_hard.c	/^void create_hard_pseudo_effects_for_multiple_purpose ( PseudoAction *a, Effect *e, int curr_var ) {$/;"	f
 create_integer_representation	inst_pre.c	/^void create_integer_representation( void ) {$/;"	f
 create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T ) {$/;"	f
 create_member_nrs	inst_pre.c	/^void create_member_nrs( void ) {$/;"	f
@@ -545,8 +547,8 @@ init_def	scan-fct_pddl.y	/^init_def:$/;"	l
 INIT_TOK	scan-fct_pddl.tab.c	/^     INIT_TOK = 264,$/;"	e	enum:yytokentype	file:
 instances	fip.h	/^	int instances;$/;"	m	struct:_ActionGroup
 instantiated_fact_adress	inst_hard.c	/^int instantiated_fact_adress( Fact *f ) {$/;"	f
-instantiate_Effect	inst_hard.c	/^Effect *instantiate_Effect( Effect *e )$/;"	f
-instantiate_wff	inst_hard.c	/^WffNode *instantiate_wff( WffNode *w )$/;"	f
+instantiate_Effect	inst_hard.c	/^Effect *instantiate_Effect( Effect *e ) {$/;"	f
+instantiate_wff	inst_hard.c	/^WffNode *instantiate_wff( WffNode *w ) {$/;"	f
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_Action
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_EasyTemplate
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_MixedOperator
@@ -699,7 +701,7 @@ make_effects	parse.c	/^Bool make_effects( PlNode **n )$/;"	f
 make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl ) {$/;"	f
 make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n ) {$/;"	f
 make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars ) {$/;"	f
-make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll )$/;"	f
+make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll ) {$/;"	f
 make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
 make_name_inst_table_from_PseudoAction	inst_final.c	/^void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )$/;"	f
 make_normal_effects	inst_pre.c	/^void make_normal_effects( NormOperator **nop, Operator *op ) {$/;"	f
@@ -736,8 +738,10 @@ multiply_easy_non_constrained_effect_parameters_for_multiple_purpose	inst_easy.c
 multiply_easy_non_constrained_op_parameters	inst_easy.c	/^void multiply_easy_non_constrained_op_parameters( int curr_parameter )$/;"	f
 multiply_easy_op_parameters	inst_easy.c	/^void multiply_easy_op_parameters( void ) {$/;"	f
 multiply_easy_op_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_op_parameters_for_multiple_purpose ( void ) {$/;"	f
-multiply_hard_effect_parameters	inst_hard.c	/^void multiply_hard_effect_parameters( void )$/;"	f
-multiply_hard_op_parameters	inst_hard.c	/^void multiply_hard_op_parameters( void )$/;"	f
+multiply_hard_effect_parameters	inst_hard.c	/^void multiply_hard_effect_parameters( void ) {$/;"	f
+multiply_hard_effect_parameters_for_multiple_purpose	inst_hard.c	/^void multiply_hard_effect_parameters_for_multiple_purpose ( void ) {$/;"	f
+multiply_hard_op_parameters	inst_hard.c	/^void multiply_hard_op_parameters( void ) {$/;"	f
+multiply_hard_op_parameters_for_multiple_purpose	inst_hard.c	/^void multiply_hard_op_parameters_for_multiple_purpose ( void ) {$/;"	f
 MULTI_GOAL_TOK	scan-fct_pddl.tab.c	/^     MULTI_GOAL_TOK = 265,$/;"	e	enum:yytokentype	file:
 mul_file_name	ff.h	/^  char mul_file_name[MAX_LENGTH];$/;"	m	struct:_command_line
 mul_pddlalloc	lex.mul_pddl.c	/^void *mul_pddlalloc (yy_size_t  size )$/;"	f
@@ -816,7 +820,7 @@ new_Facts	memory.c	/^Facts *new_Facts( void )$/;"	f
 new_goal	ff.h	/^  int new_goal;$/;"	m	struct:_EhcNode
 new_goal_gets_deleted	search.c	/^Bool new_goal_gets_deleted( EhcNode *n )$/;"	f
 new_Literal	memory.c	/^Literal *new_Literal( void ) $/;"	f
-new_MixedOperator	memory.c	/^MixedOperator *new_MixedOperator( Operator *op )$/;"	f
+new_MixedOperator	memory.c	/^MixedOperator *new_MixedOperator( Operator *op ) {$/;"	f
 new_NormEffect1	memory.c	/^NormEffect *new_NormEffect1( Effect *e ) {$/;"	f
 new_NormEffect2	memory.c	/^NormEffect *new_NormEffect2( NormEffect *e )$/;"	f
 new_NormOperator	memory.c	/^NormOperator *new_NormOperator( Operator *op ) {$/;"	f

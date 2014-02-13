@@ -512,9 +512,7 @@ EasyTemplate *new_EasyTemplate( NormOperator *op )
 
 
 
-MixedOperator *new_MixedOperator( Operator *op )
-
-{
+MixedOperator *new_MixedOperator( Operator *op ) {
 
   MixedOperator *result = ( MixedOperator * ) calloc( 1, sizeof( MixedOperator ) );
   CHECK_PTR(result);
