@@ -112,8 +112,6 @@ check_parents	fip.c	/^Bool check_parents(State *cS, StateActionPair *ptr){$/;"	f
 CHECK_PTR	ff.h	305;"	d
 cleanup_easy_domain	inst_easy.c	/^void cleanup_easy_domain( void ) {$/;"	f
 cleanup_easy_domain_for_multiple_purpose	inst_easy.c	/^void cleanup_easy_domain_for_multiple_purpose ( void ) {$/;"	f
-cleanup_hard_domain	inst_hard.c	/^void cleanup_hard_domain( void ) {$/;"	f
-cleanup_hard_domain_for_multiple_purpose	inst_hard.c	/^void cleanup_hard_domain_for_multiple_purpose ( void ) {$/;"	f
 cleanup_wff	inst_pre.c	/^void cleanup_wff( WffNode **w ) {$/;"	f
 CLOSE_PAREN	scan-fct_pddl.tab.c	/^     CLOSE_PAREN = 279$/;"	e	enum:yytokentype	file:
 CLOSE_PAREN	scan-mul_pddl.tab.c	/^     CLOSE_PAREN = 285$/;"	e	enum:yytokentype	file:
@@ -152,10 +150,6 @@ copy_Wff	inst_pre.c	/^WffNode *copy_Wff( WffNode *w )$/;"	f
 create_final_actions	inst_final.c	/^void create_final_actions( void )$/;"	f
 create_final_goal_state	inst_final.c	/^void create_final_goal_state( void )$/;"	f
 create_final_initial_state	inst_final.c	/^void create_final_initial_state( void )$/;"	f
-create_hard_mixed_operators	inst_hard.c	/^void create_hard_mixed_operators( Operator *o, int curr_var ) {$/;"	f
-create_hard_mixed_operators_for_multiple_purpose	inst_hard.c	/^void create_hard_mixed_operators_for_multiple_purpose ( Operator *o, int curr_var ) {$/;"	f
-create_hard_pseudo_effects	inst_hard.c	/^void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var ) {$/;"	f
-create_hard_pseudo_effects_for_multiple_purpose	inst_hard.c	/^void create_hard_pseudo_effects_for_multiple_purpose ( PseudoAction *a, Effect *e, int curr_var ) {$/;"	f
 create_integer_representation	inst_pre.c	/^void create_integer_representation( void ) {$/;"	f
 create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T ) {$/;"	f
 create_member_nrs	inst_pre.c	/^void create_member_nrs( void ) {$/;"	f
@@ -167,7 +161,6 @@ debugAllUnSolvedState	fip.c	/^void debugAllUnSolvedState(){$/;"	f
 debugit	fip.c	/^void debugit(State *s){$/;"	f
 DECODE_VAR	ff.h	298;"	d
 decrement_inferior_vars	inst_pre.c	/^void decrement_inferior_vars( int var, WffNode *w ) {$/;"	f
-decrement_inferior_vars_in_literals	inst_hard.c	/^void decrement_inferior_vars_in_literals( int var, Literal *ef ) {$/;"	f
 decrement_var_entries	inst_easy.c	/^void decrement_var_entries( NormOperator *o, int start ) {$/;"	f
 DEFINE_EXPECTED	scan-fct_pddl.tab.c	93;"	d	file:
 DEFINE_TOK	scan-fct_pddl.tab.c	/^     DEFINE_TOK = 258,$/;"	e	enum:yytokentype	file:
@@ -271,7 +264,7 @@ fact	ff.h	/^  Fact fact;$/;"	m	struct:_Literal
 Fact	ff.h	/^} Fact;$/;"	t	typeref:struct:_Fact
 FactList	ff.h	/^} FactList;$/;"	t	typeref:struct:_FactList
 Facts	ff.h	/^} Facts;$/;"	t	typeref:struct:_Facts
-fact_adress	inst_final.c	/^int fact_adress( void )$/;"	f
+fact_adress	inst_final.c	/^int fact_adress( void ) {$/;"	f
 FAL	ff.h	/^			   FAL,$/;"	e	enum:_Connective
 False	ff.h	/^  int *False;$/;"	m	struct:_FtConn
 FALSE	ff.h	290;"	d
@@ -384,8 +377,6 @@ free_TypedList	memory.c	/^void free_TypedList( TypedList *t )$/;"	f
 free_TypedListList	memory.c	/^void free_TypedListList( TypedListList *t )$/;"	f
 free_WffNode	memory.c	/^void free_WffNode( WffNode *w )$/;"	f
 FtConn	ff.h	/^} FtConn;$/;"	t	typeref:struct:_FtConn
-full_possibly_negative	inst_hard.c	/^Bool full_possibly_negative( Fact *f )$/;"	f
-full_possibly_positive	inst_hard.c	/^Bool full_possibly_positive( Fact *f )$/;"	f
 gA	main.c	/^int *gA;$/;"	v
 gactions	main.c	/^Action *gactions;$/;"	v
 gact_filename	main.c	/^char *gact_filename;$/;"	v
@@ -546,9 +537,6 @@ initialize_relax	relax.c	/^void initialize_relax( void ) {$/;"	f
 init_def	scan-fct_pddl.y	/^init_def:$/;"	l
 INIT_TOK	scan-fct_pddl.tab.c	/^     INIT_TOK = 264,$/;"	e	enum:yytokentype	file:
 instances	fip.h	/^	int instances;$/;"	m	struct:_ActionGroup
-instantiated_fact_adress	inst_hard.c	/^int instantiated_fact_adress( Fact *f ) {$/;"	f
-instantiate_Effect	inst_hard.c	/^Effect *instantiate_Effect( Effect *e ) {$/;"	f
-instantiate_wff	inst_hard.c	/^WffNode *instantiate_wff( WffNode *w ) {$/;"	f
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_Action
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_EasyTemplate
 inst_table	ff.h	/^  int inst_table[MAX_VARS];$/;"	m	struct:_MixedOperator
@@ -701,12 +689,11 @@ make_effects	parse.c	/^Bool make_effects( PlNode **n )$/;"	f
 make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl ) {$/;"	f
 make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n ) {$/;"	f
 make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars ) {$/;"	f
-make_instantiate_literals	inst_hard.c	/^void make_instantiate_literals( PseudoActionEffect *e, Literal *ll ) {$/;"	f
 make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
 make_name_inst_table_from_PseudoAction	inst_final.c	/^void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )$/;"	f
 make_normal_effects	inst_pre.c	/^void make_normal_effects( NormOperator **nop, Operator *op ) {$/;"	f
 make_state	memory.c	/^void make_state( State *S, int n ) {$/;"	f
-make_Wff	inst_pre.c	/^WffNode *make_Wff( PlNode *p, int num_vars )$/;"	f
+make_Wff	inst_pre.c	/^WffNode *make_Wff( PlNode *p, int num_vars ) {$/;"	f
 matches	inst_pre.c	/^Bool matches( Fact *f1, Fact *f2 )$/;"	f
 MAX_ACTIONGROUP	fip.c	11;"	d	file:
 MAX_ARITY	ff.h	212;"	d
@@ -738,10 +725,6 @@ multiply_easy_non_constrained_effect_parameters_for_multiple_purpose	inst_easy.c
 multiply_easy_non_constrained_op_parameters	inst_easy.c	/^void multiply_easy_non_constrained_op_parameters( int curr_parameter )$/;"	f
 multiply_easy_op_parameters	inst_easy.c	/^void multiply_easy_op_parameters( void ) {$/;"	f
 multiply_easy_op_parameters_for_multiple_purpose	inst_easy.c	/^void multiply_easy_op_parameters_for_multiple_purpose ( void ) {$/;"	f
-multiply_hard_effect_parameters	inst_hard.c	/^void multiply_hard_effect_parameters( void ) {$/;"	f
-multiply_hard_effect_parameters_for_multiple_purpose	inst_hard.c	/^void multiply_hard_effect_parameters_for_multiple_purpose ( void ) {$/;"	f
-multiply_hard_op_parameters	inst_hard.c	/^void multiply_hard_op_parameters( void ) {$/;"	f
-multiply_hard_op_parameters_for_multiple_purpose	inst_hard.c	/^void multiply_hard_op_parameters_for_multiple_purpose ( void ) {$/;"	f
 MULTI_GOAL_TOK	scan-fct_pddl.tab.c	/^     MULTI_GOAL_TOK = 265,$/;"	e	enum:yytokentype	file:
 mul_file_name	ff.h	/^  char mul_file_name[MAX_LENGTH];$/;"	m	struct:_command_line
 mul_pddlalloc	lex.mul_pddl.c	/^void *mul_pddlalloc (yy_size_t  size )$/;"	f
@@ -1257,7 +1240,6 @@ var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_Effect
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormEffect
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_NormOperator
 var_types	ff.h	/^  int num_vars, var_types[MAX_VARS];$/;"	m	struct:_Operator
-var_used_in_literals	inst_hard.c	/^Bool var_used_in_literals( int code_var, Literal *ef ) {$/;"	f
 var_used_in_wff	inst_pre.c	/^Bool var_used_in_wff( int code_var, WffNode *w ) {$/;"	f
 visited	ff.h	/^  Bool visited;$/;"	m	struct:_WffNode
 WffNode	ff.h	/^} WffNode, *WffNode_pointer;$/;"	t	typeref:struct:_WffNode

@@ -150,7 +150,7 @@ void encode_domain_in_integers( void ) {
       print_Operator( goperators[i] );
     }
     printf("\n\n");
-    
+
     printf("\n\nfirst step goal is:\n");
     print_Wff( ggoal, 0 );
 
@@ -239,8 +239,7 @@ void collect_all_strings( void ) {
       strcpy( gconstants[gnum_constants], f->item->item );
       c_num = gnum_constants++;
 
-      /* all constants into 0-type.
-       */
+      /* all constants into 0-type.*/
       if ( gtype_size[0] == MAX_TYPE ) {
 	printf("\ntoo many consts in type %s! increase MAX_TYPE (currently %d)\n\n",
 	       gtype_names[0], MAX_TYPE);
@@ -262,8 +261,7 @@ void collect_all_strings( void ) {
     }
   }
 
-  /* next are predicates; first of all, create in-built predicate =
-   */
+  /* next are predicates; first of all, create in-built predicate = */
   gpredicates[0] = new_Token( 5 );
   gpredicates[0] = "=";
   gpredicates_args_type[0][0] = 0;/* all objects type */
@@ -390,8 +388,7 @@ void create_integer_representation( void ) {
     free_PlNode( gorig_initial_facts );
   }
 
-  /* now insert all our artificial equality constraints into initial state.
-   */
+  /* now insert all our artificial equality constraints into initial state. */
   for ( i = 0; i < gnum_constants; i++ ) {
     gfull_initial[gnum_full_initial].predicate = 0;
     gfull_initial[gnum_full_initial].args[0] = i;
@@ -399,9 +396,7 @@ void create_integer_representation( void ) {
     gnum_full_initial++;
   }
   /* FINITO. the rest of equality handling will fully
-   * automatically be done by the rest of the machinery.
-   */
-
+   * automatically be done by the rest of the machinery.*/
   ggoal = make_Wff( gorig_goal_facts, 0 );
 
   for ( o = gloaded_ops; o; o = o->next ) {
@@ -442,11 +437,9 @@ void create_integer_representation( void ) {
     tmp->preconds = make_Wff( o->preconds, tmp->num_vars );
 
     if ( o->effects ) {
-      /* in make_effect, make sure that no one afects equality.
-       */
+      /* in make_effect, make sure that no one afects equality. */
       nn = o->effects->sons;
-      while ( nn &&
-	      (tmp->effects = make_effect( nn, tmp->num_vars )) == NULL ) {
+      while ( nn && (tmp->effects = make_effect( nn, tmp->num_vars )) == NULL ) {
 	nn = nn->next;
       }
       if ( nn ) {
@@ -461,8 +454,7 @@ void create_integer_representation( void ) {
     }
 
     if ( gnum_operators == MAX_OPERATORS ) {
-      printf("\ntoo many operators! increase MAX_OPERATORS (currently %d)\n\n",
-	     MAX_OPERATORS);
+      printf("\ntoo many operators! increase MAX_OPERATORS (currently %d)\n\n", MAX_OPERATORS);
       exit( 1 );
     }
     goperators[gnum_operators++] = tmp;
@@ -476,20 +468,16 @@ void create_integer_representation( void ) {
 
     for ( ff = ao->params; ff; ff = ff->next ) {
       if ( (type_num = position_in_types_table( ff->item->next->item )) == -1 ) {
-        printf("\nwarning: parameter %s of op %s has unknown or empty type %s. skipping op",
-               ff->item->item, ao->name, ff->item->next->item);
+        printf("\nwarning: parameter %s of op %s has unknown or empty type %s. skipping op", ff->item->item, ao->name, ff->item->next->item);
         break;
       }
       if ( tmp->num_vars == MAX_VARS ) {
-        printf("\ntoo many parameters! increase MAX_VARS (currently %d)\n\n",
-               MAX_VARS);
+        printf("\ntoo many parameters! increase MAX_VARS (currently %d)\n\n", MAX_VARS);
         exit( 1 );
       }
       for ( i = 0; i < tmp->num_vars; i++ ) {
-        if ( tmp->var_names[i] == ff->item->item ||
-             strcmp( tmp->var_names[i], ff->item->item ) == SAME ) {
-          printf("\nwarning: operator %s parameter %s overwrites previous declaration\n\n",
-                 tmp->name, ff->item->item);
+        if ( tmp->var_names[i] == ff->item->item || strcmp( tmp->var_names[i], ff->item->item ) == SAME ) {
+          printf("\nwarning: operator %s parameter %s overwrites previous declaration\n\n", tmp->name, ff->item->item);
         }
       }
       tmp->var_names[tmp->num_vars] = new_Token( strlen( ff->item->item ) + 1 );
@@ -509,11 +497,9 @@ void create_integer_representation( void ) {
     tmp->preconds = make_Wff( ao->preconds, tmp->num_vars );
 
     if ( ao->effects ) {
-      /* in make_effect, make sure that no one afects equality.
-       */
+      /* in make_effect, make sure that no one afects equality. */
       nn = ao->effects->sons;
-      while ( nn &&
-              (tmp->effects = make_effect( nn, tmp->num_vars )) == NULL ) {
+      while ( nn && (tmp->effects = make_effect( nn, tmp->num_vars )) == NULL ) {
         nn = nn->next;
       }
       if ( nn ) {
@@ -528,13 +514,11 @@ void create_integer_representation( void ) {
     }
 
     if ( gadd_num_operators == MAX_OPERATORS ) {
-      printf("\ntoo many operators! increase MAX_OPERATORS (currently %d)\n\n",
-             MAX_OPERATORS);
+      printf("\ntoo many operators! increase MAX_OPERATORS (currently %d)\n\n", MAX_OPERATORS);
       exit( 1 );
     }
     gadd_operators[gadd_num_operators++] = tmp;
   }
-
 
   if ( 0 ) {
     /* currently not in use; leads to free memory reads and
@@ -545,19 +529,17 @@ void create_integer_representation( void ) {
     free_PlOperator( gloaded_ops );
     free_PlOperator( gadd_loaded_ops );
   }
-
 }
 
 
-
+/* initialized args with ENCODE*/
 void make_Fact( Fact *f, PlNode *n, int num_vars ) {
 
   int m, i;
   TokenList *t;
 
   if ( !n->atom ) {
-    /* can't happen after previous syntax check. Oh well, whatever...
-     */
+    /* can't happen after previous syntax check. Oh well, whatever... */
     printf("\nillegal (empty) atom used in domain. check input files\n\n");
     exit( 1 );
   }
@@ -575,24 +557,20 @@ void make_Fact( Fact *f, PlNode *n, int num_vars ) {
     if ( t->item[0] == '?' ) {
       for ( i=num_vars-1; i>-1; i-- ) {
 	/* downwards, to always get most recent declaration/quantification
-	 * of that variable
-	 */
-	if ( lvar_names[i] == t->item ||
-	     strcmp( lvar_names[i], t->item ) == SAME ) {
+	 * of that variable */
+	if ( lvar_names[i] == t->item || strcmp( lvar_names[i], t->item ) == SAME ) {
 	  break;
 	}
       }
       if ( i == -1 ) {
-	printf("\nundeclared variable %s in literal %s. check input files\n\n",
-	       t->item, n->atom->item);
+	printf("\nundeclared variable %s in literal %s. check input files\n\n", t->item, n->atom->item);
 	exit( 1 );
       }
 
       if ( f->predicate != -1 &&
 	   lvar_types[i] != gpredicates_args_type[f->predicate][m] &&
 	   !is_subtype( lvar_types[i], gpredicates_args_type[f->predicate][m] ) ) {
-	printf("\ntype of var %s does not match type of arg %d of predicate %s\n\n",
-	       lvar_names[i], m, gpredicates[f->predicate]);
+	printf("\ntype of var %s does not match type of arg %d of predicate %s\n\n", lvar_names[i], m, gpredicates[f->predicate]);
 	exit( 1 );
       }
 
@@ -652,9 +630,7 @@ Bool is_subtype( int t1, int t2 )
 
 
 
-WffNode *make_Wff( PlNode *p, int num_vars )
-
-{
+WffNode *make_Wff( PlNode *p, int num_vars ) {
 
   WffNode *tmp;
   int i, t;
@@ -670,15 +646,12 @@ WffNode *make_Wff( PlNode *p, int num_vars )
   case ALL:
   case EX:
     for ( i = 0; i < num_vars; i++ ) {
-      if ( lvar_names[i] == p->atom->item ||
-	   strcmp( lvar_names[i], p->atom->item ) == SAME ) {
-	printf("\nwarning: var quantification of %s overwrites previous declaration\n\n",
-	       p->atom->item);
+      if ( lvar_names[i] == p->atom->item || strcmp( lvar_names[i], p->atom->item ) == SAME ) {
+	printf("\nwarning: var quantification of %s overwrites previous declaration\n\n", p->atom->item);
       }
     }
     if ( (t = position_in_types_table( p->atom->next->item )) == -1 ) {
-      printf("\nwarning: quantified var %s has unknown or empty type %s. simplifying.\n\n",
-	     p->atom->item, p->atom->next->item);
+      printf("\nwarning: quantified var %s has unknown or empty type %s. simplifying.\n\n", p->atom->item, p->atom->next->item);
       tmp->connective = ( p->connective == EX ) ? FAL : TRU;
       break;
     }
@@ -715,16 +688,12 @@ WffNode *make_Wff( PlNode *p, int num_vars )
   case FAL:
     break;
   default:
-    printf("\nforbidden connective %d in Pl Wff. must be a bug somewhere...\n\n",
-	   p->connective);
+    printf("\nforbidden connective %d in Pl Wff. must be a bug somewhere...\n\n", p->connective);
     exit( 1 );
   }
 
   return tmp;
-
 }
-
-
 
 Effect *make_effect( PlNode *p, int num_vars ) {
 

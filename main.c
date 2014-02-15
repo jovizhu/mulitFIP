@@ -551,8 +551,7 @@ int main( int argc, char *argv[] ) {
   	ftime(&start);
 
 	/* collect the relevant facts and build final domain
-	* and problem representations.
-	*/
+	* and problem representations.*/
 	collect_relevant_facts();
 
   	/*times( &end );*/
