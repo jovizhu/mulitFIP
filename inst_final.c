@@ -402,11 +402,29 @@ void perform_reachability_analysis( void ) {
 
 }
 
-update_accessible_analysis_for_multiple_purpose {
+void update_reachability_analysis_for_multiple_purpose ( void ) {
 
-    t3 = gadd_easy_templates;
+  int size, i, j, k, adr, num, pargtype;
+  Bool fixpoint;
+  Facts *f;
+  NormOperator *no;
+  EasyTemplate *t1, *t2;
+  NormEffect *ne;
+  Action *tmp, *a;
+  Bool *had_hard_template;
+  PseudoAction *pa;
+  PseudoActionEffect *pae;
+
+  //gactions = NULL;
+  //gnum_actions = 0;
+
+  /* compute fixpoint */
+  fixpoint = FALSE;
+  while ( !fixpoint ) {
+    fixpoint = TRUE;
+    t1 = gadd_easy_templates;
     while ( t1 ) {
-      no = t3->op;
+      no = t1->op;
 
       for ( i = 0; i < no->num_preconds; i++ ) {
 	lp = no->preconds[i].predicate;
