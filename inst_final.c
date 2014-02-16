@@ -211,90 +211,6 @@ void perform_reachability_analysis( void ) {
       t1 = t2;
     }
 
-    /* the follwong is for the aiidtional easy template */
-    t1 = geasy_templates;
-    while ( t1 ) {
-      no = t1->op;
-
-      for ( i = 0; i < no->num_preconds; i++ ) {
-	lp = no->preconds[i].predicate;
-	for ( j = 0; j < garity[lp]; j++ ) {
-	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ? no->preconds[i].args[j] : t1->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
-	}
-	if ( !lpos[lp][fact_adress()] ) {
-	  break;
-	}
-      }
-
-      if ( i < no->num_preconds ) { 
-	t1 = t1->next;
-	continue;
-      }
-      
-      /* The following is no is accessible */
-      num = 0;
-      for ( ne = no->effects; ne; ne = ne->next ) {
-	num++;
-	/* currently, simply ignore effect conditions and assume
-	 * they will all be made true eventually. */
-	for ( i = 0; i < ne->num_adds; i++ ) {
-	  lp = ne->adds[i].predicate;
-	  for ( j = 0; j < garity[lp]; j++ ) {
-	    largs[j] = ( ne->adds[i].args[j] >= 0 ) ? ne->adds[i].args[j] : t1->inst_table[DECODE_VAR( ne->adds[i].args[j] )];
-	  }
-	  adr = fact_adress();
-	  if ( !lpos[lp][adr] ) {
-	    /* new relevant fact! (added non initial) */
-	    lpos[lp][adr] = 1;
-	    lneg[lp][adr] = 1;
-	    luse[lp][adr] = 1;
-
-	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
-	      printf("\n too many relevant facts! increase MAX_RELEVANT_FACTS (currently %d)\n\n ", MAX_RELEVANT_FACTS);
-	      exit( 1 );
-	    }
-
-	    grelevant_facts[gnum_relevant_facts].predicate = lp;
-
-	    for ( j = 0; j < garity[lp]; j++ ) {
-	      grelevant_facts[gnum_relevant_facts].args[j] = largs[j];
-	    }
-
-	    lindex[lp][adr] = gnum_relevant_facts;
-	    gnum_relevant_facts++;
-	    fixpoint = FALSE;
-	  }
-	}
-      } /* endfor ne=no->effect */
-
-      tmp = new_Action();
-      tmp->norm_operator = no; /* no = easy_template*/
-      for ( i = 0; i < no->num_vars; i++ ) {
-	tmp->inst_table[i] = t1->inst_table[i];
-      }
-      tmp->name = no->operator->name;
-      tmp->num_name_vars = no->operator->number_of_real_params;
-      make_name_inst_table_from_NormOperator( tmp, no, t1 );
-      tmp->next = gactions;
-      tmp->num_effects = num;
-      gactions = tmp;
-      gnum_actions++;
-      
-      /* remove t1 from geay_template */
-      t2 = t1->next;
-      if ( t1->next ) {
-	t1->next->prev = t1->prev;
-      }
-      if ( t1->prev ) {
-	t1->prev->next = t1->next;
-      } else {
-	geasy_templates = t1->next;
-      }
-      free_single_EasyTemplate( t1 );
-      t1 = t2;
-    }
-
-
     /* now assign all hard templates that have not been transformed to actions yet.*/
     for ( i = 0; i < gnum_hard_templates; i++ ) {
       if ( had_hard_template[i] ) {
@@ -482,6 +398,8 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       for ( i = 0; i < no->num_vars; i++ ) {
 	tmp->inst_table[i] = t1->inst_table[i];
       }
+
+      /* Insert the gactions into list */
       tmp->name = no->operator->name;
       tmp->num_name_vars = no->operator->number_of_real_params;
       make_name_inst_table_from_NormOperator( tmp, no, t1 );
@@ -498,44 +416,43 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       if ( t1->prev ) {
 	t1->prev->next = t1->next;
       } else {
-	geasy_templates = t1->next;
+	gadd_easy_templates = t1->next;
       }
       free_single_EasyTemplate( t1 );
       t1 = t2;
-    }
+    } /* end while(t1) */
 
-    /* the follwong is for the aiidtional easy template */
-    t1 = geasy_templates;
-    while ( t1 ) {
-      no = t1->op;
+     
+    /* now assign all hard templates that have not been transformed to actions yet.*/
+    for ( i = 0; i < gadd_num_hard_templates; i++ ) {
+      if ( had_hard_template[i] ) {
+	continue;
+      }
+      pa = gadd_hard_templates[i];
 
-      for ( i = 0; i < no->num_preconds; i++ ) {
-	lp = no->preconds[i].predicate;
-	for ( j = 0; j < garity[lp]; j++ ) {
-	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ? no->preconds[i].args[j] : t1->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
+      for ( j = 0; j < pa->num_preconds; j++ ) {
+	lp = pa->preconds[j].predicate;
+	for ( k = 0; k < garity[lp]; k++ ) {
+	  largs[k] = pa->preconds[j].args[k];
 	}
 	if ( !lpos[lp][fact_adress()] ) {
 	  break;
 	}
       }
 
-      if ( i < no->num_preconds ) { 
-	t1 = t1->next;
+      if ( j < pa->num_preconds ) {
 	continue;
       }
-      
-      /* The following is no is accessible */
-      num = 0;
-      for ( ne = no->effects; ne; ne = ne->next ) {
-	num++;
+
+      for ( pae = pa->effects; pae; pae = pae->next ) {
 	/* currently, simply ignore effect conditions and assume
 	 * they will all be made true eventually. */
-	for ( i = 0; i < ne->num_adds; i++ ) {
-	  lp = ne->adds[i].predicate;
-	  for ( j = 0; j < garity[lp]; j++ ) {
-	    largs[j] = ( ne->adds[i].args[j] >= 0 ) ? ne->adds[i].args[j] : t1->inst_table[DECODE_VAR( ne->adds[i].args[j] )];
+	for ( j = 0; j < pae->num_adds; j++ ) {
+	  lp = pae->adds[j].predicate;
+	  for ( k = 0; k < garity[lp]; k++ ) {
+	    largs[k] = pae->adds[j].args[k];
 	  }
-	  adr = fact_adress();
+	  adr = fact_adress();/* space for preconds(lp) */
 	  if ( !lpos[lp][adr] ) {
 	    /* new relevant fact! (added non initial) */
 	    lpos[lp][adr] = 1;
@@ -543,49 +460,35 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 	    luse[lp][adr] = 1;
 
 	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
-	      printf("\n too many relevant facts! increase MAX_RELEVANT_FACTS (currently %d)\n\n ", MAX_RELEVANT_FACTS);
+	      printf("\ntoo many relevant facts! increase MAX_RELEVANT_FACTS (currently %d)\n\n", MAX_RELEVANT_FACTS);
 	      exit( 1 );
 	    }
-
 	    grelevant_facts[gnum_relevant_facts].predicate = lp;
-
-	    for ( j = 0; j < garity[lp]; j++ ) {
-	      grelevant_facts[gnum_relevant_facts].args[j] = largs[j];
+	    for ( k = 0; k < garity[lp]; k++ ) {
+	      grelevant_facts[gnum_relevant_facts].args[k] = largs[k];
 	    }
-
 	    lindex[lp][adr] = gnum_relevant_facts;
 	    gnum_relevant_facts++;
 	    fixpoint = FALSE;
-	  }
-	}
-      } /* endfor ne=no->effect */
+	  } /* end if (!lpos[lp][adr]) */
+	} /* end for j < pae->num_adds */
+      } /* end for pae = pa->effect */
 
       tmp = new_Action();
-      tmp->norm_operator = no; /* no = easy_template*/
-      for ( i = 0; i < no->num_vars; i++ ) {
-	tmp->inst_table[i] = t1->inst_table[i];
+      tmp->pseudo_action = pa;
+      for ( j = 0; j < pa->operator->num_vars; j++ ) {
+	tmp->inst_table[j] = pa->inst_table[j];
       }
-      tmp->name = no->operator->name;
-      tmp->num_name_vars = no->operator->number_of_real_params;
-      make_name_inst_table_from_NormOperator( tmp, no, t1 );
+      tmp->name = pa->operator->name;
+      tmp->num_name_vars = pa->operator->number_of_real_params;
+      make_name_inst_table_from_PseudoAction( tmp, pa );
       tmp->next = gactions;
-      tmp->num_effects = num;
+      tmp->num_effects = pa->num_effects;
       gactions = tmp;
       gnum_actions++;
-      
-      /* remove t1 from geay_template */
-      t2 = t1->next;
-      if ( t1->next ) {
-	t1->next->prev = t1->prev;
-      }
-      if ( t1->prev ) {
-	t1->prev->next = t1->next;
-      } else {
-	geasy_templates = t1->next;
-      }
-      free_single_EasyTemplate( t1 );
-      t1 = t2;
-    }
+
+      had_hard_template[i] = TRUE;
+    } /* endfor j < gnum_hard_template*/
 
 }
 
