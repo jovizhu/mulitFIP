@@ -18,7 +18,6 @@
 * 
 *********************************************************************/
 
-
 /*
 * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
 * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
@@ -35,7 +34,6 @@
 * of the user.
 */
 
-
 /*********************************************************************
 * File: main.c
 * Description: The main routine for the FastForward Planner.
@@ -44,7 +42,6 @@
 * 
 * Modified: jovi zhu 2013
 *********************************************************************/ 
-
 
 #include "ff.h"
 

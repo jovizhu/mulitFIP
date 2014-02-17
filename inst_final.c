@@ -331,8 +331,13 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
   PseudoAction *pa;
   PseudoActionEffect *pae;
 
-  //gactions = NULL;
-  //gnum_actions = 0;
+  gadd_actions = NULL;
+  gadd_num_actions = 0;
+
+  had_add_hard_template = ( Bool * ) calloc( gadd_num_hard_templates, sizeof( Bool ) );
+  for ( i = 0; i < gadd_num_hard_templates; i++ ) {
+    had_add_hard_template[i] = FALSE;
+  }
 
   /* compute fixpoint */
   fixpoint = FALSE;
@@ -361,8 +366,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       num = 0;
       for ( ne = no->effects; ne; ne = ne->next ) {
 	num++;
-	/* currently, simply ignore effect conditions and assume
-	 * they will all be made true eventually. */
+	/* currently, simply ignore effect conditions and assume,  they will all be made true eventually. */
 	for ( i = 0; i < ne->num_adds; i++ ) {
 	  lp = ne->adds[i].predicate;
 	  for ( j = 0; j < garity[lp]; j++ ) {
@@ -403,10 +407,10 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       tmp->name = no->operator->name;
       tmp->num_name_vars = no->operator->number_of_real_params;
       make_name_inst_table_from_NormOperator( tmp, no, t1 );
-      tmp->next = gactions;
+      tmp->next = gadd_actions;
       tmp->num_effects = num;
-      gactions = tmp;
-      gnum_actions++;
+      gadd_actions = tmp;
+      gadd_num_actions++;
       
       /* remove t1 from geay_template */
       t2 = t1->next;
@@ -422,10 +426,9 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       t1 = t2;
     } /* end while(t1) */
 
-     
     /* now assign all hard templates that have not been transformed to actions yet.*/
     for ( i = 0; i < gadd_num_hard_templates; i++ ) {
-      if ( had_hard_template[i] ) {
+      if ( had_add_hard_template[i] ) {
 	continue;
       }
       pa = gadd_hard_templates[i];
@@ -482,12 +485,12 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       tmp->name = pa->operator->name;
       tmp->num_name_vars = pa->operator->number_of_real_params;
       make_name_inst_table_from_PseudoAction( tmp, pa );
-      tmp->next = gactions;
+      tmp->next = gadd_actions;
       tmp->num_effects = pa->num_effects;
-      gactions = tmp;
-      gnum_actions++;
+      gadd_actions = tmp;
+      gadd_num_actions++;
 
-      had_hard_template[i] = TRUE;
+      had_add_hard_template[i] = TRUE;
     } /* endfor j < gnum_hard_template*/
 
 }
@@ -568,50 +571,14 @@ void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /***********************************************************
  * RELEVANCE ANALYSIS AND FINAL DOMAIN AND PROBLEM CLEANUP *
  ***********************************************************/
 
-
-
-
-
-
-
-
-
-/* counts effects for later allocation
- */
+/* counts effects for later allocation */
 int lnum_effects;
 
-
-
-
-
-
-
-
-
-void collect_relevant_facts( void )
-
-{
+void collect_relevant_facts( void ) {
 
   Action *a;
   NormOperator *no;
@@ -620,8 +587,7 @@ void collect_relevant_facts( void )
   PseudoAction *pa;
   PseudoActionEffect *pae;
 
-  /* mark all deleted facts; such facts, that are also pos, are relevant.
-   */
+  /* mark all deleted facts; such facts, that are also pos, are relevant. */
   for ( a = gactions; a; a = a->next ) {
     if ( a->norm_operator ) {
       no = a->norm_operator;
@@ -630,19 +596,16 @@ void collect_relevant_facts( void )
 	for ( i = 0; i < ne->num_dels; i++ ) {
 	  lp = ne->dels[i].predicate;
 	  for ( j = 0; j < garity[lp]; j++ ) {
-	    largs[j] = ( ne->dels[i].args[j] >= 0 ) ?
-	      ne->dels[i].args[j] : a->inst_table[DECODE_VAR( ne->dels[i].args[j] )];
+	    largs[j] = ( ne->dels[i].args[j] >= 0 ) ? ne->dels[i].args[j] : a->inst_table[DECODE_VAR( ne->dels[i].args[j] )];
 	  }
 	  adr = fact_adress();
 
 	  lneg[lp][adr] = 1;
-	  if ( lpos[lp][adr] &&
-	       !luse[lp][adr] ) {
+	  if ( lpos[lp][adr] && !luse[lp][adr] ) {
 	    luse[lp][adr] = 1;
 	    lindex[lp][adr] = gnum_relevant_facts;
 	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
-	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n",
-		     MAX_RELEVANT_FACTS);
+	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n", MAX_RELEVANT_FACTS);
 	      exit( 1 );
 	    }
 	    grelevant_facts[gnum_relevant_facts].predicate = lp;
@@ -666,13 +629,11 @@ void collect_relevant_facts( void )
 	  adr = fact_adress();
 
 	  lneg[lp][adr] = 1;
-	  if ( lpos[lp][adr] &&
-	       !luse[lp][adr] ) {
+	  if ( lpos[lp][adr] && !luse[lp][adr] ) {
 	    luse[lp][adr] = 1;
 	    lindex[lp][adr] = gnum_relevant_facts;
 	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
-	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n",
-		     MAX_RELEVANT_FACTS);
+	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n", MAX_RELEVANT_FACTS);
 	      exit( 1 );
 	    }
 	    grelevant_facts[gnum_relevant_facts].predicate = lp;
@@ -748,10 +709,141 @@ void collect_relevant_facts( void )
 }
 
 
+/* counts effects for later allocation */
+int lnum_effects;
 
-void create_final_goal_state( void )
+void update_relevant_facts( void ) {
 
-{
+  Action *a;
+  NormOperator *no;
+  NormEffect *ne;
+  int i, j, adr;
+  PseudoAction *pa;
+  PseudoActionEffect *pae;
+
+  /* mark all deleted facts; such facts, that are also pos, are relevant. */
+  for ( a = gadd_actions; a; a = a->next ) {
+    if ( a->norm_operator ) {
+      no = a->norm_operator;
+
+      for ( ne = no->effects; ne; ne = ne->next ) {
+	for ( i = 0; i < ne->num_dels; i++ ) {
+	  lp = ne->dels[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = ( ne->dels[i].args[j] >= 0 ) ? ne->dels[i].args[j] : a->inst_table[DECODE_VAR( ne->dels[i].args[j] )];
+	  }
+	  adr = fact_adress();
+
+	  lneg[lp][adr] = 1;
+	  if ( lpos[lp][adr] && !luse[lp][adr] ) {
+	    luse[lp][adr] = 1;
+	    lindex[lp][adr] = gnum_relevant_facts;
+	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
+	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n", MAX_RELEVANT_FACTS);
+	      exit( 1 );
+	    }
+	    grelevant_facts[gnum_relevant_facts].predicate = lp;
+	    for ( j = 0; j < garity[lp]; j++ ) {
+	      grelevant_facts[gnum_relevant_facts].args[j] = largs[j];
+	    }
+	    lindex[lp][adr] = gnum_relevant_facts;
+	    gnum_relevant_facts++;
+	  }
+	}
+      }
+    } else {
+      pa = a->pseudo_action;
+
+      for ( pae = pa->effects; pae; pae = pae->next ) {
+	for ( i = 0; i < pae->num_dels; i++ ) {
+	  lp = pae->dels[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = pae->dels[i].args[j];
+	  }
+	  adr = fact_adress();
+
+	  lneg[lp][adr] = 1;
+	  if ( lpos[lp][adr] && !luse[lp][adr] ) {
+	    luse[lp][adr] = 1;
+	    lindex[lp][adr] = gnum_relevant_facts;
+	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
+	      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n", MAX_RELEVANT_FACTS);
+	      exit( 1 );
+	    }
+	    grelevant_facts[gnum_relevant_facts].predicate = lp;
+	    for ( j = 0; j < garity[lp]; j++ ) {
+	      grelevant_facts[gnum_relevant_facts].args[j] = largs[j];
+	    }
+	    lindex[lp][adr] = gnum_relevant_facts;
+	    gnum_relevant_facts++;
+	  }
+	}
+      }
+    }
+  }
+
+  if ( gcmd_line.display_info == 119 ) {
+    printf("\n\nfacts selected as relevant:\n\n");
+    for ( i = 0; i < gnum_relevant_facts; i++ ) {
+      printf("\n%d: ", i);
+      print_Fact( &(grelevant_facts[i]) );
+    }
+  }
+
+  lnum_effects = 0;
+
+  /* first make place for initial and goal states.
+   * (one artificial fact might still be added here)
+   */
+  make_state( &ggoal_state, gnum_relevant_facts + 1 );
+  ggoal_state.max_F = gnum_relevant_facts + 1;
+  make_state( &ginitial_state, gnum_relevant_facts + 1 );
+  ginitial_state.max_F = gnum_relevant_facts + 1;
+
+  create_final_goal_state();
+  create_final_initial_state();
+  create_final_actions();
+
+  if ( gcmd_line.display_info == 120 ) {
+    printf("\n\nfinal domain representation is:\n\n");  
+    for ( i = 0; i < gnum_operators; i++ ) {
+      printf("\n\n------------------operator %s-----------\n\n", goperators[i]->name);
+      for ( a = gactions; a; a = a->next ) {
+	if ( ( !a->norm_operator &&
+	       !a->pseudo_action ) ||
+	     ( a->norm_operator && 
+	       a->norm_operator->operator != goperators[i] ) ||
+	     ( a->pseudo_action &&
+	       a->pseudo_action->operator != goperators[i] ) ) {
+	  continue;
+	}
+	print_Action( a );
+      }
+    }
+    printf("\n\n--------------------GOAL REACHED ops-----------\n\n");
+    for ( a = gactions; a; a = a->next ) {
+      if ( !a->norm_operator &&
+	   !a->pseudo_action ) {
+	print_Action( a );
+      }
+    }
+   
+    printf("\n\nfinal initial state is:\n\n");
+    for ( i = 0; i < ginitial_state.num_F; i++ ) {
+      print_ft_name( ginitial_state.F[i] );
+      printf("\n");
+    }
+    printf("\n\nfinal goal state is:\n\n");
+    for ( i = 0; i < ggoal_state.num_F; i++ ) {
+      print_ft_name( ggoal_state.F[i] );
+      printf("\n");
+    }
+  }
+
+}
+
+
+void create_final_goal_state( void ) {
 
   WffNode *w, *ww;
   int m, i, adr;
@@ -815,7 +907,7 @@ void create_final_goal_state( void )
       gactions = tmp;
       gnum_actions++;
       lnum_effects++;
-    }
+    } /end for w = ggoal->sons /
     ggoal_state.F[0] = gnum_relevant_facts - 1;
     ggoal_state.num_F = 1;
     break;
@@ -847,9 +939,7 @@ void create_final_goal_state( void )
 
 
 
-void set_relevants_in_wff( WffNode **w )
-
-{
+void set_relevants_in_wff( WffNode **w ) {
 
   WffNode *i;
   int j, adr;
