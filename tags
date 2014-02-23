@@ -3,7 +3,7 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.8	//
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 A	ff.h	/^  int *A;$/;"	m	struct:_EfConn
 A	ff.h	/^  int *A;$/;"	m	struct:_FtConn
 achieve_goals	relax.c	/^void achieve_goals( int time ) {$/;"	f
@@ -97,7 +97,6 @@ BIG_INT	ff.h	190;"	d
 Bool	ff.h	/^typedef unsigned char Bool;$/;"	t
 BSITUATION_TOK	scan-fct_pddl.tab.c	/^     BSITUATION_TOK = 261,$/;"	e	enum:yytokentype	file:
 build_action_group	fip.c	/^void build_action_group( void ){$/;"	f
-build_connectivity_graph	inst_final.c	/^void build_connectivity_graph( void )$/;"	f
 build_easy_action_templates	inst_easy.c	/^void build_easy_action_templates( void ) {$/;"	f
 build_False_set	orderings.c	/^void build_False_set( int ft ) {$/;"	f
 build_fixpoint	relax.c	/^int build_fixpoint( State *S ) {$/;"	f
@@ -121,7 +120,6 @@ collect_A_info	relax.c	/^void collect_A_info( void ) {$/;"	f
 collect_hitting_sets	inst_pre.c	/^void collect_hitting_sets( WffNode *ORlist, int index ) {$/;"	f
 collect_H_info	relax.c	/^void collect_H_info( void ) {$/;"	f
 collect_inertia_information	inst_pre.c	/^void collect_inertia_information( void ) {$/;"	f
-collect_relevant_facts	inst_final.c	/^void collect_relevant_facts( void )$/;"	f
 collect_type_names_in_pl	parse.c	/^void collect_type_names_in_pl( PlNode *n ) {$/;"	f
 COMMENT	lex.fct_pddl.c	599;"	d	file:
 COMMENT	lex.mul_pddl.c	582;"	d	file:
@@ -147,9 +145,6 @@ copy_state_level	fip.c	/^void copy_state_level(State *dest, State source){$/;"	f
 copy_Token	parse.c	/^char *copy_Token( char *s )$/;"	f
 copy_TokenList	parse.c	/^TokenList *copy_TokenList( TokenList *source )$/;"	f
 copy_Wff	inst_pre.c	/^WffNode *copy_Wff( WffNode *w )$/;"	f
-create_final_actions	inst_final.c	/^void create_final_actions( void )$/;"	f
-create_final_goal_state	inst_final.c	/^void create_final_goal_state( void )$/;"	f
-create_final_initial_state	inst_final.c	/^void create_final_initial_state( void )$/;"	f
 create_integer_representation	inst_pre.c	/^void create_integer_representation( void ) {$/;"	f
 create_intersected_type	inst_easy.c	/^int create_intersected_type( TypeArray T, int num_T ) {$/;"	f
 create_member_nrs	inst_pre.c	/^void create_member_nrs( void ) {$/;"	f
@@ -264,7 +259,6 @@ fact	ff.h	/^  Fact fact;$/;"	m	struct:_Literal
 Fact	ff.h	/^} Fact;$/;"	t	typeref:struct:_Fact
 FactList	ff.h	/^} FactList;$/;"	t	typeref:struct:_FactList
 Facts	ff.h	/^} Facts;$/;"	t	typeref:struct:_Facts
-fact_adress	inst_final.c	/^int fact_adress( void ) {$/;"	f
 FAL	ff.h	/^			   FAL,$/;"	e	enum:_Connective
 False	ff.h	/^  int *False;$/;"	m	struct:_FtConn
 FALSE	ff.h	290;"	d
@@ -656,7 +650,6 @@ lnum_changed_ehc_entrys	search.c	/^int lnum_changed_ehc_entrys;$/;"	v
 lnum_ch_E	relax.c	/^int lnum_ch_E;$/;"	v
 lnum_ch_F	relax.c	/^int lnum_ch_F;$/;"	v
 lnum_E	relax.c	/^int lnum_E;$/;"	v
-lnum_effects	inst_final.c	/^int lnum_effects;$/;"	v
 lnum_ehc_hash_entry	search.c	/^int lnum_ehc_hash_entry[EHC_HASH_SIZE];$/;"	v
 lnum_either_ty	parse.c	/^int lnum_either_ty[MAX_TYPES];$/;"	v
 lnum_F	relax.c	/^int lnum_F;$/;"	v
@@ -689,8 +682,6 @@ make_effects	parse.c	/^Bool make_effects( PlNode **n )$/;"	f
 make_either_ty	parse.c	/^void make_either_ty( TypedList *tyl ) {$/;"	f
 make_either_ty_in_pl	parse.c	/^void make_either_ty_in_pl( PlNode *n ) {$/;"	f
 make_Fact	inst_pre.c	/^void make_Fact( Fact *f, PlNode *n, int num_vars ) {$/;"	f
-make_name_inst_table_from_NormOperator	inst_final.c	/^void make_name_inst_table_from_NormOperator( Action *a, NormOperator *o, EasyTemplate *t )$/;"	f
-make_name_inst_table_from_PseudoAction	inst_final.c	/^void make_name_inst_table_from_PseudoAction( Action *a, PseudoAction *pa )$/;"	f
 make_normal_effects	inst_pre.c	/^void make_normal_effects( NormOperator **nop, Operator *op ) {$/;"	f
 make_state	memory.c	/^void make_state( State *S, int n ) {$/;"	f
 make_Wff	inst_pre.c	/^WffNode *make_Wff( PlNode *p, int num_vars ) {$/;"	f
@@ -1127,7 +1118,6 @@ serrmsg	scan-fct_pddl.tab.c	/^static char * serrmsg[] = {$/;"	v	file:
 serrmsg	scan-mul_pddl.tab.c	/^static char *serrmsg[] = {$/;"	v	file:
 serrmsg	scan-ops_pddl.tab.c	/^static char *serrmsg[] = {$/;"	v	file:
 setup_E	orderings.c	/^void setup_E( int ft )$/;"	f
-set_relevants_in_wff	inst_final.c	/^void set_relevants_in_wff( WffNode **w )$/;"	f
 short	scan-fct_pddl.tab.c	253;"	d	file:
 short	scan-mul_pddl.tab.c	255;"	d	file:
 short	scan-ops_pddl.tab.c	273;"	d	file:
@@ -1220,6 +1210,7 @@ unput	lex.mul_pddl.c	207;"	d	file:
 unput	lex.ops_pddl.c	207;"	d	file:
 unsetup_E	orderings.c	/^void unsetup_E( int ft )$/;"	f
 update_intended_effect	fip.c	/^void update_intended_effect(StateActionPair *ptr, StateActionPair *pState){$/;"	f
+update_reachability_analysis_for_multiple_purpose	inst_final.c	/^void update_reachability_analysis_for_multiple_purpose ( void ) {$/;"	f
 var	ff.h	/^  int var, var_type;$/;"	m	struct:_WffNode
 VARIABLE	scan-fct_pddl.tab.c	/^     VARIABLE = 271,$/;"	e	enum:yytokentype	file:
 VARIABLE	scan-mul_pddl.tab.c	/^     VARIABLE = 282,$/;"	e	enum:yytokentype	file:

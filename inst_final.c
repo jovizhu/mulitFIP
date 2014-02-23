@@ -1283,39 +1283,10 @@ void create_final_actions( void )
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**************************************************
  * CONNECTIVITY GRAPH. ULTRA CLEAN REPRESENTATION *
  **************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-void build_connectivity_graph( void )
-
-{
+void build_connectivity_graph( void ) {
 
   int i, j, k, l, n_op, n_ef, na, nd, ef, ef_, m, l_;
   Action *a;
@@ -1323,11 +1294,12 @@ void build_connectivity_graph( void )
   Bool *had_effects;
   ActionEffect *e, *e_, *e__;
 
-  /*  struct timeb tp;
-
+  /*  
+  struct timeb tp;
   ftime( &tp );
   srandom( tp.millitm );
-*/
+  */
+
   srand ( time(NULL) );
 
   gnum_ft_conn = gnum_relevant_facts;
@@ -1404,17 +1376,19 @@ void build_connectivity_graph( void )
 	  continue;
 	}
 	e_ = &(a->effects[j]);
-	/* check conditions
-	 */
+	/* check conditions */
 	for ( k = 0; k < e_->num_conditions; k++ ) {
+
 	  for ( l = 0; l < e->num_conditions; l++ ) {
 	    if ( e_->conditions[k] == e->conditions[l] ) {
 	      break;
 	    }
 	  }
+
 	  if ( l == e->num_conditions ) {
 	    break;
 	  }
+
 	}
 	if ( k < e_->num_conditions ) {
 	  continue;
@@ -1432,27 +1406,31 @@ void build_connectivity_graph( void )
       }
       gef_conn[n_ef].A = ( int * ) calloc( na, sizeof( int ) );
       gef_conn[n_ef].D = ( int * ) calloc( nd, sizeof( int ) );
+
       for ( j = 0; j < e->num_adds; j++ ) {
+
 	for ( k = 0; k < gef_conn[n_ef].num_A; k++ ) {
 	  if ( gef_conn[n_ef].A[k] == e->adds[j] ) break;
 	}
+
 	if ( k < gef_conn[n_ef].num_A ) continue;
-	/* exclude already true adds
-	 */
+	/* exclude already true adds */
+
 	for ( k = 0; k < gef_conn[n_ef].num_PC; k++ ) {
 	  if ( gef_conn[n_ef].PC[k] == e->adds[j] ) break;
 	}
+
 	if ( k < gef_conn[n_ef].num_PC ) continue;
 	gef_conn[n_ef].A[gef_conn[n_ef].num_A++] = e->adds[j];
       }
+
       for ( j = 0; j < e->num_dels; j++ ) {
 	for ( k = 0; k < gef_conn[n_ef].num_D; k++ ) {
 	  if ( gef_conn[n_ef].D[k] == e->dels[j] ) break;
 	}
 	if ( k < gef_conn[n_ef].num_D ) continue;
 	/* exclude re-added dels; check against *all*
-	 * adds to be integrated.
-	 */
+	 * adds to be integrated. */
 	for ( k = 0; k < e->num_adds; k++ ) {
 	  if ( e->adds[k] == e->dels[j] ) break;
 	}
@@ -1712,6 +1690,448 @@ void build_connectivity_graph( void )
     
 }
 
+
+
+/**************************************************
+ * jovi: update for multiple purpose              *
+ * CONNECTIVITY GRAPH. ULTRA CLEAN REPRESENTATION *
+ **************************************************/
+void update_connectivity_graph( void ) {
+
+  int i, j, k, l, n_op, n_ef, na, nd, ef, ef_, m, l_;
+  Action *a;
+  int *same_effects, sn;
+  Bool *had_effects;
+  ActionEffect *e, *e_, *e__;
+
+  /*
+  struct timeb tp;
+  ftime( &tp );
+  srandom( tp.millitm );*/
+
+  srand ( time(NULL) );
+ /* should be reinitialized for the additional goals*/
+ /*
+  gnum_ft_conn = gnum_relevant_facts;
+  gnum_op_conn = gnum_actions;
+  gft_conn = ( FtConn * ) calloc( gnum_ft_conn, sizeof( FtConn ) );
+  gop_conn = ( OpConn * ) calloc( gnum_op_conn, sizeof( OpConn ) );
+  gef_conn = ( EfConn * ) calloc( lnum_effects, sizeof( EfConn ) );
+  gnum_ef_conn = 0;
+
+  same_effects = ( int * ) calloc( lnum_effects, sizeof( int ) );
+   had_effects = ( Bool * ) calloc( lnum_effects, sizeof( Bool ) );
+
+  for ( i = 0; i < gnum_ft_conn; i++ ) {
+    gft_conn[i].num_PC = 0;
+    gft_conn[i].num_A = 0;
+    gft_conn[i].num_D = 0;
+
+    gft_conn[i].rand = random() % BIG_INT;
+  }
+
+  for ( i = 0; i < gnum_op_conn; i++ ) {
+    gop_conn[i].num_E = 0;
+  }
+
+  for ( i = 0; i < lnum_effects; i++ ) {
+
+    gef_conn[i].num_PC = 0;
+    gef_conn[i].num_A = 0;
+    gef_conn[i].num_D = 0;
+    gef_conn[i].num_I = 0;
+
+    gef_conn[i].removed = FALSE;
+  }
+*/
+  /* jovi: continue from gnum_actions */
+  n_op = gnum_actions;
+  n_ef = lnum_effects;
+  gnum_ft_conn = gnum_relevant_facts;
+  gnum_op_conn = gnum_actions;
+
+  for ( a = gadd_actions; a; a = a->next ) {
+
+    gop_conn[n_op].action = a;
+
+    gop_conn[n_op].E = ( int * ) calloc( a->num_effects, sizeof( int ) );
+    for ( i = 0; i < a->num_effects; i++ ) {
+      had_effects[i] = FALSE;
+    }
+
+    for ( i = 0; i < a->num_effects; i++ ) {
+
+      if ( had_effects[i] ) {
+	continue;}
+
+      had_effects[i] = TRUE;
+      e = &(a->effects[i]);
+      gop_conn[n_op].E[gop_conn[n_op].num_E++] = n_ef;
+      gef_conn[n_ef].op = n_op;
+
+      gef_conn[n_ef].PC = ( int * ) calloc( e->num_conditions + a->num_preconds, sizeof( int ) );
+
+      for ( j = 0; j < a->num_preconds; j++ ) {
+	for ( k = 0; k < gef_conn[n_ef].num_PC; k++ ) {
+	  if ( gef_conn[n_ef].PC[k] == a->preconds[j] ) break;
+	}
+	if ( k < gef_conn[n_ef].num_PC ) continue;
+	gef_conn[n_ef].PC[gef_conn[n_ef].num_PC++] = a->preconds[j];
+      }
+
+      for ( j = 0; j < e->num_conditions; j++ ) {
+	for ( k = 0; k < gef_conn[n_ef].num_PC; k++ ) {
+	  if ( gef_conn[n_ef].PC[k] == e->conditions[j] ) break;
+	}
+	if ( k < gef_conn[n_ef].num_PC ) continue;
+	gef_conn[n_ef].PC[gef_conn[n_ef].num_PC++] = e->conditions[j];
+      }
+
+      sn = 0;
+      for ( j = i + 1; j < a->num_effects; j++ ) {
+
+	if ( had_effects[j] ) {
+	  continue;
+	}
+
+	e_ = &(a->effects[j]);
+	/* check conditions */
+	for ( k = 0; k < e_->num_conditions; k++ ) {
+
+	  for ( l = 0; l < e->num_conditions; l++ ) {
+	    if ( e_->conditions[k] == e->conditions[l] ) {
+	      break;
+	    }
+	  }
+
+	  if ( l == e->num_conditions ) {
+	    break;
+	  }
+
+	}
+
+	if ( k < e_-> num_conditions ) {
+	  continue;
+	}
+
+	if ( e->num_conditions == e_->num_conditions ) {
+	  same_effects[sn++] = j;
+	}
+
+      }
+
+      na = e->num_adds;
+      nd = e->num_dels;
+
+      for ( j = 0; j < sn; j++ ) {
+	na += a->effects[same_effects[j]].num_adds;
+	nd += a->effects[same_effects[j]].num_dels;
+      }
+
+      gef_conn[n_ef].A = ( int * ) calloc( na, sizeof( int ) );
+      gef_conn[n_ef].D = ( int * ) calloc( nd, sizeof( int ) );
+
+      for ( j = 0; j < e->num_adds; j++ ) {
+
+	for ( k = 0; k < gef_conn[n_ef].num_A; k++ ) {
+	  if ( gef_conn[n_ef].A[k] == e->adds[j] ) break;
+	}
+
+	if ( k < gef_conn[n_ef].num_A ) continue;
+	/* exclude already true adds */
+	for ( k = 0; k < gef_conn[n_ef].num_PC; k++ ) {
+	  if ( gef_conn[n_ef].PC[k] == e->adds[j] ) break;
+	}
+
+	if ( k < gef_conn[n_ef].num_PC ) continue;
+	gef_conn[n_ef].A[gef_conn[n_ef].num_A++] = e->adds[j];
+      }
+
+      for ( j = 0; j < e->num_dels; j++ ) {
+
+	for ( k = 0; k < gef_conn[n_ef].num_D; k++ ) {
+	  if ( gef_conn[n_ef].D[k] == e->dels[j] ) break;
+	}
+
+	if ( k < gef_conn[n_ef].num_D ) continue;
+
+	/* exclude re-added dels; check against *all * adds to be integrated. */
+	for ( k = 0; k < e->num_adds; k++ ) {
+	  if ( e->adds[k] == e->dels[j] ) break;
+	}
+
+	if ( k < e->num_adds ) continue;
+	for ( l = 0; l < sn; l++ ) {
+	  e_ = &(a->effects[same_effects[l]]);
+	  for ( k = 0; k < e_->num_adds; k++ ) {
+	    if ( e_->adds[k] == e->dels[j] ) break;
+	  }
+	  if ( k < e_->num_adds ) break;
+	}
+
+	if ( l < sn ) continue;
+	gef_conn[n_ef].D[gef_conn[n_ef].num_D++] = e->dels[j];
+      }
+
+      for ( j = 0; j < sn; j++ ) {
+	e_ = &(a->effects[same_effects[j]]);
+	for ( l = 0; l < e_->num_adds; l++ ) {
+
+	  for ( k = 0; k < gef_conn[n_ef].num_A; k++ ) {
+	    if ( gef_conn[n_ef].A[k] == e_->adds[l] ) break;
+	  }
+	  if ( k < gef_conn[n_ef].num_A ) continue;
+
+	  for ( k = 0; k < gef_conn[n_ef].num_PC; k++ ) {
+	    if ( gef_conn[n_ef].PC[k] == e_->adds[l] ) break;
+	  }
+	  if ( k < gef_conn[n_ef].num_PC ) continue;
+
+	  gef_conn[n_ef].A[gef_conn[n_ef].num_A++] = e_->adds[l];
+	}
+
+	for ( l = 0; l < e_->num_dels; l++ ) {
+
+	  for ( k = 0; k < gef_conn[n_ef].num_D; k++ ) {
+	    if ( gef_conn[n_ef].D[k] == e_->dels[l] ) break;
+	  }
+	  if ( k < gef_conn[n_ef].num_D ) continue;
+	  /* exclude re-added dels; check against *all*
+	   * adds to be integrated.
+	   */
+	  for ( k = 0; k < e->num_adds; k++ ) {
+	    if ( e->adds[k] == e_->dels[l] ) break;
+	  }
+	  if ( k < e->num_adds ) continue;
+
+	  for ( l_ = 0; l_ < sn; l_++ ) {
+	    e__ = &(a->effects[same_effects[l_]]);
+	    for ( k = 0; k < e__->num_adds; k++ ) {
+	      if ( e__->adds[k] == e_->dels[l] ) break;
+	    }
+	    if ( k < e__->num_adds ) break;
+	  }
+	  if ( l_ < sn ) continue;
+
+	  gef_conn[n_ef].D[gef_conn[n_ef].num_D++] = e_->dels[l];
+	}
+      }
+      for ( j = 0; j < sn; j++ ) {
+	had_effects[same_effects[j]] = TRUE;
+      }
+      
+      n_ef++;
+      gnum_ef_conn++;
+    }/* ende all a->effects */
+
+
+    if ( gop_conn[n_op].num_E >= 1 ) {
+      /* CHECK EMPTY EFFECTS!
+       *
+       * two step process --- first, remove all effects that are entirely empty.
+       *                      second, check if all remaining effects are illegal
+       *                      or only delete:
+       *                      in that case, the op will never do any good so we 
+       *                      remove all its effects.
+       */
+      i = 0;
+      while ( i < gop_conn[n_op].num_E ) {
+
+        /* if effect of gop_conn[n_op].num_E is not empty */
+	if ( gef_conn[gop_conn[n_op].E[i]].num_A != 0 || gef_conn[gop_conn[n_op].E[i]].num_D != 0 ) {
+	  i++;
+	  continue;
+	}
+
+	/* we keep it in the gef_conn (seems easier), 
+	* but mark it as removed, which will exclude it from everything.
+	*/
+ 
+	gef_conn[gop_conn[n_op].E[i]].removed = TRUE;
+	for ( j = i; j < gop_conn[n_op].num_E - 1; j++ ) {
+	  gop_conn[n_op].E[j] = gop_conn[n_op].E[j+1];
+	}
+	gop_conn[n_op].num_E--;
+      }
+
+      m = 0;
+      for ( i = 0; i < gop_conn[n_op].num_E; i++ ) {
+	if ( gef_conn[gop_conn[n_op].E[i]].num_A == 0 ) {
+	  m++;
+	}
+      }
+      if ( m == gop_conn[n_op].num_E ) {
+	/* all remaining effects solely-deleters.*/
+	for ( i = 0; i < gop_conn[n_op].num_E; i++ ) {
+	  gef_conn[gop_conn[n_op].E[i]].removed = TRUE;
+	}
+	gop_conn[n_op].num_E = 0;
+      }
+    }
+
+    /* setup implied effects info */
+    if ( gop_conn[n_op].num_E > 1 ) {
+
+      for ( i = 0; i < gop_conn[n_op].num_E; i++ ) {
+	ef = gop_conn[n_op].E[i];
+	gef_conn[ef].I = ( int * ) calloc( gop_conn[n_op].num_E, sizeof( int ) );
+	gef_conn[ef].num_I = 0;
+      }
+
+      for ( i = 0; i < gop_conn[n_op].num_E - 1; i++ ) {
+	ef = gop_conn[n_op].E[i];
+	for ( j = i+1; j < gop_conn[n_op].num_E; j++ ) {
+	  ef_ = gop_conn[n_op].E[j];
+	  /* ef ==> ef_ ? */
+	  for ( k = 0; k < gef_conn[ef_].num_PC; k++ ) {
+	    for ( l = 0; l < gef_conn[ef].num_PC; l++ ) {
+	      if ( gef_conn[ef].PC[l] == gef_conn[ef_].PC[k] ) break;
+	    }
+	    if ( l == gef_conn[ef].num_PC ) break;
+	  }
+	  if ( k == gef_conn[ef_].num_PC ) {
+	    gef_conn[ef].I[gef_conn[ef].num_I++] = ef_;
+	  }
+	  /* j ==> i ? */
+	  for ( k = 0; k < gef_conn[ef].num_PC; k++ ) {
+	    for ( l = 0; l < gef_conn[ef_].num_PC; l++ ) {
+	      if ( gef_conn[ef_].PC[l] == gef_conn[ef].PC[k] ) break;
+	    }
+	    if ( l == gef_conn[ef_].num_PC ) break;
+	  }
+	  if ( k == gef_conn[ef].num_PC ) {
+	    gef_conn[ef_].I[gef_conn[ef_].num_I++] = ef;
+	  }
+	}
+      }
+    }
+
+    /* first sweep: only count the space we need for the fact arrays !*/
+    if ( gop_conn[n_op].num_E > 0 ) {
+      for ( i = 0; i < gop_conn[n_op].num_E; i++ ) {
+	ef = gop_conn[n_op].E[i];
+	for ( j = 0; j < gef_conn[ef].num_PC; j++ ) {
+	  gft_conn[gef_conn[ef].PC[j]].num_PC++; /* ft_conn.numPC is ft as PC */
+	}
+ 	for ( j = 0; j < gef_conn[ef].num_A; j++ ) {
+	  gft_conn[gef_conn[ef].A[j]].num_A++;
+	}
+	for ( j = 0; j < gef_conn[ef].num_D; j++ ) {
+	  gft_conn[gef_conn[ef].D[j]].num_D++;
+	}
+      }
+    }
+
+    n_op++;
+  }
+
+  /* clear al the data in gft_conn*/
+  /* will update later */
+  for ( i = 0; i < gnum_ft_conn; i++ ) {
+
+    if ( gft_conn[i].num_PC > 0 ) {
+      gft_conn[i].PC = ( int * ) calloc( gft_conn[i].num_PC, sizeof( int ) );
+    }
+    gft_conn[i].num_PC = 0;
+
+    if ( gft_conn[i].num_A > 0 ) {
+      gft_conn[i].A = ( int * ) calloc( gft_conn[i].num_A, sizeof( int ) );
+    }
+    gft_conn[i].num_A = 0;
+
+    if ( gft_conn[i].num_D > 0 ) {
+      gft_conn[i].D = ( int * ) calloc( gft_conn[i].num_D, sizeof( int ) );
+    }
+    gft_conn[i].num_D = 0;
+
+    gft_conn[i].is_global_goal = FALSE;
+  }
+
+  for ( i = 0; i < ggoal_state.num_F; i++ ) {
+    gft_conn[ggoal_state.F[i]].is_global_goal = TRUE;
+  }
+
+  for ( i = 0; i < gnum_ef_conn; i++ ) {
+    if ( gef_conn[i].removed ) continue;
+    for ( j = 0; j < gef_conn[i].num_PC; j++ ) {
+      gft_conn[gef_conn[i].PC[j]].PC[gft_conn[gef_conn[i].PC[j]].num_PC++] = i;
+    }
+    for ( j = 0; j < gef_conn[i].num_A; j++ ) {
+      gft_conn[gef_conn[i].A[j]].A[gft_conn[gef_conn[i].A[j]].num_A++] = i;
+    }
+    for ( j = 0; j < gef_conn[i].num_D; j++ ) {
+      gft_conn[gef_conn[i].D[j]].D[gft_conn[gef_conn[i].D[j]].num_D++] = i;
+    }
+  }
+
+  free( same_effects );
+  free( had_effects );
+
+  if ( gcmd_line.display_info == 121 ) {
+    printf("\n\ncreated connectivity graph as follows:");
+
+    printf("\n\n------------------OP ARRAY:-----------------------");
+    for ( i = 0; i < gnum_op_conn; i++ ) {
+      printf("\n\nOP: ");
+      print_op_name( i );
+      printf("\n----------EFFS:");
+      for ( j = 0; j < gop_conn[i].num_E; j++ ) {
+	printf("\neffect %d", gop_conn[i].E[j]);
+      }
+    }
+    
+    printf("\n\n-------------------EFFECT ARRAY:----------------------");
+    for ( i = 0; i < gnum_ef_conn; i++ ) {
+      printf("\n\neffect %d of op %d: ", i, gef_conn[i].op);
+      print_op_name( gef_conn[i].op );
+      if ( gef_conn[i].removed ) {
+	printf(" --- REMOVED ");
+	continue;
+      }
+      printf("\n----------PCS:");
+      for ( j = 0; j < gef_conn[i].num_PC; j++ ) {
+	printf("\n");
+	print_ft_name( gef_conn[i].PC[j] );
+      }
+      printf("\n----------ADDS:");
+      for ( j = 0; j < gef_conn[i].num_A; j++ ) {
+	printf("\n");
+	print_ft_name( gef_conn[i].A[j] );
+      }
+      printf("\n----------DELS:");
+      for ( j = 0; j < gef_conn[i].num_D; j++ ) {
+	printf("\n");
+	print_ft_name( gef_conn[i].D[j] );
+      }
+      printf("\n----------IMPLIEDS:");
+      for ( j = 0; j < gef_conn[i].num_I; j++ ) {
+	printf("\nimplied effect %d of op %d: ", 
+	       gef_conn[i].I[j], gef_conn[gef_conn[i].I[j]].op);
+	print_op_name( gef_conn[gef_conn[i].I[j]].op );
+      }
+    }
+    
+    printf("\n\n----------------------FT ARRAY:-----------------------------");
+    for ( i = 0; i < gadd_num_ft_conn; i++ ) {
+      printf("\n\nFT: ");
+      print_ft_name( i );
+      printf(" rand: %d", gft_conn[i].rand);
+      printf("\n----------PRE COND OF:");
+      for ( j = 0; j < gft_conn[i].num_PC; j++ ) {
+	printf("\neffect %d", gft_conn[i].PC[j]);
+      }
+      printf("\n----------ADD BY:");
+      for ( j = 0; j < gft_conn[i].num_A; j++ ) {
+	printf("\neffect %d", gft_conn[i].A[j]);
+      }
+      printf("\n----------DEL BY:");
+      for ( j = 0; j < gft_conn[i].num_D; j++ ) {
+	printf("\neffect %d", gft_conn[i].D[j]);
+      }
+    }
+  }
+    
+}
 
 
 

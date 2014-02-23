@@ -85,12 +85,15 @@ Bool **lm;
 
 void compute_goal_agenda( void ){
 
-  int i;
-  int max = gnum_ef_conn > gnum_ft_conn ? 
-    gnum_ef_conn : gnum_ft_conn;
-  
-  /* initialization stuff
+  /*
+   *  lDcount:  count for ft being Delete
+   *  lin_ch:  T/F a ft being changed
+   *  lch:  :  ft that being chaged
    */
+  int i;
+  int max = gnum_ef_conn > gnum_ft_conn ? gnum_ef_conn : gnum_ft_conn;
+  
+  /* initialization stuff */
   lch = ( int * ) calloc( max, sizeof( int ) );
   lin_ch = ( Bool * ) calloc( max, sizeof( Bool ) );
   for ( i = 0; i < max; i++ ) {
@@ -102,26 +105,20 @@ void compute_goal_agenda( void ){
     lDcount[i] = 0;
   }
 
-  /* False sets
-   */
+  /* False sets */
   for ( i = 0; i < ggoal_state.num_F; i++ ) { 
-    build_False_set( ggoal_state.F[i] );
+    build_False_set( ggoal_state.F[i] ); 
   }
 
-  /* heuristic reasonable orderings
-   */
+  /* heuristic reasonable orderings */
   detect_ordering_constraints();
 
-  /* build orderings into goal agenda
-   */
+  /* build orderings into goal agenda */
   build_goal_agenda();
-
 }
 
 
-/* false set computation for each goal
- */
-
+/* false set computation for each goal */
 void build_False_set( int ft ) {
 
   int i, j, k, count;
@@ -133,6 +130,7 @@ void build_False_set( int ft ) {
   for ( i = 0; i < gft_conn[ft].num_A; i++ ) {
     ef = gft_conn[ft].A[i];
     count++;
+
     for ( j = 0; j < gef_conn[ef].num_D; j++ ) {
       ft_ = gef_conn[ef].D[j];
       lDcount[ft_]++;
@@ -140,7 +138,8 @@ void build_False_set( int ft ) {
 	lch[lnum_ch++] = ft_;
 	lin_ch[ft_] = TRUE;
       }
-    } 
+    }
+
     for ( j = 0; j < gef_conn[ef].num_I; j++ ) {
       ef_ = gef_conn[ef].I[j];
       count++;
@@ -200,34 +199,19 @@ void build_False_set( int ft ) {
 
 
 /* look at pairs of goals and see if they are ordered
- * heuristically reasonable
- */
-
-
-
-
-
-
-
-
-
-
-
-void detect_ordering_constraints( void )
-
-{
+ * heuristically reasonable */
+void detect_ordering_constraints( void ) {
 
   int i, j, n = ggoal_state.num_F;
 
-  /* initialize usability array
-   */
+  /* initialize usability array */
   lin = ( Bool * ) calloc( gnum_ef_conn, sizeof( Bool ) );
   for ( i = 0; i < gnum_ef_conn; i++ ) {
     lin[i] = TRUE;
   }
 
-  /* initialize orderings matrix.
-   *
+  /* 
+   * initialize orderings matrix.
    * m[i][j] == TRUE gdw. goal[i] \leq_h goal[j]
    */
   lm = ( Bool ** ) calloc( n, sizeof( Bool * ) );
@@ -280,24 +264,23 @@ void detect_ordering_constraints( void )
 
 
 
-void setup_E( int ft )
-
-{
+void setup_E( int ft ) {
 
   int i, j;
   int ef, ef_, ft_;
 
   lnum_ch = 0;
 
-  /* efs that imply a delete ef to ft
-   */
+  /* efs that imply a delete ef to ft */
   for ( i = 0; i < gft_conn[ft].num_D; i++ ) {
+
     ef = gft_conn[ft].D[i];
     if ( !lin_ch[ef] ) {
       lin[ef] = FALSE;
       lch[lnum_ch++] = ef;
       lin_ch[ef] = TRUE;
     }
+
     for ( j = 0; j < gef_conn[ef].num_I; j++ ) {
       ef_ = gef_conn[ef].I[j];
       if ( !lin_ch[ef_] ) {
@@ -306,10 +289,10 @@ void setup_E( int ft )
 	lin_ch[ef_] = TRUE;
       }
     }
+
   }
 
-  /* efs that use False preconds
-   */
+  /* efs that use False preconds */
   for ( i = 0; i < gft_conn[ft].num_False; i++ ) {
     ft_ = gft_conn[ft].False[i];
     for ( j = 0; j < gft_conn[ft_].num_PC; j++ ) {
@@ -323,7 +306,6 @@ void setup_E( int ft )
   }
 
 }
-
 
 
 void unsetup_E( int ft )
