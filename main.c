@@ -558,8 +558,7 @@ int main( int argc, char *argv[] ) {
   	/*times( &start );*/
   	ftime(&start);
 
-	/* now build globally accessable connectivity graph
-	*/
+	/* now build globally accessable connectivity graph */
 	build_connectivity_graph();
 
   	/*times( &end );*/

@@ -99,6 +99,7 @@ BSITUATION_TOK	scan-fct_pddl.tab.c	/^     BSITUATION_TOK = 261,$/;"	e	enum:yytok
 build_action_group	fip.c	/^void build_action_group( void ){$/;"	f
 build_easy_action_templates	inst_easy.c	/^void build_easy_action_templates( void ) {$/;"	f
 build_False_set	orderings.c	/^void build_False_set( int ft ) {$/;"	f
+build_False_set_for_multiple_purpose	orderings.c	/^void build_False_set_for_multiple_purpose ( int ft ) {$/;"	f
 build_fixpoint	relax.c	/^int build_fixpoint( State *S ) {$/;"	f
 build_goal_agenda	orderings.c	/^void build_goal_agenda( void )$/;"	f
 build_hard_action_templates	inst_hard.c	/^void build_hard_action_templates( void ) {$/;"	f
@@ -125,6 +126,7 @@ COMMENT	lex.fct_pddl.c	599;"	d	file:
 COMMENT	lex.mul_pddl.c	582;"	d	file:
 COMMENT	lex.ops_pddl.c	597;"	d	file:
 compute_goal_agenda	orderings.c	/^void compute_goal_agenda( void ){$/;"	f
+compute_goal_agenda_for_mutliple_purpose	orderings.c	/^void compute_goal_agenda_for_mutliple_purpose ( void ){$/;"	f
 conditions	ff.h	/^  Fact *conditions;$/;"	m	struct:_NormEffect
 conditions	ff.h	/^  Fact *conditions;$/;"	m	struct:_PseudoActionEffect
 conditions	ff.h	/^  int *conditions;$/;"	m	struct:_ActionEffect
@@ -165,7 +167,7 @@ dels	ff.h	/^  Fact *dels;$/;"	m	struct:_NormEffect
 dels	ff.h	/^  Fact *dels;$/;"	m	struct:_PseudoActionEffect
 dels	ff.h	/^  int *dels;$/;"	m	struct:_ActionEffect
 depth	ff.h	/^  int depth;$/;"	m	struct:_EhcNode
-detect_ordering_constraints	orderings.c	/^void detect_ordering_constraints( void )$/;"	f
+detect_ordering_constraints	orderings.c	/^void detect_ordering_constraints( void ) {$/;"	f
 detect_tautologies_in_wff	inst_pre.c	/^void detect_tautologies_in_wff( WffNode **w )$/;"	f
 disable_actions	fip.c	/^void disable_actions(State*s, int index){$/;"	f
 display_info	ff.h	/^  int display_info;$/;"	m	struct:_command_line
@@ -978,7 +980,7 @@ PlOperator	ff.h	/^} PlOperator;$/;"	t	typeref:struct:_PlOperator
 position_in_constants_table	inst_pre.c	/^int position_in_constants_table( char *str )$/;"	f
 position_in_predicates_table	inst_pre.c	/^int position_in_predicates_table( char *str )$/;"	f
 position_in_types_table	inst_pre.c	/^int position_in_types_table( char *str ) {$/;"	f
-possibly_achievable	orderings.c	/^Bool possibly_achievable( int ft )$/;"	f
+possibly_achievable	orderings.c	/^Bool possibly_achievable( int ft ) {$/;"	f
 possibly_negative	inst_pre.c	/^Bool possibly_negative( Fact *f )$/;"	f
 possibly_positive	inst_pre.c	/^Bool possibly_positive( Fact *f )$/;"	f
 pPlNode	scan-fct_pddl.tab.c	/^  PlNode* pPlNode;$/;"	m	union:YYSTYPE	file:
@@ -1117,7 +1119,8 @@ search_for_better_state	search.c	/^Bool search_for_better_state ( State *S, int 
 serrmsg	scan-fct_pddl.tab.c	/^static char * serrmsg[] = {$/;"	v	file:
 serrmsg	scan-mul_pddl.tab.c	/^static char *serrmsg[] = {$/;"	v	file:
 serrmsg	scan-ops_pddl.tab.c	/^static char *serrmsg[] = {$/;"	v	file:
-setup_E	orderings.c	/^void setup_E( int ft )$/;"	f
+setup_E	orderings.c	/^void setup_E( int ft ) {$/;"	f
+setup_E_for_multiple_purpose	orderings.c	/^void setup_E_for_multiple_purpose ( int ft ) {$/;"	f
 short	scan-fct_pddl.tab.c	253;"	d	file:
 short	scan-mul_pddl.tab.c	255;"	d	file:
 short	scan-ops_pddl.tab.c	273;"	d	file:
@@ -1208,7 +1211,7 @@ unify_easy_inertia_preconds	inst_easy.c	/^void unify_easy_inertia_preconds( int 
 unput	lex.fct_pddl.c	207;"	d	file:
 unput	lex.mul_pddl.c	207;"	d	file:
 unput	lex.ops_pddl.c	207;"	d	file:
-unsetup_E	orderings.c	/^void unsetup_E( int ft )$/;"	f
+unsetup_E	orderings.c	/^void unsetup_E( int ft ) {$/;"	f
 update_intended_effect	fip.c	/^void update_intended_effect(StateActionPair *ptr, StateActionPair *pState){$/;"	f
 update_reachability_analysis_for_multiple_purpose	inst_final.c	/^void update_reachability_analysis_for_multiple_purpose ( void ) {$/;"	f
 var	ff.h	/^  int var, var_type;$/;"	m	struct:_WffNode

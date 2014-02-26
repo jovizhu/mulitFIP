@@ -118,6 +118,40 @@ void compute_goal_agenda( void ){
 }
 
 
+void compute_goal_agenda_for_mutliple_purpose ( void ){
+
+  /*
+   *  lDcount:  count for ft being Delete
+   *  lin_ch:  T/F a ft being changed
+   *  lch:  :  ft that being chaged
+   */
+  int i;
+  int max = gadd_num_ef_conn > gadd_num_ft_conn ? gadd_num_ef_conn : gadd_num_ft_conn;
+  
+  /* initialization stuff */
+  lch = ( int * ) calloc( max, sizeof( int ) );
+  lin_ch = ( Bool * ) calloc( max, sizeof( Bool ) );
+  for ( i = 0; i < max; i++ ) {
+    lin_ch[i] = FALSE;
+  }
+
+  lDcount = ( int * ) calloc( gnum_ft_conn, sizeof( int ) );
+  for ( i = 0; i < gnum_ft_conn; i++ ) {
+    lDcount[i] = 0;
+  }
+
+  /* False sets */
+  for ( i = 0; i < gadd_goal_state.num_F; i++ ) { 
+    build_False_set_for_multiple_purpose ( gadd_goal_state.F[i] ); 
+  }
+
+  /* heuristic reasonable orderings */
+  detect_ordering_constraints();
+
+  /* build orderings into goal agenda */
+  build_goal_agenda();
+}
+
 /* false set computation for each goal */
 void build_False_set( int ft ) {
 
@@ -128,6 +162,7 @@ void build_False_set( int ft ) {
 
   count = 0;
   for ( i = 0; i < gft_conn[ft].num_A; i++ ) {
+
     ef = gft_conn[ft].A[i];
     count++;
 
@@ -156,22 +191,19 @@ void build_False_set( int ft ) {
 
   /* only those that where deleted can be in False set
    *
-   * DANGER: this relies on that the function is called only once
-   *         for each fact ft
+   * DANGER: this relies on that the function is called only once for each fact ft
    */
   gft_conn[ft].False = ( int * ) calloc( lnum_ch, sizeof( int ) );
 
   gft_conn[ft].num_False = 0;
   for ( i = 0; i < lnum_ch; i++ ) {
     if ( lDcount[lch[i]] == count ) {
-      /* each adder deleted this fact
-       */
+      /* each adder deleted this fact */
       gft_conn[ft].False[gft_conn[ft].num_False++] = lch[i];
     }
   }
 
-  /* undo Dcount and lch information now
-   */
+  /* undo Dcount and lch information now */
   for ( i = 0; i < lnum_ch; i++ ) {
     lDcount[lch[i]] = 0;
     lin_ch[lch[i]] = FALSE;
@@ -190,14 +222,75 @@ void build_False_set( int ft ) {
 }
  
 
+/* false set computation for each goal */
+void build_False_set_for_multiple_purpose ( int ft ) {
 
+  int i, j, k, count;
+  int ef, ft_, ef_;
 
+  lnum_ch = 0;
 
+  count = 0;
+  for ( i = 0; i < gadd_ft_conn[ft].num_A; i++ ) {
 
+    ef = gadd_ft_conn[ft].A[i];
+    count++;
 
+    for ( j = 0; j < gadd_ef_conn[ef].num_D; j++ ) {
+      ft_ = gadd_ef_conn[ef].D[j];
+      lDcount[ft_]++;
+      if ( !lin_ch[ft_] ) {
+	lch[lnum_ch++] = ft_;
+	lin_ch[ft_] = TRUE;
+      }
+    }
 
+    for ( j = 0; j < gadd_ef_conn[ef].num_I; j++ ) {
+      ef_ = gadd_ef_conn[ef].I[j];
+      count++;
+      for ( k = 0; k < gadd_ef_conn[ef_].num_D; k++ ) {
+	ft_ = gadd_ef_conn[ef_].D[k];
+	lDcount[ft_]++;
+	if ( !lin_ch[ft_] ) {
+	  lch[lnum_ch++] = ft_;
+	  lin_ch[ft_] = TRUE;
+	}
+      }
+    }
+  }
 
+  /* only those that where deleted can be in False set
+   *
+   * DANGER: this relies on that the function is called only once for each fact ft
+   */
+  gadd_ft_conn[ft].False = ( int * ) calloc( lnum_ch, sizeof( int ) );
 
+  gadd_ft_conn[ft].num_False = 0;
+  for ( i = 0; i < lnum_ch; i++ ) {
+    if ( lDcount[lch[i]] == count ) {
+      /* each adder deleted this fact */
+      gadd_ft_conn[ft].False[gft_conn[ft].num_False++] = lch[i];
+    }
+  }
+
+  /* undo Dcount and lch information now */
+  for ( i = 0; i < lnum_ch; i++ ) {
+    lDcount[lch[i]] = 0;
+    lin_ch[lch[i]] = FALSE;
+  }
+
+  if ( gcmd_line.display_info == 125 ) {
+    printf("\n\ncomputed False set of ");
+    print_ft_name( ft );
+    printf(" as follows:");
+    for ( i = 0; i < gadd_ft_conn[ft].num_False; i++ ) {
+      printf("\n");
+      print_ft_name( gadd_ft_conn[ft].False[i] );
+    }
+  }
+
+}
+ 
 /* look at pairs of goals and see if they are ordered
  * heuristically reasonable */
 void detect_ordering_constraints( void ) {
@@ -235,8 +328,74 @@ void detect_ordering_constraints( void ) {
     setup_E( ggoal_state.F[i] );
     for ( j = i + 1; j < n; j++ ) {
       lm[j][i] = !possibly_achievable( ggoal_state.F[j] );
+      if ( gcmd_line.display_info == 126 && lm[j][i] ) {
+	printf("\norderings: ");
+	print_ft_name( ggoal_state.F[j] );
+	printf(" <= ");
+	print_ft_name( ggoal_state.F[i] );
+      }
+    }
+    unsetup_E( ggoal_state.F[i] );
+  }
+  for ( i = n - 1; i > 0; i-- ) {
+    setup_E( ggoal_state.F[i] );
+    for ( j = i - 1; j > -1; j-- ) {
+      lm[j][i] = !possibly_achievable( ggoal_state.F[j] );
       if ( gcmd_line.display_info == 126 &&
 	   lm[j][i] ) {
+	printf("\norderings: ");
+	print_ft_name( ggoal_state.F[j] );
+	printf(" <= ");
+	print_ft_name( ggoal_state.F[i] );
+      }
+    }
+    unsetup_E( ggoal_state.F[i] );
+  }
+
+}
+
+
+/* look at pairs of goals and see if they are ordered
+ * heuristically reasonable */
+void detect_ordering_constraints_for_multiple_purpose ( void ) {
+
+  int i, j, n = gadd_goal_state.num_F;
+
+  /* initialize usability array */
+  lin = ( Bool * ) calloc( gadd_num_ef_conn, sizeof( Bool ) );
+  for ( i = 0; i < gadd_num_ef_conn; i++ ) {
+    lin[i] = TRUE;
+  }
+
+  /* 
+   * initialize orderings matrix.
+   * m[i][j] == TRUE gdw. goal[i] \leq_h goal[j]
+   *
+   */
+
+  lm = ( Bool ** ) calloc( n, sizeof( Bool * ) );
+  for ( i = 0; i < n; i++ ) {
+    lm[i] = ( Bool * ) calloc( n, sizeof( Bool ) );
+  }
+
+  for ( i = 0; i < n; i++ ) {
+    for ( j = 0; j < n; j++ ) {
+      lm[i][j] = ( i == j ? TRUE : FALSE );
+    }
+  }
+
+  /* check each pair of goals i, j for heuristic
+   * reasonable ordering.
+   *
+   * order of pairs due to speedup by marking
+   * unusable efs for each as long as possible constant
+   * goal i
+   */
+  for ( i = 0; i < n - 1; i++ ) {
+    setup_E( gadd_goal_state.F[i] );
+    for ( j = i + 1; j < n; j++ ) {
+      lm[j][i] = !possibly_achievable( gadd_goal_state.F[j] );
+      if ( gcmd_line.display_info == 126 && lm[j][i] ) {
 	printf("\norderings: ");
 	print_ft_name( ggoal_state.F[j] );
 	printf(" <= ");
@@ -307,10 +466,50 @@ void setup_E( int ft ) {
 
 }
 
+void setup_E_for_multiple_purpose ( int ft ) {
 
-void unsetup_E( int ft )
+  int i, j;
+  int ef, ef_, ft_;
 
-{
+  lnum_ch = 0;
+
+  /* efs that imply a delete ef to ft */
+  for ( i = 0; i < gadd_ft_conn[ft].num_D; i++ ) {
+
+    ef = gadd_ft_conn[ft].D[i];
+    if ( !lin_ch[ef] ) {
+      lin[ef] = FALSE;
+      lch[lnum_ch++] = ef;
+      lin_ch[ef] = TRUE;
+    }
+
+    for ( j = 0; j < gadd_ef_conn[ef].num_I; j++ ) {
+      ef_ = gadd_ef_conn[ef].I[j];
+      if ( !lin_ch[ef_] ) {
+	lin[ef_] = FALSE;
+	lch[lnum_ch++] = ef_;
+	lin_ch[ef_] = TRUE;
+      }
+    }
+
+  }
+
+  /* efs that use False preconds */
+  for ( i = 0; i < gft_conn[ft].num_False; i++ ) {
+    ft_ = gft_conn[ft].False[i];
+    for ( j = 0; j < gft_conn[ft_].num_PC; j++ ) {
+      ef = gft_conn[ft_].PC[j];
+      if ( !lin_ch[ef] ) {
+	lin[ef] = FALSE;
+	lch[lnum_ch++] = ef;
+	lin_ch[ef] = TRUE;
+      }
+    }
+  }
+
+}
+
+void unsetup_E( int ft ) {
 
   int i;
 
@@ -323,30 +522,27 @@ void unsetup_E( int ft )
 
 
 
-Bool possibly_achievable( int ft )
-
-{
+Bool possibly_achievable( int ft ) {
 
   int i, j, k;
   int ef, ft_;
 
-  for ( i = 0; i < gft_conn[ft].num_A; i++ ) {
-    ef = gft_conn[ft].A[i];
+  for ( i = 0; i < gadd_ft_conn[ft].num_A; i++ ) {
+    ef = gadd_ft_conn[ft].A[i];
     if ( !lin[ef] ) {
-      continue;
-    }
-    for ( j = 0; j < gef_conn[ef].num_PC; j++ ) {
-      ft_ = gef_conn[ef].PC[j];
-      for ( k = 0; k < gft_conn[ft_].num_A; k++ ) {
+      continue; }
+    for ( j = 0; j < gadd_ef_conn[ef].num_PC; j++ ) {
+      ft_ = gadd_ef_conn[ef].PC[j];
+      for ( k = 0; k < gadd_ft_conn[ft_].num_A; k++ ) {
 	if ( lin[gft_conn[ft_].A[k]] ) {
 	  break;
 	}
       }
-      if ( k == gft_conn[ft_].num_A ) {
+      if ( k == gadd_ft_conn[ft_].num_A ) {
 	break;
       }
     }
-    if ( j < gef_conn[ef].num_PC ) {
+    if ( j < gadd_ef_conn[ef].num_PC ) {
       continue;
     }
     return TRUE;
