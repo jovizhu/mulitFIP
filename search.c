@@ -141,15 +141,12 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 	int i, h, h_;
 
 	if ( first_call ) {
-		/* on first call, initialize plan hash table, search space, search hash table
-		 */
+		/* on first call, initialize plan hash table, search space, search hash table */
 		for ( i = 0; i < PLAN_HASH_SIZE; i++ ) {
 			lplan_hash_entry[i] = NULL;
 		}
 
-		/* on subsequent calls, the start is already hashed, as it's the end
-		 * of the previous calls
-		 */
+		/* on subsequent calls, the start is already hashed, as it's the end of the previous calls */
 		hash_plan_state( start, 0 );
 
 		lehc_space_head = new_EhcNode();
@@ -174,8 +171,7 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 		first_call = FALSE;
 	}
 
-	/* start enforced Hill-climbing
-	*/
+	/* start enforced Hill-climbing */
 	source_to_dest( &lcurrent_goals, end );  
 
 	source_to_dest( &S, start );
@@ -187,8 +183,8 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 	}
 	if ( h == 0 ) {
 		return TRUE;
-	}  
-	printf("\n\nCueing down from goal distance: %4d into depth ", h);
+	}
+	printf("\n\nCueing down from goal distance: %4d into depth", h);
 
 	while ( h != 0 ) {
 		if ( !search_for_better_state( &S, h, &S_, &h_ ) ) {
@@ -198,8 +194,7 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 		/*
 		* modified by Jason Huang: return ealier
 		*/
-
-		if(is_solved_state( &S_ )){
+		if(is_solved_state( &S_ )) {
 			printf("\nstate have seen. h = %d. return\n", h);
 			return TRUE;
 		}
@@ -231,8 +226,7 @@ Bool search_for_better_state ( State *S, int h, State *S_, int *h_ ) {
 	}
 
 	/* don't hash states, but search nodes.
-	* this way, don't need to keep states twice in memory
-	*/
+	* this way, don't need to keep states twice in memory */
 	tmp = new_EhcNode();
 	copy_source_to_dest( &(tmp->S), S);
 	hash_ehc_node( tmp );
@@ -240,49 +234,39 @@ Bool search_for_better_state ( State *S, int h, State *S_, int *h_ ) {
 	lehc_current_end = lehc_space_head->next;
 	
 	for ( i = 0; i < gnum_H; i++ ) {
-		/*if(g_is_strong){*/
-		/*JC: dismiss invalid actions?? Just for strong??*/
 		int k;
 		Bool found = FALSE;
 		for(k = 0; k < gnum_IV; k++){
-			if(same_state(&gInvActs[k].state, S) && gH[i] == gInvActs[k].act){						
+			if(same_state(&gInvActs[k].state, S) && gH[i] == gInvActs[k].act){	
 				found = TRUE;				
 				break;
 			}
 		}
 		if(found) continue;
-		/*}*/
 
 		if(is_D_action(gop_conn[gH[i]].action->name)) continue;
 		
-		/*print_op_name(gH[i]);*/
 		g = result_to_dest( &S__, S, gH[i] );
 		add_to_ehc_space( &S__, gH[i], NULL, g );
 	}
 
-
 	for ( i = 0; i < gnum_H; i++ ) {
-		/*if(g_is_strong){*/
-		/*JC: dismiss invalid actions?? Just for strong??*/
 		int k;
 		Bool found = FALSE;
 		for(k = 0; k < gnum_IV; k++){
-			if(same_state(&gInvActs[k].state, S) && gH[i] == gInvActs[k].act){						
+			if(same_state(&gInvActs[k].state, S) && gH[i] == gInvActs[k].act){
 				found = TRUE;				
 				break;
 			}
 		}
 		if(found) continue;
-		/*}*/
 
 		if(!is_D_action(gop_conn[gH[i]].action->name)) continue;
 		
-		/*print_op_name(gH[i]);*/
+                /* D_cation, not in the gH */
 		g = result_to_dest( &S__, S, gH[i] );
 		add_to_ehc_space( &S__, gH[i], NULL, g );
 	}
-
-
 
 	lehc_current_start = lehc_space_head->next;
 
@@ -301,6 +285,7 @@ Bool search_for_better_state ( State *S, int h, State *S_, int *h_ ) {
 			printf("[%d]", depth);
 			fflush( stdout );
 		}
+
 		h__ = expand_first_node( h );
 		if ( LESS( h__, h ) ) {
 			break;
@@ -322,8 +307,7 @@ Bool search_for_better_state ( State *S, int h, State *S_, int *h_ ) {
 
 void add_to_ehc_space( State *S, int op, EhcNode *father, int new_goal ) {
 
-	/* see if state is already a part of this search space
-	*/
+	/* see if state is already a part of this search space */
 	if ( ehc_state_hashed( S ) ) {
 		return;
 	}
@@ -350,7 +334,7 @@ void add_to_ehc_space( State *S, int op, EhcNode *father, int new_goal ) {
 }
 
 
-
+/* breath first search */
 int expand_first_node( int h ) {
 
 	static Bool fc = TRUE;
@@ -371,8 +355,7 @@ int expand_first_node( int h ) {
 		return h_;
 	}
 
-	if ( lehc_current_start->new_goal != -1 &&
-		new_goal_gets_deleted( lehc_current_start ) ) {
+	if ( lehc_current_start->new_goal != -1 && new_goal_gets_deleted( lehc_current_start ) ) {
 			lehc_current_start = lehc_current_start->next;
 			return INFINITY;
 	}
@@ -382,7 +365,6 @@ int expand_first_node( int h ) {
 	}
 
 	for ( i = 0; i < gnum_H; i++ ) {
-		/*if(g_is_strong){*/
 		/*JC: dismiss invalid actions*/
 		int k;
 		Bool found = FALSE;
@@ -394,7 +376,6 @@ int expand_first_node( int h ) {
 		}
 		if(found)
 			continue;
-		/*}*/
 		
 		if(is_D_action(gop_conn[gH[i]].action->name)) continue;
 
@@ -404,7 +385,6 @@ int expand_first_node( int h ) {
 
 
 	for ( i = 0; i < gnum_H; i++ ) {
-		/*if(g_is_strong){*/
 		/*JC: dismiss invalid actions*/
 		int k;
 		Bool found = FALSE;
@@ -416,7 +396,6 @@ int expand_first_node( int h ) {
 		}
 		if(found)
 			continue;
-		/*}*/
 		
 		if(!is_D_action(gop_conn[gH[i]].action->name)) continue;
 
@@ -465,8 +444,7 @@ void hash_ehc_node( EhcNode *n ) {
 	}
 
 	if ( h ) {
-		/* current list end is still in allocated list of hash entrys
-		*/
+		/* current list end is still in allocated list of hash entrys */
 		h->sum = sum;
 		h->ehc_node = n;
 		lnum_ehc_hash_entry[index]++;
@@ -476,8 +454,7 @@ void hash_ehc_node( EhcNode *n ) {
 		}
 		return;
 	}
-	/* allocated list ended; connect a new hash entry to it.
-	*/
+	/* allocated list ended; connect a new hash entry to it. */
 	h = new_EhcHashEntry();
 	h->sum = sum;
 	h->ehc_node = n;
@@ -714,9 +691,7 @@ PlanHashEntry *plan_state_hashed( State *S )
 /*********************************
 * ADDED GOAL DELETION HEURISTIC *
 *********************************/
-Bool new_goal_gets_deleted( EhcNode *n )
-
-{
+Bool new_goal_gets_deleted( EhcNode *n ) {
 
 	int i, j, ef, new_goal = n->new_goal;
 

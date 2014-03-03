@@ -155,20 +155,7 @@ int lh;
 * helper, for -1 == INFINITY method *
 *************************************/
 
-
-
-
-
-
-
-
-
-
-
-
-Bool LESS( int a, int b )
-
-{
+Bool LESS( int a, int b ) {
 
 	if ( a == INFINITY ) {
 		return FALSE;

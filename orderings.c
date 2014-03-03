@@ -135,8 +135,8 @@ void compute_goal_agenda_for_mutliple_purpose ( void ){
     lin_ch[i] = FALSE;
   }
 
-  lDcount = ( int * ) calloc( gnum_ft_conn, sizeof( int ) );
-  for ( i = 0; i < gnum_ft_conn; i++ ) {
+  lDcount = ( int * ) calloc( gadd_num_ft_conn, sizeof( int ) );
+  for ( i = 0; i < gadd_num_ft_conn; i++ ) {
     lDcount[i] = 0;
   }
 
@@ -146,11 +146,12 @@ void compute_goal_agenda_for_mutliple_purpose ( void ){
   }
 
   /* heuristic reasonable orderings */
-  detect_ordering_constraints();
+  detect_ordering_constraints_for_multiple_purpose ();
 
   /* build orderings into goal agenda */
-  build_goal_agenda();
+  build_goal_agenda_for_multiple_purpose ();
 }
+
 
 /* false set computation for each goal */
 void build_False_set( int ft ) {
@@ -269,7 +270,7 @@ void build_False_set_for_multiple_purpose ( int ft ) {
   for ( i = 0; i < lnum_ch; i++ ) {
     if ( lDcount[lch[i]] == count ) {
       /* each adder deleted this fact */
-      gadd_ft_conn[ft].False[gft_conn[ft].num_False++] = lch[i];
+      gadd_ft_conn[ft].False[gadd_ft_conn[ft].num_False++] = lch[i];
     }
   }
 
@@ -392,31 +393,30 @@ void detect_ordering_constraints_for_multiple_purpose ( void ) {
    * goal i
    */
   for ( i = 0; i < n - 1; i++ ) {
-    setup_E( gadd_goal_state.F[i] );
+    setup_E_for_multiple_purpose( gadd_goal_state.F[i] );
     for ( j = i + 1; j < n; j++ ) {
+      lm[j][i] = !possibly_achievable_for_multiple_purpose ( gadd_goal_state.F[j] );
+      if ( gcmd_line.display_info == 126 && lm[j][i] ) {
+	printf("\norderings: ");
+	print_ft_name( gadd_goal_state.F[j] );
+	printf(" <= ");
+	print_ft_name( gadd_goal_state.F[i] );
+      }
+    }
+    unsetup_E( gadd_goal_state.F[i] );
+  }
+  for ( i = n - 1; i > 0; i-- ) {
+    setup_E_for_multiple_purpose( gadd_goal_state.F[i] );
+    for ( j = i - 1; j > -1; j-- ) {
       lm[j][i] = !possibly_achievable( gadd_goal_state.F[j] );
       if ( gcmd_line.display_info == 126 && lm[j][i] ) {
 	printf("\norderings: ");
-	print_ft_name( ggoal_state.F[j] );
+	print_ft_name( gadd_goal_state.F[j] );
 	printf(" <= ");
-	print_ft_name( ggoal_state.F[i] );
+	print_ft_name( gadd_goal_state.F[i] );
       }
     }
-    unsetup_E( ggoal_state.F[i] );
-  }
-  for ( i = n - 1; i > 0; i-- ) {
-    setup_E( ggoal_state.F[i] );
-    for ( j = i - 1; j > -1; j-- ) {
-      lm[j][i] = !possibly_achievable( ggoal_state.F[j] );
-      if ( gcmd_line.display_info == 126 &&
-	   lm[j][i] ) {
-	printf("\norderings: ");
-	print_ft_name( ggoal_state.F[j] );
-	printf(" <= ");
-	print_ft_name( ggoal_state.F[i] );
-      }
-    }
-    unsetup_E( ggoal_state.F[i] );
+    unsetup_E( gadd_goal_state.F[i] );
   }
 
 }
@@ -495,10 +495,10 @@ void setup_E_for_multiple_purpose ( int ft ) {
   }
 
   /* efs that use False preconds */
-  for ( i = 0; i < gft_conn[ft].num_False; i++ ) {
-    ft_ = gft_conn[ft].False[i];
-    for ( j = 0; j < gft_conn[ft_].num_PC; j++ ) {
-      ef = gft_conn[ft_].PC[j];
+  for ( i = 0; i < gadd_ft_conn[ft].num_False; i++ ) {
+    ft_ = gadd_ft_conn[ft].False[i];
+    for ( j = 0; j < gadd_ft_conn[ft_].num_PC; j++ ) {
+      ef = gadd_ft_conn[ft_].PC[j];
       if ( !lin_ch[ef] ) {
 	lin[ef] = FALSE;
 	lch[lnum_ch++] = ef;
@@ -521,8 +521,39 @@ void unsetup_E( int ft ) {
 }
 
 
-
 Bool possibly_achievable( int ft ) {
+
+  int i, j, k;
+  int ef, ft_;
+
+  for ( i = 0; i < gft_conn[ft].num_A; i++ ) {
+    ef = gft_conn[ft].A[i];
+    if ( !lin[ef] ) {
+      continue; }
+    for ( j = 0; j < gef_conn[ef].num_PC; j++ ) {
+      ft_ = gef_conn[ef].PC[j];
+      for ( k = 0; k < gft_conn[ft_].num_A; k++ ) {
+	if ( lin[gft_conn[ft_].A[k]] ) {
+	  break;
+	}
+      }
+      if ( k == gft_conn[ft_].num_A ) {
+	break;
+      }
+    }
+    if ( j < gef_conn[ef].num_PC ) {
+      continue;
+    }
+    return TRUE;
+  }
+
+  return FALSE;
+
+}
+
+
+/* check ft can be reached by 3 steps */
+Bool possibly_achievable_for_multiple_purpose ( int ft ) {
 
   int i, j, k;
   int ef, ft_;
@@ -552,32 +583,10 @@ Bool possibly_achievable( int ft ) {
 
 }
 
-
-
-
-
-
-
-
-
 /* take a matrix of goal orderings and build it into
  * the goal agenda
  */
-
-
-
-
-
-
-
-
-
-
-
-
-void build_goal_agenda( void )
-
-{
+void build_goal_agenda( void ) {
 
   int i, j, k, n = ggoal_state.num_F, start, entry;
   int *degree;
@@ -694,3 +703,115 @@ void build_goal_agenda( void )
 }
 
 
+/* take a matrix of goal orderings and build it into
+ * the goal agenda
+ */
+void build_goal_agenda_for_multiple_purpose ( void ) {
+
+  int i, j, k, n = gadd_goal_state.num_F, start, entry;
+  int *degree;
+  int *hits;
+  int *slot;
+
+  degree = ( int * ) calloc( n, sizeof( int ) );
+  hits = ( int * ) calloc( n, sizeof( int ) );
+  slot = ( int * ) calloc( n, sizeof( int ) );
+  for ( i = 0; i < n; i++ ) {
+    degree[i] = 0;
+    hits[i] = 0;
+  }
+
+  /* compute transitive closure on orderings matrix */
+  for ( j = 0; j < n; j++ ) {
+    for ( i = 0; i < n; i++ ) {
+      if ( lm[i][j] ) {
+	for ( k = 0; k < n; k++ ) {
+	  if ( lm[j][k] ) {
+	    lm[i][k] = TRUE;
+	  }
+	}
+      }
+    }
+  }
+  
+  /* count in - and outgoing edges, know those
+   * goals that are not connected at all */
+  for ( i = 0; i < n; i++ ) {
+    for ( j = 0; j < n; j++ ) {
+      if ( i != j && lm[i][j] ) {
+	degree[i]--;
+	degree[j]++;
+	hits[i]++;
+	hits[j]++;
+      }
+    }
+  }
+
+  /* order goals with increasing degree, disconnected at the very end. */
+  for ( i = 0; i < n; i++ ) {
+
+    if ( hits[i] == 0 ) {
+      slot[i] = i;
+      continue;
+    }
+
+    for ( j = 0; j < i; j++ ) {
+      if ( degree[i] < degree[slot[j]] || hits[slot[j]] == 0 ) {
+	break;
+      }
+    }
+
+    for ( k = i - 1; k >= j; k-- ) {
+      slot[k+1] = slot[k];
+    }
+    slot[j] = i;
+  }
+
+  /* sweep over and collect goal agenda */
+  gadd_goal_agenda = ( State * ) calloc( n, sizeof( State ) );
+  for ( i = 0; i < n; i++ ) {
+    make_state( &(gadd_goal_agenda[i]), gadd_num_ft_conn );
+    gadd_goal_agenda[i].max_F = gadd_num_ft_conn;
+  }
+
+  start = 0;
+  entry = 0;
+  for ( i = 1; i < n; i++ ) {
+    if ( ( degree[slot[i]] != degree[slot[i-1]] ) || ( hits[slot[i]] == 0 && hits[slot[i-1]] != 0 ) ) {
+      gadd_goal_agenda[entry].num_F = 0;
+      for ( j = start; j < i; j++ ) {
+	gadd_goal_agenda[entry].F[gadd_goal_agenda[entry].num_F++] = gadd_goal_state.F[slot[j]];
+      }
+      entry++;
+      start = i;
+    }
+  }
+  gadd_goal_agenda[entry].num_F = 0;
+  for ( i = start; i < n; i++ ) {
+    gadd_goal_agenda[entry].F[gadd_goal_agenda[entry].num_F++] = gadd_goal_state.F[slot[i]];
+  }
+  entry++;
+  gadd_num_goal_agenda = entry;
+
+  free( degree );
+  free( hits );
+  free( slot );
+
+  if ( gcmd_line.display_info == 127 ) {
+    printf("\nadditional goal agenda is:\n");
+    for ( i = 0; i < gadd_num_goal_agenda; i++ ) {
+      if ( i == 0 ) {
+	printf("\nentry %3d: ", i);
+      } else {
+	printf("\n      %3d: ", i);
+      }
+      for ( j = 0; j < gadd_goal_agenda[i].num_F; j++ ) {
+	print_ft_name( gadd_goal_agenda[i].F[j] );
+	if ( j < gadd_goal_agenda[i].num_F - 1 ) {
+	  printf("\n           ");
+	}
+      }
+    }
+  }
+
+}
