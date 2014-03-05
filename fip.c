@@ -949,7 +949,7 @@ StateActionPair* is_solved_state( State *pState ){
 	StateActionPair *p = gsolved_states;
 
 	while( p ){
-		/*if( same_state(&p->state, pState) ){*/
+
 		/*JC: big change -- need cautious!!!*/		
 		if(g_is_strong){
 			if( is_in_goal(pState, &p->state) || is_in_goal(&p->state, pState)){		

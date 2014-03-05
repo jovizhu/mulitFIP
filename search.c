@@ -175,6 +175,7 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 	source_to_dest( &lcurrent_goals, end );  
 
 	source_to_dest( &S, start );
+
 	/*seems get a heuristic*/
 	h = get_1P_and_H( &S, &lcurrent_goals );
 
@@ -207,7 +208,60 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 }
 
 
+Bool do_enforced_hill_climbing_for_multiple_purpose ( State *start, State *end ) {
 
+	static Bool first_call_for_multiple_purpose  = TRUE;
+	static State S, S_;
+	int i, h, h_;
+
+	if ( first_call_for_multiple_purpose ) {
+
+		make_state( &S, gadd_num_ft_conn ); 
+		S.max_F = gadd_num_ft_conn;
+		make_state( &S_, gadd_num_ft_conn );
+		S_.max_F = gadd_num_ft_conn;
+
+		make_state( &lcurrent_goals, gadd_num_ft_conn );
+		lcurrent_goals.max_F = gadd_num_ft_conn;
+
+		first_call = FALSE;
+	}
+
+	/* start enforced Hill-climbing */
+	source_to_dest( &lcurrent_goals, end );  
+
+	source_to_dest( &S, start );
+
+	/*seems get a heuristic*/
+	h = get_1P_and_H( &S, &lcurrent_goals );
+
+	if ( h == INFINITY ) {
+		return FALSE;
+	}
+	if ( h == 0 ) {
+		return TRUE;
+	}
+	printf("\n\nCueing down from goal distance: %4d into depth", h);
+
+	while ( h != 0 ) {
+		if ( !search_for_better_state( &S, h, &S_, &h_ ) ) {
+			return FALSE;
+		}
+
+		/*
+		* modified by Jason Huang: return ealier
+		*/
+		if(is_solved_state( &S_ )) {
+			printf("\nstate have seen. h = %d. return\n", h);
+			return TRUE;
+		}
+
+		source_to_dest( &S, &S_ );
+		h = h_;
+		printf("\n                                %4d            ", h);
+	}
+	return TRUE;
+}
 /*************************************************
 * FUNCTIONS FOR BREADTH FIRST SEARCH IN H SPACE *
 *************************************************/
@@ -490,7 +544,7 @@ Bool ehc_state_hashed( State *S ) {
 	return FALSE;
 }
 
-
+/* check if S1 is in S2 */
 Bool is_in_goal( State *S1, State *S2 ) {
 
 	int i, j;

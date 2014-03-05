@@ -288,8 +288,7 @@ int build_fixpoint( State *S ) {
 	static Bool first_call = TRUE;
 
 	if ( first_call ) {
-		/* get memory for local globals
-		*/
+		/* get memory for local globals */
 		lF = ( int * ) calloc( gnum_ft_conn, sizeof( int ) );
 		lE = ( int * ) calloc( gnum_ef_conn, sizeof( int ) );
 		lch_E = ( int * ) calloc( gnum_ef_conn, sizeof( int ) );
@@ -325,6 +324,7 @@ int build_fixpoint( State *S ) {
 	start_ft = 0;
 	start_ef = 0;
 	while ( TRUE ) {
+
 		if ( all_goals_activated( time ) ) {
 			break;
 		}
@@ -448,8 +448,6 @@ void reset_fixpoint( void ) {
 	}
 }
 
-
-
 Bool all_goals_activated( int time ) {
 
 	int i;
@@ -467,7 +465,6 @@ Bool all_goals_activated( int time ) {
 	}
 
 	return TRUE;
-
 }
 
 

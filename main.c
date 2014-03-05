@@ -285,6 +285,11 @@ int gnum_actions;
 State ginitial_state;
 State ggoal_state;
 
+/* jovi: add for multiple purpose */
+Action *gadd_actions;
+int gadd_num_actions;
+State gadd_goal_state;
+
 /*added by JC*/
 StateActionPair *gini_pair = NULL;
 
@@ -320,15 +325,27 @@ int gnum_IV = 0;
 OpConn *gop_conn;
 int gnum_op_conn;
 
+/* jovi: add for multiple purpose */
+OpConn *gadd_op_conn;
+int gadd_num_op_conn;
+
 /* one effects array ...
 */
 EfConn *gef_conn;
 int gnum_ef_conn;
 
+/* jovi: add for multiple purpose */
+EfConn *gadd_ef_conn;
+int gadd_num_ef_conn;
+
 /* one facts array.
 */
 FtConn *gft_conn;
 int gnum_ft_conn;
+
+/* jovi: add for multiple purpose */
+FtConn *gadd_ft_conn;
+int gadd_num_ft_conn; 
 
 /*******************
 * SEARCHING NEEDS *
@@ -398,6 +415,8 @@ int main( int argc, char *argv[] ) {
 	State current_start, current_end;
 	int i, j;
 	Bool found_plan;
+        
+        Bool found_plan_for_multiple_purpose;
 
   	/*times ( &lstart );*/
 	ftime(&lstart);
@@ -617,11 +636,34 @@ int main( int argc, char *argv[] ) {
 
 	found_plan = ( i == gnum_goal_agenda ) ? TRUE : FALSE;
 
+	/********************************************
+	 * Multiple Purpose Planning                *
+         ********************************************/
+        compute_goal_agenda_for_multiple_purpose (); 
+         
+        /*****************************************************************************************/
 	if ( !found_plan ) {
 		printf("\n\nEnforced Hill-climbing failed !");
 		printf("\nswitching to Best-first Search now.\n");
 		reset_ff_states();
 		found_plan = do_best_first_search();
+	}
+ 
+        /* planning for multiple purpose */
+        source_to_dest( &current_end, &(gadd_goal_agenda[0]) );
+        source_to_dest( &current_start, &(gplan_start[gnum_plan_ops])); 
+     
+	for ( i = 0; i < gadd_num_goal_agenda; i++ ) {
+		/* JC add a hashtable creating in do_enforced_hill_climbling*/
+		if ( !do_enforced_hill_climbing_for_multiple_purpose ( &current_start, &current_end ) ) {
+			break;
+		}
+		source_to_dest( &current_start, &(gplan_states[gnum_plan_ops]) );
+		if ( i < gnum_goal_agenda - 1 ) {
+			for ( j = 0; j < ggoal_agenda[i+1].num_F; j++ ) {
+				current_end.F[current_end.num_F++] = ggoal_agenda[i+1].F[j];
+			}
+		}
 	}
 
 	if ( found_plan ) {
@@ -690,8 +732,8 @@ int main( int argc, char *argv[] ) {
 
   output_planner_info();
 
-	printf("\n\n");
-	exit( 0 );
+  printf("\n\n");
+  exit( 0 );
 
 }
 

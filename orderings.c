@@ -118,8 +118,8 @@ void compute_goal_agenda( void ){
 }
 
 
-void compute_goal_agenda_for_mutliple_purpose ( void ){
-
+/* jovi: update for multiple purpose */
+void compute_goal_agenda_for_multiple_purpose ( void ){
   /*
    *  lDcount:  count for ft being Delete
    *  lin_ch:  T/F a ft being changed
