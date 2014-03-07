@@ -328,6 +328,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
   NormEffect *ne;
   Action *tmp, *a;
   Bool *had_hard_template;
+  Bool *had_add_hard_template;
   PseudoAction *pa;
   PseudoActionEffect *pae;
 
@@ -500,6 +501,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
  * must consider pred args in smallest - to - largest - type order to make
  * mapping injective.
  */
+ }
 int fact_adress( void ) {
 
   int r = 0, b = 1, i, j, min, minj;
@@ -907,7 +909,7 @@ void create_final_goal_state( void ) {
       gactions = tmp;
       gnum_actions++;
       lnum_effects++;
-    } /end for w = ggoal->sons /
+    } /* end for w = ggoal->sons */
     ggoal_state.F[0] = gnum_relevant_facts - 1;
     ggoal_state.num_F = 1;
     break;
@@ -1568,17 +1570,21 @@ void build_connectivity_graph( void ) {
       }
     }
 
-    /* first sweep: only count the space we need for the fact arrays !
+    /* 
+     * first sweep: only count the space we need for the fact arrays !
      */
     if ( gop_conn[n_op].num_E > 0 ) {
       for ( i = 0; i < gop_conn[n_op].num_E; i++ ) {
 	ef = gop_conn[n_op].E[i];
+
 	for ( j = 0; j < gef_conn[ef].num_PC; j++ ) {
 	  gft_conn[gef_conn[ef].PC[j]].num_PC++;
 	}
+
  	for ( j = 0; j < gef_conn[ef].num_A; j++ ) {
 	  gft_conn[gef_conn[ef].A[j]].num_A++;
 	}
+
 	for ( j = 0; j < gef_conn[ef].num_D; j++ ) {
 	  gft_conn[gef_conn[ef].D[j]].num_D++;
 	}
@@ -1690,8 +1696,6 @@ void build_connectivity_graph( void ) {
     
 }
 
-
-
 /**************************************************
  * jovi: update for multiple purpose              *
  * CONNECTIVITY GRAPH. ULTRA CLEAN REPRESENTATION *
@@ -1707,11 +1711,12 @@ void update_connectivity_graph( void ) {
   /*
   struct timeb tp;
   ftime( &tp );
-  srandom( tp.millitm );*/
+  srandom( tp.millitm );
+  */
 
   srand ( time(NULL) );
- /* should be reinitialized for the additional goals*/
- /*
+  /* should be reinitialized for the additional goals*/
+  /*
   gnum_ft_conn = gnum_relevant_facts;
   gnum_op_conn = gnum_actions;
   gft_conn = ( FtConn * ) calloc( gnum_ft_conn, sizeof( FtConn ) );
@@ -1720,7 +1725,7 @@ void update_connectivity_graph( void ) {
   gnum_ef_conn = 0;
 
   same_effects = ( int * ) calloc( lnum_effects, sizeof( int ) );
-   had_effects = ( Bool * ) calloc( lnum_effects, sizeof( Bool ) );
+  had_effects = ( Bool * ) calloc( lnum_effects, sizeof( Bool ) );
 
   for ( i = 0; i < gnum_ft_conn; i++ ) {
     gft_conn[i].num_PC = 0;
@@ -1743,7 +1748,7 @@ void update_connectivity_graph( void ) {
 
     gef_conn[i].removed = FALSE;
   }
-*/
+  */
   /* jovi: continue from gnum_actions */
   n_op = gnum_actions;
   n_ef = lnum_effects;
@@ -2132,8 +2137,4 @@ void update_connectivity_graph( void ) {
   }
     
 }
-
-
-
-
 

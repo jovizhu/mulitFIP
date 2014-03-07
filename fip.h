@@ -109,4 +109,5 @@ Bool is_weak_less_than(State s1, State s2);
 void increment_state_level_id(State *dest, State source);
 void backtrack_single_nodes(State* s, int act);
 
+void rm_unsolved_states(State *s);
 #endif

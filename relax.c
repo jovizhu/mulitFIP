@@ -364,7 +364,6 @@ int build_fixpoint( State *S ) {
 void initialize_fixpoint( State *S ) {
 
 	int i;
-
 	lnum_E = 0;
 	lnum_ch_E = 0;
 

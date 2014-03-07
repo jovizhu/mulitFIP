@@ -9,11 +9,11 @@
 TYPE	= 
 ADDONS	= 
 
-CC      = gcc
+CC      = gcc 
 
 #CFLAGS	= -O6 -Wall -g -ansi $(TYPE) $(ADDONS) 
 ifeq ($(UNAME),Darwin) # Mac OS
-CFLAGS = -O3 -g -w -ansi $(TYPE) $(ADDONS) 
+CFLAGS = -O3 -g -stdlib=libstdc++ -ansi $(TYPE) $(ADDONS) 
 endif
 
 ifeq ($(UNAME), Linux) # Linux
@@ -21,7 +21,7 @@ CFLAGS = -O6 -g -w -ansi $(TYPE) $(ADDONS)
 endif
 # -g -pg
 
-LIBS    = -lm
+LIBS    = -lm -lstdc++
 
 
 ####### Files
@@ -73,11 +73,11 @@ fip: $(OBJECTS) $(PDDL_PARSER_OBJ)
 	$(CC) -o fip $(OBJECTS) $(PDDL_PARSER_OBJ) $(CFLAGS) $(LIBS)
 
 # pddl syntax
-scan-fct_pddl.tab.c: scan-fct_pddl.y lex.fct_pddl.c
-	bison -pfct_pddl -bscan-fct_pddl scan-fct_pddl.y
-
 scan-ops_pddl.tab.c: scan-ops_pddl.y lex.ops_pddl.c
 	bison -pops_pddl -bscan-ops_pddl scan-ops_pddl.y
+
+scan-fct_pddl.tab.c: scan-fct_pddl.y lex.fct_pddl.c
+	bison -pfct_pddl -bscan-fct_pddl scan-fct_pddl.y
 
 scan-mul_pddl.tab.c: scan-mul_pddl.y lex.mul_pddl.c
 	bison -pmul_pddl -bscan-mul_pddl scan-mul_pddl.y

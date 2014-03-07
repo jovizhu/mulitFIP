@@ -38,12 +38,6 @@
  * of the user.
  */
 
-
-
-
-
-
-
 /*********************************************************************
  * File: orderings.h
  *
@@ -53,35 +47,24 @@
  *
  *********************************************************************/ 
 
-
-
-
-
-
-
 #ifndef _ORDERINGS_H
 #define _ORDERINGS_H
 
-
-
 void compute_goal_agenda( void );
-
-
+void compute_goal_agenda_for_multiple_purpose( void );
 
 void build_False_set( int ft );
-
-
+void build_False_set_for_multiple_purpose ( int ft );
 
 void detect_ordering_constraints( void );
+void detect_ordering_constraints_for_multiple_purpose( void );
 void setup_E( int ft );
+void setup_E_for_multiple_purpose( int ft );
 void unsetup_E( int ft );
 Bool possibly_achievable( int ft );
-
-
+Bool possibly_achievable_for_multiple_purpose( int ft );
 
 void build_goal_agenda( void );
-
-
-
+void build_goal_agenda_for_multiple_purpose( void );
 
 #endif /* _ORDERINGS_H */

@@ -161,7 +161,7 @@ void build_easy_action_templates( void ) {
  /****************************************
   * jovi: for multiple purpsoe 
   ****************************************/
-  multiply_easy_op_parameters_for_multiple_purposes ();
+  multiply_easy_op_parameters_for_multiple_purpose ();
 
   if ( gcmd_line.display_info == 113 ) {
     printf("\n\ninertia free additional easy operators are:");

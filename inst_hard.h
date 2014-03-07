@@ -39,14 +39,6 @@
  * of the user.
  */
 
-
-
-
-
-
-
-
-
 /*********************************************************************
  * File: inst_hard.h
  * Description: headers for multiplying hard operators.
@@ -56,30 +48,22 @@
  *
  *********************************************************************/ 
 
-
-
-
-
-
-
-
 #ifndef _INST_HARD_H
 #define _INST_HARD_H
 
-
-
 void build_hard_action_templates( void );
 
-
-
 void cleanup_hard_domain( void );
+void cleanup_hard_domain_for_multiple_purpose( void );
 Bool var_used_in_literals( int code_var, Literal *ef );
 void decrement_inferior_vars_in_literals( int var, Literal *ef );
 
 
 
 void multiply_hard_op_parameters( void );
+void multiply_hard_op_parameters_for_multiple_purpose( void );
 void create_hard_mixed_operators( Operator *o, int curr_var );
+void create_hard_mixed_operators_for_multiple_purpose( Operator *o, int curr_var );
 Effect *instantiate_Effect( Effect *e );
 WffNode *instantiate_wff( WffNode *w );
 Bool full_possibly_positive( Fact *f );
@@ -89,7 +73,9 @@ int instantiated_fact_adress( Fact *f );
 
 
 void multiply_hard_effect_parameters( void );
+void multiply_hard_effect_parameters_for_multiple_purpose( void );
 void create_hard_pseudo_effects( PseudoAction *a, Effect *e, int curr_var );
+void create_hard_pseudo_effects_for_multiple_purpose( PseudoAction *a, Effect *e, int curr_var );
 void make_instantiate_literals( PseudoActionEffect *e, Literal *ll );
 
 

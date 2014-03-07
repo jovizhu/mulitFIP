@@ -207,7 +207,7 @@ Bool do_enforced_hill_climbing( State *start, State *end ) {
 	return TRUE;
 }
 
-
+/* jovi: add for multiple purpose */
 Bool do_enforced_hill_climbing_for_multiple_purpose ( State *start, State *end ) {
 
 	static Bool first_call_for_multiple_purpose  = TRUE;
@@ -224,12 +224,11 @@ Bool do_enforced_hill_climbing_for_multiple_purpose ( State *start, State *end )
 		make_state( &lcurrent_goals, gadd_num_ft_conn );
 		lcurrent_goals.max_F = gadd_num_ft_conn;
 
-		first_call = FALSE;
+		first_call_for_multiple_purpose  = FALSE;
 	}
 
 	/* start enforced Hill-climbing */
 	source_to_dest( &lcurrent_goals, end );  
-
 	source_to_dest( &S, start );
 
 	/*seems get a heuristic*/

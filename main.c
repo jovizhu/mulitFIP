@@ -196,16 +196,21 @@ int garity[MAX_PREDICATES];
 int gpredicates_args_type[MAX_PREDICATES][MAX_ARITY];
 int gnum_predicates = 0;
 
+/* jovi: defined for multiple purpose */
+Token gadd_predicates[MAX_PREDICATES];
+
 /* the domain in integer (Fact) representation */
 Operator_pointer goperators[MAX_OPERATORS];
 int gnum_operators = 0;
 Fact *gfull_initial;
 int gnum_full_initial = 0;
 WffNode *ggoal = NULL;
+
 /* jovi: defined for multiple purposes */
 Operator_pointer gadd_operators[MAX_OPERATORS];
 int gadd_num_operators = 0;
 WffNode *gadd_goal = NULL;
+
 /* stores inertia - information: is any occurence of the predicate
  * added / deleted in the uninstantiated ops ? */
 Bool gis_added[MAX_PREDICATES];
@@ -255,6 +260,7 @@ int gnum_hard_templates;
 /* splitted additional domain: hard n easy ops */
 Operator_pointer *gadd_hard_operators;
 int gadd_num_hard_operators;
+
 NormOperator_pointer *gadd_easy_operators;
 int gadd_num_easy_operators;
 
@@ -356,6 +362,10 @@ int gadd_num_ft_conn;
 State *ggoal_agenda;
 int gnum_goal_agenda;
 
+
+State *gadd_goal_agenda;
+int gadd_num_goal_agenda;
+
 /* byproduct of fixpoint: applicable actions
 */
 int *gA;
@@ -381,6 +391,8 @@ int gnum_plan_ops = 0;
 * ( for knowing where new agenda entry starts from )
 */
 State gplan_states[MAX_PLAN_LENGTH + 1];
+
+State gadd_plan_states[MAX_PLAN_LENGTH + 1];
 
 /*
 *  ----------------------------- HEADERS FOR PARSING ----------------------------
@@ -599,7 +611,6 @@ int main( int argc, char *argv[] ) {
   	compute_goal_agenda();
 
   	/*debugit(&ginitial_state);*/
-
 	/* make space in plan states info, and relax
 	 * make sapce is initialize the space for gplan_states and
 	 * initialzie the variable
@@ -641,6 +652,25 @@ int main( int argc, char *argv[] ) {
          ********************************************/
         compute_goal_agenda_for_multiple_purpose (); 
          
+	for ( i = 0; i < MAX_PLAN_LENGTH + 1; i++ ) {
+		make_state( &(gadd_plan_states[i]), gadd_num_ft_conn );
+		gadd_plan_states[i].max_F = gadd_num_ft_conn;
+	}
+
+	source_to_dest( &current_end, &(gadd_goal_agenda[0]) );
+
+	for ( i = 0; i < gadd_num_goal_agenda; i++ ) {
+		/* JC add a hashtable creating in do_enforced_hill_climbling*/
+		if ( !do_enforced_hill_climbing_for_multiple_purpose ( &current_start, &current_end ) ) {
+			break;
+		}
+		source_to_dest( &current_start, &(gplan_states[gnum_plan_ops]) );
+		if ( i < gnum_goal_agenda - 1 ) {
+			for ( j = 0; j < ggoal_agenda[i+1].num_F; j++ ) {
+				current_end.F[current_end.num_F++] = ggoal_agenda[i+1].F[j];
+			}
+		}
+	}
         /*****************************************************************************************/
 	if ( !found_plan ) {
 		printf("\n\nEnforced Hill-climbing failed !");
@@ -651,7 +681,7 @@ int main( int argc, char *argv[] ) {
  
         /* planning for multiple purpose */
         source_to_dest( &current_end, &(gadd_goal_agenda[0]) );
-        source_to_dest( &current_start, &(gplan_start[gnum_plan_ops])); 
+        source_to_dest( &current_start, &(gplan_states[gnum_plan_ops])); 
      
 	for ( i = 0; i < gadd_num_goal_agenda; i++ ) {
 		/* JC add a hashtable creating in do_enforced_hill_climbling*/

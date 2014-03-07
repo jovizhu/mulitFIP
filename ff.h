@@ -1071,20 +1071,8 @@ typedef struct _BfsHashEntry {
 /*
  *  -------------------------------- MAIN FN HEADERS ----------------------------
  */
-
-
-
-
-
-
-
-
 void print_official_result( void );/* AIPS 2002 output routine */
 void print_official_op_name( int index );
-
-
-
-
 
 void output_planner_info( void );
 void ff_usage( void );
@@ -1102,29 +1090,9 @@ Bool process_command_line( int argc, char *argv[] );
  *  ----------------------------- GLOBAL VARIABLES ----------------------------
  */
 
-
-
-
-
-
-
-
-
-
-
-
 /*******************
  * GENERAL HELPERS *
  *******************/
-
-
-
-
-
-
-
-
-
 
 /* used to time the different stages of the planner
  */
@@ -1143,27 +1111,9 @@ extern int gevaluated_states;
  */
 extern int gmax_search_depth;
 
-
-
-
-
-
-
-
-
 /***********
  * PARSING *
  ***********/
-
-
-
-
-
-
-
-
-
-
 
 /* used for pddl parsing, flex only allows global variables
  */
@@ -1239,31 +1189,9 @@ extern FactList *gorig_constant_list;
 extern FactList *gpredicates_and_types;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*****************
  * INSTANTIATING *
  *****************/
-
-
-
-
-
-
-
-
-
-
 /* global arrays of constant names,
  *               type names (with their constants),
  *               predicate names,
@@ -1279,28 +1207,30 @@ extern int gmember_nr[MAX_CONSTANTS][MAX_TYPES];/* nr of object within a type */
 extern int gtype_size[MAX_TYPES];
 extern int gnum_types;
 extern Token gpredicates[MAX_PREDICATES];
+extern Token gadd_predicates[MAX_PREDICATES];
 extern int garity[MAX_PREDICATES];
 extern int gpredicates_args_type[MAX_PREDICATES][MAX_ARITY];
 extern int gnum_predicates;
-
-
-
+extern int gadd_num_predicates;
 
 /* the domain in first step integer representation
  */
 extern Operator_pointer goperators[MAX_OPERATORS];
+extern Operator_pointer gadd_operators[MAX_OPERATORS];
 extern int gnum_operators;
+extern int gadd_num_operators;
 extern Fact *gfull_initial;
 extern int gnum_full_initial;
 extern WffNode *ggoal;
-
-
+extern WffNode *gadd_goal;
 
 /* stores inertia - information: is any occurence of the predicate
  * added / deleted in the uninstantiated ops ?
  */
 extern Bool gis_added[MAX_PREDICATES];
+extern Bool gadd_is_added[MAX_PREDICATES];
 extern Bool gis_deleted[MAX_PREDICATES];
+extern Bool gadd_is_deleted[MAX_PREDICATES];
 
 
 
@@ -1331,32 +1261,36 @@ extern int gnum_intersected_types[MAX_TYPES];
 /* splitted domain: hard n easy ops
  */
 extern Operator_pointer *ghard_operators;
+extern Operator_pointer *gadd_hard_operators;
 extern int gnum_hard_operators;
+extern int gadd_num_hard_operators;
 extern NormOperator_pointer *geasy_operators;
+extern NormOperator_pointer *gadd_easy_operators;
 extern int gnum_easy_operators;
-
-
+extern int gadd_num_easy_operators;
 
 /* so called Templates for easy ops: possible inertia constrained
  * instantiation constants
  */
 extern EasyTemplate *geasy_templates;
+extern EasyTemplate *gadd_easy_templates;
 extern int gnum_easy_templates;
-
-
+extern int gadd_num_easy_templates;
 
 /* first step for hard ops: create mixed operators, with conjunctive
  * precondition and arbitrary effects
  */
 extern MixedOperator *ghard_mixed_operators;
+extern MixedOperator *gadd_hard_mixed_operators;
 extern int gnum_hard_mixed_operators;
-
-
+extern int gadd_num_hard_mixed_operators;
 
 /* hard ''templates'' : pseudo actions
  */
 extern PseudoAction_pointer *ghard_templates;
+extern PseudoAction_pointer *gadd_hard_templates;
 extern int gnum_hard_templates;
+extern int gadd_num_hard_templates;
 
 
 
@@ -1371,76 +1305,53 @@ extern int gnum_pp_facts;
 /* the final actions and problem representation
  */
 extern Action *gactions;
+extern Action *gadd_actions;
 extern int gnum_actions;
+extern int gadd_num_actions;
 extern State ginitial_state;
 extern State ggoal_state;
-
-
-
-
-
-
-
+extern State gadd_goal_state;
 
 /**********************
  * CONNECTIVITY GRAPH *
  **********************/
 
-
-
-
-
 /* one ops (actions) array ...
  */
 extern OpConn *gop_conn;
+extern OpConn *gadd_op_conn;
 extern int gnum_op_conn;
-
-
+extern int gadd_num_op_conn;
 
 /* one effects array ...
  */
 extern EfConn *gef_conn;
+extern EfConn *gadd_ef_conn;
 extern int gnum_ef_conn;
-
-
+extern int gadd_num_ef_conn;
 
 /* one facts array.
  */
 extern FtConn *gft_conn;
+extern FtConn *gadd_ft_conn;
 extern int gnum_ft_conn;
-
-
-
-
-
-
-
-
+extern int gadd_num_ft_conn;
 
 
 /*******************
  * SEARCHING NEEDS *
  *******************/
-
-
-
-
-
-
-
 /* the goal state, divided into subsets
  */
 extern State *ggoal_agenda;
+extern State *gadd_goal_agenda;
 extern int gnum_goal_agenda;
-
-
+extern int gadd_num_goal_agenda;
 
 /* applicable actions
  */
 extern int *gA;
 extern int gnum_A;
-
-
 
 /* communication from extract 1.P. to search engine:
  * 1P action choice
@@ -1448,29 +1359,22 @@ extern int gnum_A;
 extern int *gH;
 extern int gnum_H;
 
-
-
 /* the effects that are considered true in relaxed plan
  */
 extern int *gin_plan_E;
 extern int gnum_in_plan_E;
 
-
-
 /* always stores (current) serial plan
  */
 extern int gplan_ops[MAX_PLAN_LENGTH];
+extern int gadd_plan_ops[MAX_PLAN_LENGTH];
 extern int gnum_plan_ops;
-
-
+extern int gadd_num_plan_ops;
 
 /* stores the states that the current plan goes through
  */
 extern State gplan_states[MAX_PLAN_LENGTH + 1];
-
-
-
-
+extern State gadd_plan_states[MAX_PLAN_LENGTH + 1];
 
 
 #endif __FF_H

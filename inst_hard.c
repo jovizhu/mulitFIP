@@ -174,19 +174,6 @@ void build_hard_action_templates( void ) {
 
 }
 
-}
-
-
-
-
-
-
-
-
-
-
-
-
 /****************
  * CLEANUP CODE *
  ****************/

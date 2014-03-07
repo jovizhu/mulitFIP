@@ -73,30 +73,38 @@ void build_easy_action_templates( void );
 
 
 void cleanup_easy_domain( void );
+void cleanup_easy_domain_for_multiple_purpose (void);
 Bool identical_fact( Fact *f1, Fact *f2 );
 void remove_unused_easy_parameters( void );
+void remove_unused_easy_parameters_for_multiple_purpose ( void );
 void replace_var_entries( NormOperator *o, int p0, int p1 );
 void decrement_var_entries( NormOperator *o, int start );
 void remove_unused_easy_effect_parameters( NormOperator *o, NormEffect *e );
 void handle_empty_easy_parameters( void );
+void handle_empty_easy_parameters_for_multiple_purpose ( void );
 
 
 
 void encode_easy_unaries_as_types( void );
+void encode_easy_unaries_as_types_for_multiple_purpose( void );
 int create_intersected_type( TypeArray T, int num_T );
 int find_intersected_type( TypeArray T, int num_T );
 
 
 
 void multiply_easy_effect_parameters( void );
+void multiply_easy_effect_parameters_for_multiple_purpose( void );
 void unify_easy_inertia_conditions( int curr_inertia );
 void multiply_easy_non_constrained_effect_parameters( int curr_parameter );
+void multiply_easy_non_constrained_effect_parameters_for_multiple_purpose ( int curr_parameter );
 
 
 
 void multiply_easy_op_parameters( void );
+void multiply_easy_op_parameters_for_multiple_purpose( void );
 void unify_easy_inertia_preconds( int curr_inertia );
 void multiply_easy_non_constrained_op_parameters( int curr_parameter );
+void multiply_easy_non_constrained_op_parameters_for_multiple_purpose( int curr_parameter );
 
 
 

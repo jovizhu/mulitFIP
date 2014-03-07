@@ -392,6 +392,7 @@ void detect_ordering_constraints_for_multiple_purpose ( void ) {
    * unusable efs for each as long as possible constant
    * goal i
    */
+
   for ( i = 0; i < n - 1; i++ ) {
     setup_E_for_multiple_purpose( gadd_goal_state.F[i] );
     for ( j = i + 1; j < n; j++ ) {
@@ -408,7 +409,7 @@ void detect_ordering_constraints_for_multiple_purpose ( void ) {
   for ( i = n - 1; i > 0; i-- ) {
     setup_E_for_multiple_purpose( gadd_goal_state.F[i] );
     for ( j = i - 1; j > -1; j-- ) {
-      lm[j][i] = !possibly_achievable( gadd_goal_state.F[j] );
+      lm[j][i] = !possibly_achievable_for_multiple_purpose ( gadd_goal_state.F[j] );
       if ( gcmd_line.display_info == 126 && lm[j][i] ) {
 	printf("\norderings: ");
 	print_ft_name( gadd_goal_state.F[j] );
@@ -466,6 +467,8 @@ void setup_E( int ft ) {
 
 }
 
+/* jovi: add for multiple purpose    */
+/*       update the lin, lch, lin_ch */
 void setup_E_for_multiple_purpose ( int ft ) {
 
   int i, j;
@@ -509,6 +512,7 @@ void setup_E_for_multiple_purpose ( int ft ) {
 
 }
 
+/* un set lin lin_ch */
 void unsetup_E( int ft ) {
 
   int i;
@@ -551,8 +555,11 @@ Bool possibly_achievable( int ft ) {
 
 }
 
-
-/* check ft can be reached by 3 steps */
+/**************************************
+ * jovi: update for multiple purpose  *
+ * check ft can be reached by 3 steps *
+ * check lin can reach ft             *
+ **************************************/
 Bool possibly_achievable_for_multiple_purpose ( int ft ) {
 
   int i, j, k;
@@ -578,7 +585,6 @@ Bool possibly_achievable_for_multiple_purpose ( int ft ) {
     }
     return TRUE;
   }
-
   return FALSE;
 
 }
@@ -703,9 +709,9 @@ void build_goal_agenda( void ) {
 }
 
 
-/* take a matrix of goal orderings and build it into
- * the goal agenda
- */
+/* jovi: update for multiple purpose  *
+ * take a matrix of goal orderings    *
+ * and build it into the goal agenda */
 void build_goal_agenda_for_multiple_purpose ( void ) {
 
   int i, j, k, n = gadd_goal_state.num_F, start, entry;
@@ -716,6 +722,7 @@ void build_goal_agenda_for_multiple_purpose ( void ) {
   degree = ( int * ) calloc( n, sizeof( int ) );
   hits = ( int * ) calloc( n, sizeof( int ) );
   slot = ( int * ) calloc( n, sizeof( int ) );
+
   for ( i = 0; i < n; i++ ) {
     degree[i] = 0;
     hits[i] = 0;

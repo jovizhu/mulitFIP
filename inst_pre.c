@@ -369,6 +369,7 @@ void create_integer_representation( void ) {
 
   PlNode *n, *nn;
   PlOperator *o;
+  PlOperator *ao;
   Operator *tmp;
   FactList *ff;
   int type_num, i, s = 0;
@@ -875,7 +876,7 @@ void collect_inertia_information( void ) {
 
  for ( i=0; i < gnum_predicates; i++ ) {
    gadd_is_added[i] = FALSE;
-   gadd_is_delted[i] = FALSE;
+   gadd_is_deleted[i] = FALSE;
  }
 
  for ( i = 0; i < gadd_num_operators; i++ ) {
