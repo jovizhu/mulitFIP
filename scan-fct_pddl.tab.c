@@ -1546,7 +1546,7 @@ yyreduce:
         case 4:
 #line 156 "scan-fct_pddl.y"
     { 
-   fcterr( PROBNAME_EXPECTED, NULL ); 
+  fcterr( PROBNAME_EXPECTED, NULL ); 
 ;}
     break;
 
@@ -2182,15 +2182,28 @@ yyreturn:
  * Functions
  **********************************************************************/
 
-
 /* 
  * call	bison -pfct -bscan-fct scan-fct.y
  */
+void fcterr( int errno, char *par ) {
+
+   sact_err = errno; 
+
+   if ( sact_err_par ) { 
+     free( sact_err_par ); 
+   } 
+   if ( par ) { 
+     sact_err_par = new_Token( strlen(par)+1 ); 
+     strcpy( sact_err_par, par); 
+   } else { 
+     sact_err_par = NULL; 
+   } 
+
+}
 
 
-int yyerror( char *msg )
 
-{
+int yyerror( char *msg ){
   fflush( stdout );
   fprintf(stderr,"\n%s: syntax error in line %d, '%s':\n",
 	  gact_filename, lineno, yytext );
@@ -2207,9 +2220,7 @@ int yyerror( char *msg )
 
 
 
-void load_fct_file( char *filename ) 
-
-{
+void load_fct_file( char *filename ) {
 
   FILE *fp;/* pointer to input files */
   char tmp[MAX_LENGTH] = "";
