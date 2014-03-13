@@ -318,6 +318,7 @@ void perform_reachability_analysis( void ) {
 
 }
 
+
 void update_reachability_analysis_for_multiple_purpose ( void ) {
 
   int size, i, j, k, adr, num, pargtype;
@@ -327,7 +328,6 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
   EasyTemplate *t1, *t2;
   NormEffect *ne;
   Action *tmp, *a;
-  Bool *had_hard_template;
   Bool *had_add_hard_template;
   PseudoAction *pa;
   PseudoActionEffect *pae;
@@ -336,6 +336,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
   gadd_num_actions = 0;
 
   had_add_hard_template = ( Bool * ) calloc( gadd_num_hard_templates, sizeof( Bool ) );
+
   for ( i = 0; i < gadd_num_hard_templates; i++ ) {
     had_add_hard_template[i] = FALSE;
   }
@@ -363,8 +364,9 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 	continue;
       }
       
-      /* The following is no is accessible */
+      /* The following is no is accessible/lpos is positive */
       num = 0;
+      /* update effect of no */
       for ( ne = no->effects; ne; ne = ne->next ) {
 	num++;
 	/* currently, simply ignore effect conditions and assume,  they will all be made true eventually. */
@@ -380,19 +382,19 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 	    lneg[lp][adr] = 1;
 	    luse[lp][adr] = 1;
 
-	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
+	    if ( gadd_num_relevant_facts == MAX_RELEVANT_FACTS ) {
 	      printf("\n too many relevant facts! increase MAX_RELEVANT_FACTS (currently %d)\n\n ", MAX_RELEVANT_FACTS);
 	      exit( 1 );
 	    }
 
-	    grelevant_facts[gnum_relevant_facts].predicate = lp;
+	    gadd_relevant_facts[gadd_num_relevant_facts].predicate = lp;
 
 	    for ( j = 0; j < garity[lp]; j++ ) {
-	      grelevant_facts[gnum_relevant_facts].args[j] = largs[j];
+	      gadd_relevant_facts[gadd_num_relevant_facts].args[j] = largs[j];
 	    }
 
-	    lindex[lp][adr] = gnum_relevant_facts;
-	    gnum_relevant_facts++;
+	    lindex[lp][adr] = gadd_num_relevant_facts;
+	    gadd_num_relevant_facts++;
 	    fixpoint = FALSE;
 	  }
 	}
@@ -463,16 +465,16 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 	    lneg[lp][adr] = 1;
 	    luse[lp][adr] = 1;
 
-	    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
+	    if ( gadd_num_relevant_facts == MAX_RELEVANT_FACTS ) {
 	      printf("\ntoo many relevant facts! increase MAX_RELEVANT_FACTS (currently %d)\n\n", MAX_RELEVANT_FACTS);
 	      exit( 1 );
 	    }
-	    grelevant_facts[gnum_relevant_facts].predicate = lp;
+	    gadd_relevant_facts[gadd_num_relevant_facts].predicate = lp;
 	    for ( k = 0; k < garity[lp]; k++ ) {
-	      grelevant_facts[gnum_relevant_facts].args[k] = largs[k];
+	      gadd_relevant_facts[gadd_num_relevant_facts].args[k] = largs[k];
 	    }
-	    lindex[lp][adr] = gnum_relevant_facts;
-	    gnum_relevant_facts++;
+	    lindex[lp][adr] = gadd_num_relevant_facts;
+	    gadd_num_relevant_facts++;
 	    fixpoint = FALSE;
 	  } /* end if (!lpos[lp][adr]) */
 	} /* end for j < pae->num_adds */
@@ -483,6 +485,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       for ( j = 0; j < pa->operator->num_vars; j++ ) {
 	tmp->inst_table[j] = pa->inst_table[j];
       }
+
       tmp->name = pa->operator->name;
       tmp->num_name_vars = pa->operator->number_of_real_params;
       make_name_inst_table_from_PseudoAction( tmp, pa );
@@ -492,8 +495,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
       gadd_num_actions++;
 
       had_add_hard_template[i] = TRUE;
-    } /* endfor j < gnum_hard_template*/
-
+    } /* endfor j < gnum_hard_template */
 }
 
 /* bit complicated to avoid memory explosion when high arity predicates take
@@ -501,7 +503,6 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
  * must consider pred args in smallest - to - largest - type order to make
  * mapping injective.
  */
- }
 int fact_adress( void ) {
 
   int r = 0, b = 1, i, j, min, minj;
@@ -712,9 +713,9 @@ void collect_relevant_facts( void ) {
 
 
 /* counts effects for later allocation */
-int lnum_effects;
+int ladd_num_effects;
 
-void update_relevant_facts( void ) {
+void update_relevant_facts_for_multiple_purpose ( void ) {
 
   Action *a;
   NormOperator *no;

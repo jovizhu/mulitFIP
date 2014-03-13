@@ -55,6 +55,7 @@
 #include "inst_pre.h"
 #include "inst_easy.h" 
 
+/* jovi: updated for multiple purpose */
 void build_easy_action_templates( void ) {
 
   int i, j;

@@ -558,6 +558,7 @@ int main( int argc, char *argv[] ) {
 	* NOW MULTIPLY PARAMETERS IN EFFECTIVE MANNER *
 	***********************************************/
 
+        /*jovi: updated for multiple purpose */
 	build_easy_action_templates();
 	build_hard_action_templates();
 
@@ -650,6 +651,8 @@ int main( int argc, char *argv[] ) {
 	/********************************************
 	 * Multiple Purpose Planning                *
          ********************************************/
+	update_reachability_analysis_for_multiple_purpose ();
+
         compute_goal_agenda_for_multiple_purpose (); 
          
 	for ( i = 0; i < MAX_PLAN_LENGTH + 1; i++ ) {
