@@ -354,6 +354,7 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 	for ( j = 0; j < garity[lp]; j++ ) {
 	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ? no->preconds[i].args[j] : t1->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
 	}
+	/* lp initialized in the previous for single goal */
 	if ( !lpos[lp][fact_adress()] ) {
 	  break;
 	}
@@ -496,7 +497,9 @@ void update_reachability_analysis_for_multiple_purpose ( void ) {
 
       had_add_hard_template[i] = TRUE;
     } /* endfor j < gnum_hard_template */
+  }
 }
+
 
 /* bit complicated to avoid memory explosion when high arity predicates take
  * num_obs ^ arity space. take space for individual arg types only; 
@@ -725,6 +728,7 @@ void update_relevant_facts_for_multiple_purpose ( void ) {
   PseudoActionEffect *pae;
 
   /* mark all deleted facts; such facts, that are also pos, are relevant. */
+  /* gadd_actions is collected by update reachiablity analysis */
   for ( a = gadd_actions; a; a = a->next ) {
     if ( a->norm_operator ) {
       no = a->norm_operator;
@@ -754,7 +758,7 @@ void update_relevant_facts_for_multiple_purpose ( void ) {
 	  }
 	}
       }
-    } else {
+    } else { /* a->normal_operator == False */
       pa = a->pseudo_action;
 
       for ( pae = pa->effects; pae; pae = pae->next ) {
@@ -798,13 +802,13 @@ void update_relevant_facts_for_multiple_purpose ( void ) {
   /* first make place for initial and goal states.
    * (one artificial fact might still be added here)
    */
-  make_state( &ggoal_state, gnum_relevant_facts + 1 );
-  ggoal_state.max_F = gnum_relevant_facts + 1;
-  make_state( &ginitial_state, gnum_relevant_facts + 1 );
-  ginitial_state.max_F = gnum_relevant_facts + 1;
+  make_state( &gadd_goal_state, gnum_relevant_facts + 1 );
+  gadd_goal_state.max_F = gnum_relevant_facts + 1;
+  //make_state( &ginitial_state, gnum_relevant_facts + 1 );
+  //ginitial_state.max_F = gnum_relevant_facts + 1;
 
-  create_final_goal_state();
-  create_final_initial_state();
+  create_final_goal_state_for_multiple_purpose ();
+  //create_final_initial_state();
   create_final_actions();
 
   if ( gcmd_line.display_info == 120 ) {
@@ -941,6 +945,100 @@ void create_final_goal_state( void ) {
 }
 
 
+void create_final_goal_state_for_multiple_purpose ( void ) {
+
+  WffNode *w, *ww;
+  int m, i, adr;
+  Action *tmp;
+
+  set_relevants_in_wff( &gadd_goal );
+  cleanup_wff( &gadd_goal );
+  if ( gadd_goal->connective == TRU ) {
+    printf("\nff: goal can be simplified to TRUE. The empty plan solves it\n\n");
+    exit( 1 );
+  }
+  if ( gadd_goal->connective == FAL ) {
+    printf("\nff: goal can be simplified to FALSE. No plan will solve it\n\n");
+    exit( 1 );
+  }
+
+  switch ( gadd_goal->connective ) {
+  case OR:
+    if ( gnum_relevant_facts == MAX_RELEVANT_FACTS ) {
+      printf("\nincrease MAX_RELEVANT_FACTS! (current value: %d)\n\n",MAX_RELEVANT_FACTS);
+      exit( 1 );
+    }
+    grelevant_facts[gnum_relevant_facts].predicate = -3;
+    gnum_relevant_facts++;
+    for ( w = gadd_goal->sons; w; w = w->next ) {
+      tmp = new_Action();
+      if ( w->connective == AND ) {
+	m = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) m++;
+	tmp->preconds = ( int * ) calloc( m, sizeof( int ) );
+	tmp->num_preconds = 0;
+	for ( ww = w->sons; ww; ww = ww->next ) {
+	  lp = ww->fact->predicate;
+	  for ( i = 0; i < garity[lp]; i++ ) {
+	    largs[i] = ww->fact->args[i];
+	  }
+	  adr = fact_adress();
+	  tmp->preconds[tmp->num_preconds++] = lindex[lp][adr];
+	}
+      } else {
+	tmp->preconds = ( int * ) calloc( 1, sizeof( int ) );
+	tmp->num_preconds = 1;
+	lp = w->fact->predicate;
+	for ( i = 0; i < garity[lp]; i++ ) {
+	  largs[i] = w->fact->args[i];
+	}
+	adr = fact_adress();
+	tmp->preconds[0] = lindex[lp][adr];
+      }
+      tmp->effects = ( ActionEffect * ) calloc( 1, sizeof( ActionEffect ) );
+      tmp->num_effects = 1;
+      tmp->effects[0].conditions = NULL;
+      tmp->effects[0].num_conditions = 0;
+      tmp->effects[0].dels = NULL;
+      tmp->effects[0].num_dels = 0;
+      tmp->effects[0].adds = ( int * ) calloc( 1, sizeof( int ) );
+      tmp->effects[0].adds[0] = gnum_relevant_facts - 1;
+      tmp->effects[0].num_adds = 1;
+      tmp->next = gadd_actions;
+      gadd_actions = tmp;
+      gadd_num_actions++;
+      lnum_effects++;
+    } /* end for w = ggoal->sons */
+    ggoal_state.F[0] = gnum_relevant_facts - 1;
+    gadd_goal_state.num_F = 1;
+    break;
+  case AND:
+    for ( w = gadd_goal->sons; w; w = w->next ) {
+      lp = w->fact->predicate;
+      for ( i = 0; i < garity[lp]; i++ ) {
+	largs[i] = w->fact->args[i];
+      }
+      adr = fact_adress();
+      gadd_goal_state.F[gadd_goal_state.num_F++] = lindex[lp][adr];
+    }
+    break;
+  case ATOM:
+    gadd_goal_state.num_F = 1;
+    lp = gadd_goal->fact->predicate;
+    for ( i = 0; i < garity[lp]; i++ ) {
+      /* largs will be used on fact_adress */
+      largs[i] = gadd_goal->fact->args[i];
+    }
+    adr = fact_adress();
+    gadd_goal_state.F[0] = lindex[lp][adr];
+    break;
+  default:
+    printf("\n\nwon't get here: non ATOM,AND,OR in fully simplified goal\n\n");
+    exit( 1 );
+  }
+
+}
+
 
 void set_relevants_in_wff( WffNode **w ) {
 
@@ -985,9 +1083,7 @@ void set_relevants_in_wff( WffNode **w ) {
 
 
 
-void create_final_initial_state( void )
-
-{
+void create_final_initial_state( void ) {
 
   Facts *f;
   int i, adr;
@@ -1013,9 +1109,7 @@ void create_final_initial_state( void )
 
 
 
-void create_final_actions( void )
-
-{
+void create_final_actions( void ) {
 
   Action *a, *p, *t;
   NormOperator *no;
@@ -1060,6 +1154,275 @@ void create_final_actions( void )
 	if ( ne->num_conditions > 0 ) {
 	  a->effects[a->num_effects].conditions =
 	    ( int * ) calloc( ne->num_conditions, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_conditions = 0;
+
+	for ( i = 0; i < ne->num_conditions; i++ ) {
+	  lp = ne->conditions[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = ( ne->conditions[i].args[j] >= 0 ) ?
+	      ne->conditions[i].args[j] : a->inst_table[DECODE_VAR( ne->conditions[i].args[j] )];
+	  }
+	  adr = fact_adress();
+	  if ( !lpos[lp][adr] ) {/* condition not reachable: skip effect */
+	    break;
+	  }
+	  if ( !lneg[lp][adr] ) {/* condition always true: skip it */
+	    continue;
+	  }
+	  a->effects[a->num_effects].conditions[a->effects[a->num_effects].num_conditions++] =
+	    lindex[lp][adr];
+	}
+
+	if ( i < ne->num_conditions ) {/* found unreachable condition: free condition space */
+	  free( a->effects[a->num_effects].conditions );
+	  continue;
+	}
+
+	/* now create the add and del effects.
+	 */
+	if ( ne->num_adds > 0 ) {
+	  a->effects[a->num_effects].adds = ( int * ) calloc( ne->num_adds, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_adds = 0;
+	for ( i = 0; i < ne->num_adds; i++ ) {
+	  lp = ne->adds[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = ( ne->adds[i].args[j] >= 0 ) ?
+	      ne->adds[i].args[j] : a->inst_table[DECODE_VAR( ne->adds[i].args[j] )];
+	  }
+	  adr = fact_adress();
+
+	  if ( !lneg[lp][adr] ) {/* effect always true: skip it */
+	    continue;
+	  }
+	  
+	  a->effects[a->num_effects].adds[a->effects[a->num_effects].num_adds++] = lindex[lp][adr];
+	}
+
+	if ( ne->num_dels > 0 ) {
+	  a->effects[a->num_effects].dels = ( int * ) calloc( ne->num_dels, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_dels = 0;
+	for ( i = 0; i < ne->num_dels; i++ ) {
+	  lp = ne->dels[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = ( ne->dels[i].args[j] >= 0 ) ?
+	      ne->dels[i].args[j] : a->inst_table[DECODE_VAR( ne->dels[i].args[j] )];
+	  }
+	  adr = fact_adress();
+
+	  if ( !lpos[lp][adr] ) {/* effect always false: skip it */
+	    continue;
+	  }
+
+	  a->effects[a->num_effects].dels[a->effects[a->num_effects].num_dels++] = lindex[lp][adr];
+	}
+	if ( i < ne->num_dels ) break;
+
+	/* this effect is OK. go to next one in NormOp.
+	 */
+	a->num_effects++;
+	lnum_effects++;
+      }
+      if ( ne ) {
+	/* we get here if one effect was faulty
+	 */
+	if ( p ) {
+	  p->next = a->next;
+	  t = a;
+	  a = a->next;
+	  free_single_Action( t );
+	} else {
+	  gactions = a->next;
+	  t = a;
+	  a = a->next;
+	  free_single_Action( t );
+	}
+      } else {
+	p = a;
+	a = a->next;
+      }
+      continue;
+    }
+    if ( a->pseudo_action ) {
+      /* action is result of a PseudoAction
+       */
+      pa = a->pseudo_action;
+
+      if ( pa->num_preconds > 0 ) {
+	a->preconds = ( int * ) calloc( pa->num_preconds, sizeof( int ) );
+      }
+      a->num_preconds = 0;
+      for ( i = 0; i < pa->num_preconds; i++ ) {
+	lp = pa->preconds[i].predicate;
+	for ( j = 0; j < garity[lp]; j++ ) {
+	  largs[j] = pa->preconds[i].args[j];
+	}
+	adr = fact_adress();
+	
+	/* preconds are lpos in all cases due to reachability analysis
+	 */
+	if ( !lneg[lp][adr] ) {
+	  continue;
+	}
+	
+	a->preconds[a->num_preconds++] = lindex[lp][adr];
+      }
+
+      if ( a->num_effects > 0 ) {
+	a->effects = ( ActionEffect * ) calloc( a->num_effects, sizeof( ActionEffect ) );
+      }
+      a->num_effects = 0;
+      for ( pae = pa->effects; pae; pae = pae->next ) {
+	if ( pae->num_conditions > 0 ) {
+	  a->effects[a->num_effects].conditions =
+	    ( int * ) calloc( pae->num_conditions, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_conditions = 0;
+
+	for ( i = 0; i < pae->num_conditions; i++ ) {
+	  lp = pae->conditions[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = pae->conditions[i].args[j];
+	  }
+	  adr = fact_adress();
+
+	  if ( !lpos[lp][adr] ) {/* condition not reachable: skip effect */
+	    break;
+	  }
+	  if ( !lneg[lp][adr] ) {/* condition always true: skip it */
+	    continue;
+	  }
+	  
+	  a->effects[a->num_effects].conditions[a->effects[a->num_effects].num_conditions++] =
+	    lindex[lp][adr];
+	}
+
+	if ( i < pae->num_conditions ) {/* found unreachable condition: free condition space */
+	  free( a->effects[a->num_effects].conditions );
+	  continue;
+	}
+
+	/* now create the add and del effects.
+	 */
+	if ( pae->num_adds > 0 ) {
+	  a->effects[a->num_effects].adds = ( int * ) calloc( pae->num_adds, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_adds = 0;
+	for ( i = 0; i < pae->num_adds; i++ ) {
+	  lp = pae->adds[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = pae->adds[i].args[j];
+	  }
+	  adr = fact_adress();
+
+	  if ( !lneg[lp][adr] ) {/* effect always true: skip it */
+	    continue;
+	  }
+	  
+	  a->effects[a->num_effects].adds[a->effects[a->num_effects].num_adds++] = lindex[lp][adr];
+	}
+
+	if ( pae->num_dels > 0 ) {
+	  a->effects[a->num_effects].dels = ( int * ) calloc( pae->num_dels, sizeof( int ) );
+	}
+	a->effects[a->num_effects].num_dels = 0;
+	for ( i = 0; i < pae->num_dels; i++ ) {
+	  lp = pae->dels[i].predicate;
+	  for ( j = 0; j < garity[lp]; j++ ) {
+	    largs[j] = pae->dels[i].args[j];
+	  }
+	  adr = fact_adress();
+
+	  if ( !lpos[lp][adr] ) {/* effect always false: skip it */
+	    continue;
+	  }
+	  
+	  a->effects[a->num_effects].dels[a->effects[a->num_effects].num_dels++] = lindex[lp][adr];
+	}
+	if ( i < pae->num_dels ) break;
+
+	/* this effect is OK. go to next one in PseudoAction.
+	 */
+	a->num_effects++;
+	lnum_effects++;
+      }
+      if ( pae ) {
+	/* we get here if one effect was faulty
+	 */
+	if ( p ) {
+	  p->next = a->next;
+	  t = a;
+	  a = a->next;
+	  free_single_Action( t );
+	} else {
+	  gactions = a->next;
+	  t = a;
+	  a = a->next;
+	  free_single_Action( t );
+	}
+      } else {
+	p = a;
+	a = a->next;
+      }
+      continue;
+    }/* end of if clause for PseudoAction */
+    /* if action was neither normop, nor pseudo action determined,
+     * then it is an artificial action due to disjunctive goal
+     * conditions.
+     *
+     * these are already in final form.
+     */
+    p = a;
+    a = a->next;
+  }/* endfor all actions ! */
+
+}
+
+
+void create_final_actions_for_multiple_purpose ( void ) {
+
+  Action *a, *p, *t;
+  NormOperator *no;
+  NormEffect *ne;
+  int i, j, adr;
+  PseudoAction *pa;
+  PseudoActionEffect *pae;
+
+  a = gadd_actions; p = NULL;
+  while ( a ) {
+    if ( a->norm_operator ) {
+      /* action comes from an easy template NormOp
+       */
+      no = a->norm_operator;
+
+      if ( no->num_preconds > 0 ) {
+	a->preconds = ( int * ) calloc( no->num_preconds, sizeof( int ) );
+      }
+      a->num_preconds = 0;
+      for ( i = 0; i < no->num_preconds; i++ ) {
+	lp = no->preconds[i].predicate;
+	for ( j = 0; j < garity[lp]; j++ ) {
+	  largs[j] = ( no->preconds[i].args[j] >= 0 ) ? no->preconds[i].args[j] : a->inst_table[DECODE_VAR( no->preconds[i].args[j] )];
+	}
+	adr = fact_adress();
+	
+	/* preconds are lpos in all cases due to reachability analysis */
+	if ( !lneg[lp][adr] ) {
+	  continue;
+	}
+	
+	a->preconds[a->num_preconds++] = lindex[lp][adr];
+      }
+
+      if ( a->num_effects > 0 ) {
+	a->effects = ( ActionEffect * ) calloc( a->num_effects, sizeof( ActionEffect ) );
+      }
+      a->num_effects = 0;
+      for ( ne = no->effects; ne; ne = ne->next ) {
+	if ( ne->num_conditions > 0 ) {
+	  a->effects[a->num_effects].conditions = ( int * ) calloc( ne->num_conditions, sizeof( int ) );
 	}
 	a->effects[a->num_effects].num_conditions = 0;
 

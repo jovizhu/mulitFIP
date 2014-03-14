@@ -474,11 +474,9 @@ int main( int argc, char *argv[] ) {
     		printf("\nff: parsing domain file");
   	} 
   	/* it is important for the pddl language to define the domain before 
-   	* reading the problem 
-   	*/
+   	* reading the problem  */
   	load_ops_file( ops_file );
-  	/* problem file (facts)
-   	*/  
+  	/* problem file (facts) */  
   	if ( gcmd_line.display_info >= 1 ) {
     		printf(" ... done.\nff: parsing problem file.\n"); 
   	}
@@ -495,8 +493,7 @@ int main( int argc, char *argv[] ) {
 		printf("... done.\n");
 	}
 
-	/* This is needed to get all types.
-	*/
+	/* This is needed to get all types.*/
 	/* modified by jovi: adding supprot for addtional constant */
 	build_orig_constant_list();
 
@@ -652,6 +649,8 @@ int main( int argc, char *argv[] ) {
 	 * Multiple Purpose Planning                *
          ********************************************/
 	update_reachability_analysis_for_multiple_purpose ();
+	
+	update_relevant_facts_for_multiple_purpose ();
 
         compute_goal_agenda_for_multiple_purpose (); 
          
@@ -770,34 +769,10 @@ int main( int argc, char *argv[] ) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
 /*
 *  ----------------------------- HELPING FUNCTIONS ----------------------------
 */
-
-
-
-
-
-
-
-
-
-
-
-
-void output_planner_info( void )
-
-{
+void output_planner_info( void ) {
 
 	printf( "\n\ntime spent: %7.3f seconds instantiating %d easy, %d hard action templates", 
 		gtempl_time, gnum_easy_templates, gnum_hard_mixed_operators );
